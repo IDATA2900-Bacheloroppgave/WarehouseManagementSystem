@@ -61,6 +61,16 @@ public class ProductService {
         return false;
     }
 
+    public boolean update(Product product){
+        Optional<Product> existingProduct = productRepository.findById(product.getId());
+
+        if(existingProduct.isPresent()){
+            Product updatedProduct = existingProduct.get();
+            updatedProduct.setName(product.getName());
+        }
+
+    }
+
 
 
 }
