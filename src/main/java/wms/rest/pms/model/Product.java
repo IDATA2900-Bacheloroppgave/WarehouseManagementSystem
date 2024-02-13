@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * Class represents the Product in a warehouse managemange system.
+ * Class represents the Product in a warehouse management system.
  */
 @Getter
 @Setter
@@ -13,6 +16,7 @@ import lombok.Setter;
 public class Product {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "name", nullable = false)
@@ -33,6 +37,9 @@ public class Product {
 
     @Column(name = "batch", nullable = false)
     private int batch;
+
+    @ManyToMany(mappedBy = "products")
+    private Set<Category> categories = new HashSet<>();
 
     /**
      * Constructor for product.
