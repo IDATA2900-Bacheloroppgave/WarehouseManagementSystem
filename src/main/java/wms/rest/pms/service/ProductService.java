@@ -7,6 +7,9 @@ import wms.rest.pms.repository.ProductRepository;
 
 import java.util.Optional;
 
+/**
+ * Service class for productrepository interface.
+ */
 @Service
 public class ProductService {
 
@@ -41,10 +44,22 @@ public class ProductService {
         return this.productRepository.findById(id);
     }
 
+    /**
+     * Validate if product is not null.
+     *
+     * @param product to validate.
+     * @return true if valid, false if invalid.
+     */
     public boolean validateProduct(Product product){
         return product != null;
     }
 
+    /**
+     * Add a product to the repository.
+     *
+     * @param product the product to add to the repository.
+     * @return true if added, false if not added.
+     */
     public boolean add(Product product){
         if(validateProduct(product)){
             this.productRepository.save(product);
@@ -53,6 +68,12 @@ public class ProductService {
         return false;
     }
 
+    /**
+     * Deletes a product from the repository.
+     *
+     * @param id the id of the product to delete.
+     * @return true if deleted, false if not deleted.
+     */
     public boolean deleteProduct(int id) {
         if (this.productRepository.findById(id).isPresent()) {
             this.productRepository.deleteById(id);
@@ -62,6 +83,12 @@ public class ProductService {
         }
     }
 
+    /**
+     * Update an existing product from the repository.
+     *
+     * @param product the product to update properties.
+     * @return true if updated, false if not updated.
+     */
     public boolean update(Product product){
         Optional<Product> existingProduct = productRepository.findById(product.getId());
 
@@ -82,7 +109,4 @@ public class ProductService {
         }
         return false;
     }
-
-
-
 }

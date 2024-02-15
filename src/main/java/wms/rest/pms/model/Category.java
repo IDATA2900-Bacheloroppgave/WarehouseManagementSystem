@@ -8,6 +8,9 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Class represents a Category in the warehouse management system.
+ */
 @Entity
 @Setter
 @Getter
@@ -29,14 +32,18 @@ public class Category {
     )
     private Set<Product> products = new HashSet<>();
 
-
+    /**
+     * Constructor.
+     *
+     * @param categoryName the name of the category.
+     */
     public Category(String categoryName){
         this.categoryName = categoryName;
     }
 
+    /**
+     * Empty constructor.
+     */
     public Category(){
     }
-
-
-
 }

@@ -14,17 +14,22 @@ public class CategoryController {
 
     private CategoryService categoryService;
 
+    /**
+     * Constructor.
+     *
+     * @param categoryService categoryservice.
+     */
     @Autowired
     public CategoryController(CategoryService categoryService){
         this.categoryService = categoryService;
     }
 
-    @GetMapping
-    public ResponseEntity<Iterable<Category>> getCategories(){
-        Iterable<Category> categories = this.categoryService.getAll();
-        return ResponseEntity.ok(categories);
-    }
-
+    /**
+     * Post mapping for /categories endpoint. Adds a category to the database.
+     *
+     * @param category the category to add to the database. Requires JSON body in the HTTP POST request.
+     * @return responseentity based on the result of the post request.
+     */
     @PostMapping("/add")
     public ResponseEntity<?> addCategory(@RequestBody Category category){
         try{
@@ -40,6 +45,12 @@ public class CategoryController {
         }
     }
 
+    /**
+     * Delete mapping for /categories endpoint. Deletes a category from the database.
+     *
+     * @param id the id of the category to delete.
+     * @return responsentity based on the result of the delete request.
+     */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable int id){
         boolean deleted = this.categoryService.deleteCategory(id);
