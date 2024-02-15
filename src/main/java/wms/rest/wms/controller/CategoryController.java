@@ -32,7 +32,6 @@ public class CategoryController {
     @PostMapping("/add")
     public ResponseEntity<?> addCategory(@RequestBody Category category){
         try{
-
             boolean added = this.categoryService.addCategory(category);
             if(added){
                 return new ResponseEntity<>("Category was added", HttpStatus.OK);
@@ -54,9 +53,9 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(@PathVariable int id){
         boolean deleted = this.categoryService.deleteCategory(id);
         if(deleted){
-            return new ResponseEntity<>("Deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Category was deleted", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Not deleted", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Category was not deleted", HttpStatus.BAD_REQUEST);
         }
     }
 }
