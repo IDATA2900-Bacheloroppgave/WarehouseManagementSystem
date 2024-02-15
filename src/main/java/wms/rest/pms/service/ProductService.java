@@ -53,12 +53,13 @@ public class ProductService {
         return false;
     }
 
-    public boolean delete(int id){
-        if(productRepository.findById(id).isPresent()){
-            productRepository.deleteById(id);
+    public boolean deleteProduct(int id) {
+        if (this.productRepository.findById(id).isPresent()) {
+            this.productRepository.deleteById(id);
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public boolean update(Product product){
@@ -67,8 +68,19 @@ public class ProductService {
         if(existingProduct.isPresent()){
             Product updatedProduct = existingProduct.get();
             updatedProduct.setName(product.getName());
-        }
+            updatedProduct.setDescription(product.getDescription());
+            updatedProduct.setItem(product.getItem());
+            updatedProduct.setInventory(product.getInventory());
+            updatedProduct.setGtin(product.getGtin());
+            updatedProduct.setBatch(product.getBatch());
 
+            updatedProduct.getCategories().clear();
+            updatedProduct.getCategories().addAll(product.getCategories());
+
+            productRepository.save(updatedProduct);
+            return true;
+        }
+        return false;
     }
 
 
