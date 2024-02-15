@@ -1,4 +1,4 @@
-package wms.rest.pms.model;
+package wms.rest.wms.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

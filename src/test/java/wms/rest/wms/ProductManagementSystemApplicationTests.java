@@ -1,4 +1,4 @@
-package wms.rest.pms;
+package wms.rest.wms;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

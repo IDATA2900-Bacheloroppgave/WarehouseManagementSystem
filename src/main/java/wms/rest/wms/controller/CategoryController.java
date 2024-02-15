@@ -1,12 +1,11 @@
-package wms.rest.pms.controller;
+package wms.rest.wms.controller;
 
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wms.rest.pms.model.Category;
-import wms.rest.pms.service.CategoryService;
+import wms.rest.wms.model.Category;
+import wms.rest.wms.service.CategoryService;
 
 @RestController
 @RequestMapping("/api/categories")

@@ -1,9 +1,9 @@
-package wms.rest.pms.service;
+package wms.rest.wms.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wms.rest.pms.repository.CategoryRepository;
-import wms.rest.pms.model.Category;
+import wms.rest.wms.repository.CategoryRepository;
+import wms.rest.wms.model.Category;
 
 import java.util.Optional;
 

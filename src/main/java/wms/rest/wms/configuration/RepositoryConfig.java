@@ -1,10 +1,10 @@
-package wms.rest.pms.configuration;
+package wms.rest.wms.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
-import wms.rest.pms.model.Product;
+import wms.rest.wms.model.Product;
 
 /**
  * Class expose ID of entities for easier access during development.

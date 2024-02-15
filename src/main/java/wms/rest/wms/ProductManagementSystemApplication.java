@@ -1,4 +1,4 @@
-package wms.rest.pms;
+package wms.rest.wms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

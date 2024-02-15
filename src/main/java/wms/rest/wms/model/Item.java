@@ -1,4 +1,4 @@
-package wms.rest.pms.model;
+package wms.rest.wms.model;
 
 public enum Item {
     DRY_GOODS,

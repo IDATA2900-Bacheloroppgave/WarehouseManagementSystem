@@ -1,4 +1,4 @@
-package wms.rest.pms.model;
+package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,11 +1,11 @@
-package wms.rest.pms.controller;
+package wms.rest.wms.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wms.rest.pms.model.Product;
-import wms.rest.pms.service.ProductService;
+import wms.rest.wms.model.Product;
+import wms.rest.wms.service.ProductService;
 
 /**
  * Class represents the /products endpoint.
