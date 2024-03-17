@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.repository.ProductRepository;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
