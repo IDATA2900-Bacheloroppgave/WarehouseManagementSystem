@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.repository.ProductRepository;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Service class for productrepository interface.
+ * Service class for product api controller.
  */
 @Service
 public class ProductService {
@@ -97,7 +96,7 @@ public class ProductService {
             Product updatedProduct = existingProduct.get();
             updatedProduct.setName(product.getName());
             updatedProduct.setDescription(product.getDescription());
-            updatedProduct.setItem(product.getItem());
+            updatedProduct.setProductType(product.getProductType());
             updatedProduct.setInventory(product.getInventory());
             updatedProduct.setGtin(product.getGtin());
             updatedProduct.setBatch(product.getBatch());

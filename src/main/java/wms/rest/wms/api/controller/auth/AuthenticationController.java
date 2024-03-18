@@ -27,7 +27,7 @@ public class AuthenticationController {
             userService.registerUser(registrationBody);
             return ResponseEntity.ok().build();
         } catch(UserAlreadyExistsException e){ //TODO: FIX EXCEPTION HANDLING
-            return ResponseEntity.status(HttpStatus.CONFLICT).build(); //User with registered email already exists
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 

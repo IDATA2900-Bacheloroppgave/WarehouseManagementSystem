@@ -9,7 +9,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Class represents the Order in a warehouse management system.
+ * Represents an order in the warehouse management system. This entity maps to the 'customerOrder' table
+ * in the database and captures the essential details of an order, including the order date, status,
+ * and associations to the user who placed the order and the address for the order. It also includes a set of
+ * CustomerOrderQuantities to represent the many-to-many relationship between orders and products, capturing the
+ * quantity of each product in the order.
  */
 @Getter
 @Setter
@@ -46,12 +50,15 @@ public class Order {
      * @param status the delivery status of the order.
      * @param user the user of which the order was placed by.
      */
-    public Order(Date date, String status,User user){
+    public Order(Date date, String status, User user){
         this.date = date;
         this.status = status;
         this.user = user;
     }
 
+    /**
+     * Empty constructor.
+     */
     public Order(){
     }
 }

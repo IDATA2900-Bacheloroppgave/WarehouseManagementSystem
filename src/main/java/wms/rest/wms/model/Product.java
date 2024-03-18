@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * Class represents the Product in a warehouse management system.
+ * Class represents the Product in a warehouse management system. The product has several attributes such as
+ * name, description, product type, gtin number and batch number for identification. The product also has a
+ * one to one relation with the inventory for performance reasons. Once the product_id is located, the inventory
+ * holds the stock of the product.
  */
 @Getter
 @Setter
@@ -29,7 +29,7 @@ public class Product {
 
     @Column(name = "Item", nullable = false)
     @Enumerated(EnumType.STRING)
-    private Item item;
+    private ProductType productType;
 
     @Column(name = "gtin", nullable = false)
     private int gtin;
@@ -43,68 +43,27 @@ public class Product {
     /**
      * Constructor for product.
      *
-     * @param id the id of the product.
      * @param name the name of the product.
      * @param description the description of the product.
-     * @param item the type of item the product is.
+     * @param productType the type of item the product is.
      * @param gtin global trade item number.
      * @param batch batch number.
      */
-    public Product(int id
-                , String name
+    public Product(String name
                 , String description
-                , Item item
+                , ProductType productType
                 , int gtin
                 , int batch){
-        this.name = validateString(name, "name");
-        this.description = validateString(description, "description");
-        this.gtin = validateInteger(gtin, "global trade item number");
-        this.batch = validateInteger(batch, "batch");
+        this.name = name;
+        this.description = description;
+        this.productType = productType;
+        this.gtin = gtin;
+        this.batch = batch;
     }
 
     /**
      * Empty constructor.
      */
     public Product(){
-    }
-
-    /**
-     * Checks if a string is valid or not.
-     * Return the string if valid, otherwise throw illegalargumentexception.
-     *
-     * @param value the string you want to validate.
-     * @param parameterName the name used to identify the string in error messages.
-     * @return the original string if it is valid.
-     */
-    public String validateString(String value, String parameterName) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("The parameter '" + parameterName + "' cannot be null or blank.");
-        }
-        return value;
-    }
-
-    /**
-     * Check if a int is valid or not.
-     * Return the int if valid, otherwise throw illegalargumentexception.
-     *
-     * @param value the int you want to validate.
-     * @param parameterName the name used to identify the int in error messages.
-     * @return the original value if it is valid.
-     */
-    public int validateInteger(int value, String parameterName) {
-        if(value < 0){
-            throw new IllegalArgumentException("The parameter '" + parameterName + "' cannot be less than zero");
-        }
-        return value;
-    }
-
-    /**
-     * Validate if product is valid or not.
-     *
-     * @param product the product to check if is valid.
-     * @return true if valid, otherwise false.
-     */
-    public boolean isValid(Product product){
-        return !" ".equals(name) && ! " ".equals(description);
     }
 }

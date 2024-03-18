@@ -16,7 +16,6 @@ public class RepositoryConfig implements RepositoryRestConfigurer {
 
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(Product.class);
-
     }
     @Bean
     public RepositoryRestConfigurer repositoryRestConfigurer() {

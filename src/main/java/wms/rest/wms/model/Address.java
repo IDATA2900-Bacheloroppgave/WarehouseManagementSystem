@@ -7,6 +7,12 @@ import lombok.Setter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Class represents the address in the system. This class is a part of the model layer and maps to the
+ * 'address' table in the database. It holds information about a user's address, including street addresses,
+ * country, city and postal code. Each address is associated with a User entity in a many to one relationship,
+ * indicating that multiple addresses can be linked to a single user.
+ */
 @Getter
 @Setter
 @Entity
@@ -34,16 +40,26 @@ public class Address {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /**
+     * Constructor for Address.
+     *
+     * @param address the address of the user.
+     * @param country the country where the user is located.
+     * @param city the city which the user is located.
+     * @param postalCode the postal code of the city where the user is located.
+     */
     public Address(String address,
                    String country, String city,
                    int postalCode) {
-
         this.address = address;
         this.country = country;
         this.city = city;
         this.postalCode = postalCode;
     }
 
+    /**
+     * Empty constructor.
+     */
     public Address(){
     }
 }

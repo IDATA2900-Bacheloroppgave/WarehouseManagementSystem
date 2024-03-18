@@ -6,6 +6,9 @@ import wms.rest.wms.exception.UserAlreadyExistsException;
 import wms.rest.wms.model.User;
 import wms.rest.wms.repository.UserRepository;
 
+/**
+ * Service class for user api controller.
+ */
 @Service
 public class UserService {
 
