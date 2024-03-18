@@ -16,9 +16,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())           //TODO: MIGHT NEED TO LOOK INTO THIS MORE
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**").permitAll() // Allow unauthenticated access to /auth/**
+                        .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/api/orders/**").authenticated() // Require authentication for /api/orders/**
                         .anyRequest().authenticated()) // Require authentication for any other request
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Apply the JWTRequestFilter
 
