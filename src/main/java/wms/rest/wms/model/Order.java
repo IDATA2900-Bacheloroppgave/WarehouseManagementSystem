@@ -3,9 +3,10 @@ package wms.rest.wms.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import wms.rest.wms.user.User;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Class represents the Order in a warehouse management system.
@@ -13,19 +14,30 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "'order'") //Order is reserved in MariaDB.
+@Table(name = "customerOrder")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private int id;
 
+    @Column(name = "date", nullable = false)
     private Date date;
 
+    @Column(name = "status", nullable = false)
     private String status; //packed, in transit, deliverd (?)
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "address_id", nullable = false)
+    private Address address;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<CustomerOrderQuantities> quantities = new LinkedHashSet<>();
 
     /**
      * Constructor for order.

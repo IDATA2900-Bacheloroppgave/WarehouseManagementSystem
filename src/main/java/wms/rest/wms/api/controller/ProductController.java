@@ -1,4 +1,4 @@
-package wms.rest.wms.controller;
+package wms.rest.wms.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

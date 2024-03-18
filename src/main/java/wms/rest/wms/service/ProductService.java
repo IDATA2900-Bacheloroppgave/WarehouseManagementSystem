@@ -102,9 +102,6 @@ public class ProductService {
             updatedProduct.setGtin(product.getGtin());
             updatedProduct.setBatch(product.getBatch());
 
-            updatedProduct.getCategories().clear();
-            updatedProduct.getCategories().addAll(product.getCategories());
-
             productRepository.save(updatedProduct);
             return true;
         }

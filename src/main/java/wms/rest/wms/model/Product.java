@@ -13,10 +13,12 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Table(name = "product")
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
     @Column(name = "name", nullable = false)
@@ -29,17 +31,14 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private Item item;
 
-    @Column(name = "Inventory", nullable = false)
-    private int inventory;
-
     @Column(name = "gtin", nullable = false)
     private int gtin;
 
     @Column(name = "batch", nullable = false)
     private int batch;
 
-    @ManyToMany(mappedBy = "products")
-    private Set<Category> categories = new HashSet<>();
+    @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
+    private Inventory inventory;
 
     /**
      * Constructor for product.
@@ -48,7 +47,6 @@ public class Product {
      * @param name the name of the product.
      * @param description the description of the product.
      * @param item the type of item the product is.
-     * @param inventory how many of the product in inventory.
      * @param gtin global trade item number.
      * @param batch batch number.
      */
@@ -56,12 +54,10 @@ public class Product {
                 , String name
                 , String description
                 , Item item
-                , int inventory
                 , int gtin
                 , int batch){
         this.name = validateString(name, "name");
         this.description = validateString(description, "description");
-        this.inventory = validateInteger(inventory, "inventory");
         this.gtin = validateInteger(gtin, "global trade item number");
         this.batch = validateInteger(batch, "batch");
     }
