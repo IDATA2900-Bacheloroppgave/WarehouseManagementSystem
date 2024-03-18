@@ -14,8 +14,11 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    public UserService(UserRepository userRepository){
+    private EncryptionService encryptionService;
+
+    public UserService(UserRepository userRepository, EncryptionService encryptionService){
         this.userRepository = userRepository;
+        this.encryptionService = encryptionService;
     }
 
     public User registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException {
@@ -26,7 +29,7 @@ public class UserService {
         user.setEmail(registrationBody.getEmail());
         user.setFirstName(registrationBody.getFirstName());
         user.setLastName(registrationBody.getLastName());
-        user.setPassword(registrationBody.getPassword());
+        user.setPassword(encryptionService.encryptPassword(registrationBody.getPassword()));
         return userRepository.save(user);
     }
 
