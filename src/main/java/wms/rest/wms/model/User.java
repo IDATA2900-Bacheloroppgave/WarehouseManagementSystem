@@ -1,5 +1,6 @@
 package wms.rest.wms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,9 +28,11 @@ public class User {
     @Column(name = "lastname", nullable = false)
     private String lastName;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Address> addresses = new LinkedHashSet<>();
 

@@ -1,5 +1,7 @@
 package wms.rest.wms.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Order;
 import wms.rest.wms.model.User;
@@ -13,13 +15,14 @@ import java.util.List;
 @Service
 public class OrderService {
 
+    @Autowired
     private OrderRepository orderRepository;
 
     public OrderService(OrderRepository orderRepository){
         this.orderRepository = orderRepository;
     }
 
-    public List<Order> getOrdersByUser(User user){
+    public List<Order> getOrders(User user){
         return this.orderRepository.findByUser(user);
     }
 }
