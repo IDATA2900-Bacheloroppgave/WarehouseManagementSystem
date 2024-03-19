@@ -3,6 +3,7 @@ package wms.rest.wms.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Or;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -29,8 +30,9 @@ public class Order {
     @Column(name = "date", nullable = false)
     private Date date;
 
-    @Column(name = "status", nullable = false)
-    private OrderStatus status;
+    @Column(name = "orderStatus", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -47,12 +49,11 @@ public class Order {
      * Constructor for order.
      *
      * @param date the time of the order was placed.
-     * @param status the delivery status of the order.
      * @param user the user of which the order was placed by.
      */
-    public Order(Date date, OrderStatus status, User user){
+    public Order(Date date,OrderStatus orderStatus,  User user){
         this.date = date;
-        this.status = status;
+        this.orderStatus = orderStatus;
         this.user = user;
     }
 
@@ -62,3 +63,4 @@ public class Order {
     public Order(){
     }
 }
+

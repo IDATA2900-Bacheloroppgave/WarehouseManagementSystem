@@ -33,7 +33,7 @@ public class Product {
     private String description;
 
     @Column(name = "Item", nullable = false)
-    @Enumerated(EnumType.STRING) //?
+    @Enumerated(EnumType.STRING)
     private ProductType productType;
 
     @Column(name = "price", nullable = false)

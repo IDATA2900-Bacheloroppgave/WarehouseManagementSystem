@@ -4,12 +4,8 @@ public enum TripStatus {
 
     NOT_STARTED,
     READY_FOR_DEPARTURE,
-
     ACTIVE,
     LOADING,
     DEPARTED,
-
-
-
     IN_TRANSIT
 }

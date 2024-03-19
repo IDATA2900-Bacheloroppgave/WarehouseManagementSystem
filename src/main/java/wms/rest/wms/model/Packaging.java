@@ -14,14 +14,20 @@ import java.util.Set;
 @Table(name = "packaging")
 public class Packaging {
 
+    public enum PackageType{
+        D_PAK,
+        F_PAK
+    }
+
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private int id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "package_type")
-    private String packageType; //D-PAK, F-PAK
+    private PackageType packageType;
 
     @Column(name = "quantity")
     private int quantity;
@@ -37,7 +43,7 @@ public class Packaging {
     @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
 
-    public Packaging(String packageType, int quantity, double weight, double dimensionCm3, Product product) {
+    public Packaging(PackageType packageType, int quantity, double weight, double dimensionCm3, Product product) {
         this.packageType = packageType;
         this.quantity = quantity;
         this.weight = weight;

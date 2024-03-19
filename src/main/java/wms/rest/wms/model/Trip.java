@@ -20,6 +20,7 @@ public class Trip {
     private int id;
 
     @Column(name = "trip_status")
+    @Enumerated(EnumType.STRING)
     private TripStatus tripStatus;
 
     @Column(name = "start_location", nullable = false)

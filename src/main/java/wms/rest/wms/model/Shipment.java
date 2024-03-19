@@ -33,4 +33,10 @@ public class Shipment {
     @OneToMany
     private Set<Order> orders = new LinkedHashSet<>();
 
+
+    public Shipment(String shipment_load, String shipment_unload, Trip trip) {
+        this.shipment_load = shipment_load;
+        this.shipment_unload = shipment_unload;
+        this.trip = trip;
+    }
 }
