@@ -23,9 +23,6 @@ public class OrderQuantities {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "quantity", nullable = false)
-    private int quantity;
-
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id", nullable = false)
@@ -41,7 +38,6 @@ public class OrderQuantities {
     public OrderQuantities(Product product, Order order, Integer quantity) {
         this.product = product;
         this.order = order;
-        this.quantity = quantity;
     }
 
     public OrderQuantities(){
