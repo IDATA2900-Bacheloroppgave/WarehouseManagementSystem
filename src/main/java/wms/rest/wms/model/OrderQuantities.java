@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "customer_order_quantities")
-public class CustomerOrderQuantities {
+public class OrderQuantities {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -24,7 +24,7 @@ public class CustomerOrderQuantities {
     private Product product;
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    private int quantity;
 
     @JsonIgnore
     @ManyToOne(optional = false)
@@ -38,13 +38,13 @@ public class CustomerOrderQuantities {
      * @param order
      * @param quantity
      */
-    public CustomerOrderQuantities(Product product, Order order, Integer quantity) {
+    public OrderQuantities(Product product, Order order, Integer quantity) {
         this.product = product;
         this.order = order;
         this.quantity = quantity;
     }
 
-    public CustomerOrderQuantities(){
+    public OrderQuantities(){
     }
 
 }

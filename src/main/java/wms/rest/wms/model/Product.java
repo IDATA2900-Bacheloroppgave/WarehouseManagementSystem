@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Class represents the Product in a warehouse management system. The product has several attributes such as
  * name, description, product type, gtin number and batch number for identification. The product also has a
@@ -29,8 +33,11 @@ public class Product {
     private String description;
 
     @Column(name = "Item", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) //?
     private ProductType productType;
+
+    @Column(name = "price", nullable = false)
+    private Double price;
 
     @Column(name = "gtin", nullable = false)
     private int gtin;
@@ -38,13 +45,12 @@ public class Product {
     @Column(name = "batch", nullable = false)
     private int batch;
 
-    @JsonIgnore
+
     @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
     private Inventory inventory;
 
-    @OneToOne(mappedBy = "product", orphanRemoval = true)
-    private Measurement measurement;
-
+    @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
+    private Packaging packaging;
 
     /**
      * Constructor for product.
@@ -58,11 +64,13 @@ public class Product {
     public Product(String name
                 , String description
                 , ProductType productType
+                , Double price
                 , int gtin
                 , int batch){
         this.name = name;
         this.description = description;
         this.productType = productType;
+        this.price = price;
         this.gtin = gtin;
         this.batch = batch;
     }

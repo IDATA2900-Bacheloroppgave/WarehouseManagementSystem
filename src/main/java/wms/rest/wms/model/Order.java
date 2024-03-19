@@ -41,7 +41,7 @@ public class Order {
     private Address address;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<CustomerOrderQuantities> quantities = new LinkedHashSet<>();
+    private Set<OrderQuantities> quantities = new LinkedHashSet<>(); //TODO: QUANTITIES? What does it do, dont remember
 
     /**
      * Constructor for order.

@@ -10,6 +10,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "inventory")
 public class Inventory {
+
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

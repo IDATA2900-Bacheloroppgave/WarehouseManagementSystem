@@ -21,6 +21,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // Allow unauthenticated access to /auth/**
                         .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/orders/**").authenticated() // Require authentication for /api/orders/**
+                        .requestMatchers("/api/packaging/**").authenticated()
                         .anyRequest().authenticated()) // Require authentication for any other request
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Apply the JWTRequestFilter
 
