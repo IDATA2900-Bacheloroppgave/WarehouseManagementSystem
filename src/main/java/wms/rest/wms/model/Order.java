@@ -30,7 +30,7 @@ public class Order {
     private Date date;
 
     @Column(name = "status", nullable = false)
-    private String status; //packed, in transit, deliverd (?)
+    private OrderStatus status;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -50,7 +50,7 @@ public class Order {
      * @param status the delivery status of the order.
      * @param user the user of which the order was placed by.
      */
-    public Order(Date date, String status, User user){
+    public Order(Date date, OrderStatus status, User user){
         this.date = date;
         this.status = status;
         this.user = user;
