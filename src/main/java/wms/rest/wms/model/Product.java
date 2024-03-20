@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
  * Class represents the Product in a warehouse management system. The product has several attributes such as
  * name, description, product type, gtin number and batch number for identification. The product also has a
@@ -28,6 +30,12 @@ public class Product {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "supplier", nullable = false)
+    private String supplier;
+
+    @Column(name = "best_before_date", nullable = false)
+    private Date bestBeforeDate;
 
     @Column(name = "item", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -61,12 +69,16 @@ public class Product {
                 , String description
                 , ProductType productType
                 , Double price
+                , String supplier
+                , Date bestBeforeDate
                 , int gtin
                 , int batch){
         this.name = name;
         this.description = description;
         this.productType = productType;
         this.price = price;
+        this.supplier = supplier;
+        this.bestBeforeDate = bestBeforeDate;
         this.gtin = gtin;
         this.batch = batch;
     }

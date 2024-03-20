@@ -6,6 +6,7 @@ import wms.rest.wms.model.Trip;
 import wms.rest.wms.repository.TripRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TripService {
@@ -19,6 +20,10 @@ public class TripService {
 
     public List<Trip> findAll() {
         return this.tripRepository.findAll();
+    }
+
+    public Optional<Trip> findTripById(int id){
+        return this.tripRepository.findByTripId(id);
     }
 
 

@@ -1,12 +1,13 @@
 package wms.rest.wms.api.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import wms.rest.wms.model.Trip;
 import wms.rest.wms.service.TripService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/trips")
@@ -21,5 +22,18 @@ public class TripController {
     @GetMapping
     public List<Trip> getTrips(){
         return this.tripService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Trip>> getTripById(@PathVariable("id") int id){
+        Optional<Trip> trip = this.tripService.findTripById(id);
+        ResponseEntity response;
+
+        if(trip.isPresent()){
+            response = new ResponseEntity(trip, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity(trip, HttpStatus.NOT_FOUND);
+        }
+        return response;
     }
 }

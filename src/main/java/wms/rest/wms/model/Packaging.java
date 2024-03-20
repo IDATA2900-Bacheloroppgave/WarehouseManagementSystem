@@ -30,21 +30,21 @@ public class Packaging {
     private int quantityPrPackage;
 
     @Column(name = "weight_in_gram", nullable = false)
-    private double weight;
+    private double weightInGrams;
 
     @Column(name = "dimension_cm_3", nullable = false)
-    private double dimensionCm3;
+    private double dimensionInCm3;
 
     @JsonIgnore
     @OneToOne(optional = false, orphanRemoval = true)
     @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
 
-    public Packaging(PackageType packageType, int quantityPrPackage, double weight, double dimensionCm3, Product product) {
+    public Packaging(PackageType packageType, int quantityPrPackage, double weightInGrams, double dimensionInCm3, Product product) {
         this.packageType = packageType;
         this.quantityPrPackage = quantityPrPackage;
-        this.weight = weight;
-        this.dimensionCm3 = dimensionCm3;
+        this.weightInGrams = weightInGrams;
+        this.dimensionInCm3 = dimensionInCm3;
         this.product = product;
     }
 

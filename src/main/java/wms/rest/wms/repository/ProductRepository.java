@@ -3,19 +3,23 @@ package wms.rest.wms.repository;
 import org.springframework.data.repository.ListCrudRepository;
 import wms.rest.wms.model.Product;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends ListCrudRepository<Product, Integer> {
 
     /**
-     * Find specific product by name search.
+     * Find a specific product or list based on search query.
      *
-     * where product name like 'name'
+     * where product name contains 'name'
+     *
+     * If there are several products with the same pattern, for example Makrell
+     * and Makrell i tomat, both the products will be returned as a list.
      *
      * @param name name of the product to search for.
-     * @return optional container on the found product.
+     * @return list of the products found.
      */
-    Optional<Product> findByName(String name);
+    List<Product> findByNameContaining(String name);
 
     /**
      * Find specific product by global trade identification number search.

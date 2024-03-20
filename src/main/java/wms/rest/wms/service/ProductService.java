@@ -2,6 +2,7 @@ package wms.rest.wms.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wms.rest.wms.exception.ProductDoesNotExistException;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.repository.ProductRepository;
 
@@ -24,6 +25,12 @@ public class ProductService {
         return this.productRepository.findAll();
     }
 
+    public List<Product> findByNameContaining(String name){
+        return this.productRepository.findByNameContaining(name);
+    }
 
+    public Optional<Product> findByGtin(int gtin){
+        return this.productRepository.findByGtin(gtin);
+    }
 }
 
