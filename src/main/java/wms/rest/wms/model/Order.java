@@ -3,7 +3,6 @@ package wms.rest.wms.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.aspectj.weaver.ast.Or;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -24,11 +23,11 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "order_id", nullable = false)
     private int id;
 
     @Column(name = "date", nullable = false)
-    private Date date;
+    private Date orderDate;
 
     @Column(name = "orderStatus", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -36,23 +35,28 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Customer user;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<OrderQuantities> quantities = new LinkedHashSet<>(); //TODO: QUANTITIES? What does it do, dont remember
+    private Set<OrderQuantities> quantities = new LinkedHashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "shipment_id")
+    private Shipment shipment;
+
 
     /**
      * Constructor for order.
      *
-     * @param date the time of the order was placed.
+     * @param orderDate the time of the order was placed.
      * @param user the user of which the order was placed by.
      */
-    public Order(Date date,OrderStatus orderStatus,  User user){
-        this.date = date;
+    public Order(Date orderDate,OrderStatus orderStatus,  Customer user){
+        this.orderDate = orderDate;
         this.orderStatus = orderStatus;
         this.user = user;
     }

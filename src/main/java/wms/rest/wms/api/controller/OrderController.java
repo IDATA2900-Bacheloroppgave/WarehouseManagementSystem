@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import wms.rest.wms.model.Order;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 import wms.rest.wms.service.OrderService;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Order> getOrders(@AuthenticationPrincipal User user){
+    public List<Order> getOrders(@AuthenticationPrincipal Customer user){
         return this.orderService.getOrders(user);
     }
 }

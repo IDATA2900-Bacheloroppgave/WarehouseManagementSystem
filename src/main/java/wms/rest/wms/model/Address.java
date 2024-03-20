@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
  * Class represents the address in the system. This class is a part of the model layer and maps to the
  * 'address' table in the database. It holds information about a user's address, including street addresses,
@@ -20,9 +17,10 @@ import java.util.Set;
 @Table(name = "address")
 public class Address {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "address_id", nullable = false)
     private int id;
 
     @Column(name = "address", nullable = false, length = 100)
@@ -40,7 +38,7 @@ public class Address {
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Customer user;
 
     /**
      * Constructor for Address.

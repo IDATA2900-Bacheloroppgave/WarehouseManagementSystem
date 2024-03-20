@@ -12,11 +12,12 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "user")
-public class User {
+public class Customer {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private int id;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -37,7 +38,7 @@ public class User {
     private Set<Address> addresses = new LinkedHashSet<>();
 
 
-    public User(int id, String email, String password, String firstName, String lastName){
+    public Customer(int id, String email, String password, String firstName, String lastName){
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -45,7 +46,7 @@ public class User {
         this.password = password;
     }
 
-    public User(){
+    public Customer(){
     }
 
 }

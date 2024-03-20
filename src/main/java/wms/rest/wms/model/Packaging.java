@@ -22,7 +22,7 @@ public class Packaging {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "packaging_id", nullable = false)
     private int id;
 
     @Enumerated(EnumType.STRING)

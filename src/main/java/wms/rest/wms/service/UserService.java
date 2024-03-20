@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import wms.rest.wms.api.model.LoginBody;
 import wms.rest.wms.api.model.RegistrationBody;
 import wms.rest.wms.exception.UserAlreadyExistsException;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 import wms.rest.wms.repository.UserRepository;
 
 import java.util.Optional;
@@ -27,11 +27,11 @@ public class UserService {
         this.jwtService = jwtService;
     }
 
-    public User registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException {
+    public Customer registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException {
         if(userRepository.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent()){
             throw new UserAlreadyExistsException();
         }
-        User user = new User();
+        Customer user = new Customer();
         user.setEmail(registrationBody.getEmail());
         user.setFirstName(registrationBody.getFirstName());
         user.setLastName(registrationBody.getLastName());
@@ -40,9 +40,9 @@ public class UserService {
     }
 
     public String loginUser(LoginBody loginBody){
-        Optional<User> opUser = userRepository.findByEmail(loginBody.getEmail());
+        Optional<Customer> opUser = userRepository.findByEmail(loginBody.getEmail());
         if(opUser.isPresent()){
-            User user = opUser.get();
+            Customer user = opUser.get();
             if(encryptionService.verifyPassword(loginBody.getPassword(), user.getPassword())){
                 return jwtService.generateJWT(user);
             }

@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 
 import java.util.Date;
 
@@ -30,7 +30,7 @@ public class JwtService {
         algorithm = Algorithm.HMAC256(algorithmKey);
     }
 
-    public String generateJWT(User user){
+    public String generateJWT(Customer user){
         return JWT.create()
                 .withClaim(EMAIL_KEY, user.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + (1000 * expiryInSeconds)))

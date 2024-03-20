@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 import wms.rest.wms.repository.UserRepository;
 import wms.rest.wms.service.JwtService;
 
@@ -36,9 +36,9 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             String token = tokenHeader.substring(7);
             try {
                 String email = jwtService.getEmail(token);
-                Optional<User> opUser = userRepository.findByEmail(email);
+                Optional<Customer> opUser = userRepository.findByEmail(email);
                 if(opUser.isPresent()){
-                    User user = opUser.get();
+                    Customer user = opUser.get();
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);

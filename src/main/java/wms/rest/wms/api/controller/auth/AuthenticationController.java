@@ -10,7 +10,7 @@ import wms.rest.wms.api.model.LoginBody;
 import wms.rest.wms.api.model.LoginResponse;
 import wms.rest.wms.api.model.RegistrationBody;
 import wms.rest.wms.exception.UserAlreadyExistsException;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 import wms.rest.wms.service.UserService;
 
 @RestController
@@ -46,7 +46,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/me")
-    public User getLoggedInUserProfile(@AuthenticationPrincipal User user){
+    public Customer getLoggedInUserProfile(@AuthenticationPrincipal Customer user){
         return user;
     }
 }

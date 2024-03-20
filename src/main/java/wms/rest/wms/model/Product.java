@@ -21,9 +21,10 @@ import java.util.Set;
 @Table(name = "product")
 public class Product {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "product_id")
     private int id;
 
     @Column(name = "name", nullable = false)

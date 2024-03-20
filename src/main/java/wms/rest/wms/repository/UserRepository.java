@@ -1,15 +1,15 @@
 package wms.rest.wms.repository;
 
 import org.springframework.data.repository.CrudRepository;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 
 import java.util.Optional;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UserRepository extends CrudRepository<Customer, Integer> {
 
-    Optional<User> findByEmailIgnoreCase(String email);
+    Optional<Customer> findByEmailIgnoreCase(String email);
 
-    Optional<User> findByEmail(String email);
+    Optional<Customer> findByEmail(String email);
 
 
 }

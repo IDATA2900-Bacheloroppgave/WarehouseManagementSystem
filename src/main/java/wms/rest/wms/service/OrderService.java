@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Order;
 import wms.rest.wms.model.OrderStatus;
 import wms.rest.wms.model.Trip;
-import wms.rest.wms.model.User;
+import wms.rest.wms.model.Customer;
 import wms.rest.wms.repository.OrderRepository;
 import wms.rest.wms.repository.TripRepository;
 
@@ -25,7 +25,7 @@ public class OrderService {
         this.tripRepository = tripRepository;
     }
 
-    public List<Order> getOrders(User user){
+    public List<Order> getOrders(Customer user){
         return this.orderRepository.findByUser(user);
     }
 
