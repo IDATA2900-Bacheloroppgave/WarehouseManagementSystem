@@ -18,8 +18,11 @@ public class OrderQuantities {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_quantities_id", nullable = false)
-    private int id;
+    @Column(name = "customer_order_quantities_id", nullable = false)
+    private int customerOrderQuantitiesId;
+
+    @Column(name = "product_quantity")
+    private int productQuantity;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", nullable = false)
@@ -30,20 +33,17 @@ public class OrderQuantities {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "quantity")
-    private int quantity;
-
     /**
      * Co
      *
      * @param product
      * @param order
-     * @param quantity
+     * @param productQuantity
      */
-    public OrderQuantities(Product product, Order order, int quantity) {
+    public OrderQuantities(Product product, Order order, int productQuantity) {
         this.product = product;
         this.order = order;
-        this.quantity = quantity;
+        this.productQuantity = productQuantity;
     }
 
     public OrderQuantities(){

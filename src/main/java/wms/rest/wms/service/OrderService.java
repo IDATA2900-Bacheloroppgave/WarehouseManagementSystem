@@ -25,8 +25,8 @@ public class OrderService {
         this.tripRepository = tripRepository;
     }
 
-    public List<Order> getOrders(Customer user){
-        return this.orderRepository.findByUser(user);
+    public List<Order> getOrders(Customer customer){
+        return this.orderRepository.findByCustomer(customer);
     }
 
     /**

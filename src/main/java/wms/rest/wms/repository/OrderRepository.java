@@ -8,7 +8,7 @@ import wms.rest.wms.model.Customer;
 import java.util.List;
 
 public interface OrderRepository extends ListCrudRepository<Order, Integer> {
-    List<Order> findByUser(Customer user);
+    List<Order> findByCustomer(Customer customer);
 
     List<Order> findByOrderStatus(OrderStatus orderStatus);
 }

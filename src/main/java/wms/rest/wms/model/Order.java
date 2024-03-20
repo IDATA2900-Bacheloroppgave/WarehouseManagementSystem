@@ -1,5 +1,6 @@
 package wms.rest.wms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,41 +25,42 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id", nullable = false)
-    private int id;
+    private int orderId;
 
     @Column(name = "date", nullable = false)
     private Date orderDate;
 
-    @Column(name = "orderStatus", nullable = false)
+    @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Customer user;
+    private Customer customer;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private Set<OrderQuantities> quantities = new LinkedHashSet<>();
-
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<OrderQuantities> quantities = new LinkedHashSet<>();
 
 
     /**
      * Constructor for order.
      *
      * @param orderDate the time of the order was placed.
-     * @param user the user of which the order was placed by.
+     * @param customer the user of which the order was placed by.
      */
-    public Order(Date orderDate,OrderStatus orderStatus,  Customer user){
+    public Order(Date orderDate,OrderStatus orderStatus,  Customer customer){
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
-        this.user = user;
+        this.customer = customer;
     }
 
     /**

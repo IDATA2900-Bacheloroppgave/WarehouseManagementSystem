@@ -1,7 +1,6 @@
 package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -12,7 +11,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "tripId")
 @Getter
 @Setter
 @Entity
@@ -22,7 +21,7 @@ public class Trip {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "trip_id", nullable = false)
-    private int id;
+    private int tripId;
 
     @Column(name = "trip_status")
     @Enumerated(EnumType.STRING)

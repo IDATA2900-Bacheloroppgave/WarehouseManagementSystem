@@ -21,7 +21,7 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id", nullable = false)
-    private int id;
+    private int addressId;
 
     @Column(name = "address", nullable = false, length = 100)
     private String address;
@@ -37,8 +37,8 @@ public class Address {
 
     @JsonIgnore
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private Customer user;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     /**
      * Constructor for Address.

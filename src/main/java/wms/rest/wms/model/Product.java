@@ -5,10 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
  * Class represents the Product in a warehouse management system. The product has several attributes such as
  * name, description, product type, gtin number and batch number for identification. The product also has a
@@ -25,7 +21,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private int id;
+    private int productId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -33,7 +29,7 @@ public class Product {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "Item", nullable = false)
+    @Column(name = "item", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
@@ -45,7 +41,6 @@ public class Product {
 
     @Column(name = "batch", nullable = false)
     private int batch;
-
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
     private Inventory inventory;

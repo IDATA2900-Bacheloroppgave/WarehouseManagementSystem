@@ -15,7 +15,7 @@ public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id", nullable = false)
-    private int id;
+    private int inventoryId;
 
     @JsonIgnore
     @OneToOne(optional = false, orphanRemoval = true)

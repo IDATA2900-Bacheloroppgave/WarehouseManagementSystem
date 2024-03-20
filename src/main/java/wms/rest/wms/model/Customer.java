@@ -11,14 +11,14 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
+@Table(name = "customer")
 public class Customer {
 
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
-    private int id;
+    @Column(name = "customer_id", nullable = false)
+    private int customerId;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -34,12 +34,12 @@ public class Customer {
     private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Address> addresses = new LinkedHashSet<>();
 
 
-    public Customer(int id, String email, String password, String firstName, String lastName){
-        this.id = id;
+    public Customer(int customerId, String email, String password, String firstName, String lastName){
+        this.customerId = customerId;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;

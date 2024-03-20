@@ -5,9 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @Entity
@@ -23,16 +20,16 @@ public class Packaging {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "packaging_id", nullable = false)
-    private int id;
+    private int packagingId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "package_type")
     private PackageType packageType;
 
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "quantity_pr_package")
+    private int quantityPrPackage;
 
-    @Column(name = "weightInG", nullable = false)
+    @Column(name = "weight_in_gram", nullable = false)
     private double weight;
 
     @Column(name = "dimension_cm_3", nullable = false)
@@ -43,9 +40,9 @@ public class Packaging {
     @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
 
-    public Packaging(PackageType packageType, int quantity, double weight, double dimensionCm3, Product product) {
+    public Packaging(PackageType packageType, int quantityPrPackage, double weight, double dimensionCm3, Product product) {
         this.packageType = packageType;
-        this.quantity = quantity;
+        this.quantityPrPackage = quantityPrPackage;
         this.weight = weight;
         this.dimensionCm3 = dimensionCm3;
         this.product = product;

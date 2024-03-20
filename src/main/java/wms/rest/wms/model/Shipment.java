@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "shipmentId")
 @Getter
 @Setter
 @Entity
@@ -19,16 +19,16 @@ public class Shipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shipment_id", nullable = false)
-    private int id;
+    private int shipmentId;
 
     //Dato?
     //Ønsket levering?
 
     @Column(name = "shipment_load")
-    private String shipment_load;
+    private String shipmentLoad;
 
     @Column(name = "shipment_unload")
-    private String shipment_unload;
+    private String shipmentUnload;
 
     @JsonBackReference
     @ManyToOne
@@ -38,9 +38,9 @@ public class Shipment {
     @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Order> orders = new LinkedHashSet<>();
 
-    public Shipment(String shipment_load, String shipment_unload, Trip trip) {
-        this.shipment_load = shipment_load;
-        this.shipment_unload = shipment_unload;
+    public Shipment(String shipmentLoad, String shipmentUnload, Trip trip) {
+        this.shipmentLoad = shipmentLoad;
+        this.shipmentUnload = shipmentUnload;
         this.trip = trip;
     }
 
