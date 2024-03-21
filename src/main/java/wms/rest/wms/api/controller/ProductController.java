@@ -1,5 +1,7 @@
 package wms.rest.wms.api.controller;
 
+import org.apache.coyote.Response;
+import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,19 @@ public class ProductController {
             response = new ResponseEntity(products, HttpStatus.OK);
         } else {
             response = new ResponseEntity(products, HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<Optional<Product>> getProductById(@PathVariable("id") int id) {
+        ResponseEntity response;
+
+        Optional<Product> product = this.productService.findByid(id);
+        if(product.isPresent()){
+            response = new ResponseEntity(product, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity(product, HttpStatus.BAD_REQUEST);
         }
         return response;
     }
@@ -81,6 +96,36 @@ public class ProductController {
            response = new ResponseEntity(product, HttpStatus.OK);
         } else {
             response = new ResponseEntity(product, HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
+    /**
+     * Ikke testet
+     * @param productId
+     * @return
+     */
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProductById(@PathVariable("id") int productId){
+        ResponseEntity response;
+
+        if(this.productService.existsByid(productId)){
+            response = new ResponseEntity(productId, HttpStatus.OK);
+            this.productService.deleteByid(productId);
+        } else {
+            response = new ResponseEntity(productId, HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
+    @PostMapping()
+    public ResponseEntity<Product> createProduct(@RequestBody Product product){
+        ResponseEntity response;
+        try{
+            Product newProduct = this.productService.saveProduct(product);
+            response = new ResponseEntity(newProduct, HttpStatus.OK);
+        } catch (Exception e){
+            response = new ResponseEntity(null, HttpStatus.BAD_REQUEST);
         }
         return response;
     }

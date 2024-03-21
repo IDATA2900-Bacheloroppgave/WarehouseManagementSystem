@@ -26,12 +26,11 @@ public class ShipmentController {
         List<Shipment> shipments = this.shipmentService.getShipments();
         ResponseEntity response;
 
-        if(!shipments.isEmpty()){
+        if (!shipments.isEmpty()) {
             response = new ResponseEntity(shipments, HttpStatus.OK);
         } else {
             response = new ResponseEntity(shipments, HttpStatus.NOT_FOUND);
         }
         return response;
     }
-
 }

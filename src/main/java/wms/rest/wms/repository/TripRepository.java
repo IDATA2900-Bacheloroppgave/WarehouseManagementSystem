@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface TripRepository extends ListCrudRepository<Trip, Integer> {
     Optional<Trip> findByTripId(int tripId);
+
+
+
 }

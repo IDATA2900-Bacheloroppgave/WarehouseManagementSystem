@@ -1,8 +1,13 @@
 package wms.rest.wms.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -16,6 +21,9 @@ import java.util.Set;
  * CustomerOrderQuantities to represent the many-to-many relationship between orders and products, capturing the
  * quantity of each product in the order.
  */
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -27,15 +35,17 @@ public class Order {
     @Column(name = "order_id", nullable = false)
     private int orderId;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "date", nullable = false)
     private Date orderDate;
 
+    @NotNull(message = "Order status is mandatory")
     @Column(name = "order_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ManyToOne(optional = false)
@@ -49,24 +59,5 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<OrderQuantities> quantities = new LinkedHashSet<>();
-
-
-    /**
-     * Constructor for order.
-     *
-     * @param orderDate the time of the order was placed.
-     * @param customer the user of which the order was placed by.
-     */
-    public Order(Date orderDate,OrderStatus orderStatus,  Customer customer){
-        this.orderDate = orderDate;
-        this.orderStatus = orderStatus;
-        this.customer = customer;
-    }
-
-    /**
-     * Empty constructor.
-     */
-    public Order(){
-    }
 }
 

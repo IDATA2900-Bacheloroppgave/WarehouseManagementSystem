@@ -2,15 +2,22 @@ package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Class represents the address in the system. This class is a part of the model layer and maps to the
+ * Class represents the address in the warehouse management system. This class is a part of the model layer and maps to the
  * 'address' table in the database. It holds information about a user's address, including street addresses,
  * country, city and postal code. Each address is associated with a User entity in a many to one relationship,
  * indicating that multiple addresses can be linked to a single user.
  */
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -23,43 +30,24 @@ public class Address {
     @Column(name = "address_id", nullable = false)
     private int addressId;
 
-    @Column(name = "address", nullable = false, length = 100)
+    @NotBlank(message = "Address is mandatory")
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "country", nullable = false, length = 70)
+    @NotBlank(message = "Country is mandatory")
+    @Column(name = "country", nullable = false)
     private String country;
 
-    @Column(name = "city", nullable = false, length = 100)
+    @NotBlank(message = "City is mandatory")
+    @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "postal_code", nullable = false, length = 30)
+    @NotNull(message = "Postal code is mandatory")
+    @Column(name = "postal_code", nullable = false)
     private int postalCode;
 
     @JsonIgnore
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @OneToOne(optional = false, orphanRemoval = true)
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
     private Customer customer;
-
-    /**
-     * Constructor for Address.
-     *
-     * @param address the address of the user.
-     * @param country the country where the user is located.
-     * @param city the city which the user is located.
-     * @param postalCode the postal code of the city where the user is located.
-     */
-    public Address(String address,
-                   String country, String city,
-                   int postalCode) {
-        this.address = address;
-        this.country = country;
-        this.city = city;
-        this.postalCode = postalCode;
-    }
-
-    /**
-     * Empty constructor.
-     */
-    public Address(){
-    }
 }

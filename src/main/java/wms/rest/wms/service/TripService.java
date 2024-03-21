@@ -26,5 +26,13 @@ public class TripService {
         return this.tripRepository.findByTripId(id);
     }
 
+    public boolean existsById(int tripId){
+        return this.tripRepository.existsById(tripId);
+    }
+
+    public void deleteById(int tripId){
+        this.tripRepository.deleteById(tripId);
+    }
+
 
 }

@@ -1,8 +1,13 @@
 package wms.rest.wms.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -13,6 +18,8 @@ import java.util.Date;
  * one to one relation with the inventory for performance reasons. Once the product_id is located, the inventory
  * holds the stock of the product.
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -25,28 +32,36 @@ public class Product {
     @Column(name = "product_id")
     private int productId;
 
+    @NotBlank(message = "Name is mandatory")
     @Column(name = "name", nullable = false)
     private String name;
 
+    @NotBlank(message = "Description is mandatory")
     @Column(name = "description", nullable = false)
     private String description;
 
+    @NotBlank(message = "Supplier is mandatory")
     @Column(name = "supplier", nullable = false)
     private String supplier;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "best_before_date", nullable = false)
     private Date bestBeforeDate;
 
+    @NotNull(message = "Product type is mandatory")
     @Column(name = "item", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
+    @NotNull(message = "Price is mandatory")
     @Column(name = "price", nullable = false)
     private Double price;
 
+    @NotNull(message = "Gtin is mandatory")
     @Column(name = "gtin", nullable = false)
     private int gtin;
 
+    @NotNull(message = "Batch is mandatory")
     @Column(name = "batch", nullable = false)
     private int batch;
 
@@ -55,37 +70,4 @@ public class Product {
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
     private Packaging packaging;
-
-    /**
-     * Constructor for product.
-     *
-     * @param name the name of the product.
-     * @param description the description of the product.
-     * @param productType the type of item the product is.
-     * @param gtin global trade item number.
-     * @param batch batch number.
-     */
-    public Product(String name
-                , String description
-                , ProductType productType
-                , Double price
-                , String supplier
-                , Date bestBeforeDate
-                , int gtin
-                , int batch){
-        this.name = name;
-        this.description = description;
-        this.productType = productType;
-        this.price = price;
-        this.supplier = supplier;
-        this.bestBeforeDate = bestBeforeDate;
-        this.gtin = gtin;
-        this.batch = batch;
-    }
-
-    /**
-     * Empty constructor.
-     */
-    public Product(){
-    }
 }

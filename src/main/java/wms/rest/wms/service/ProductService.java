@@ -21,6 +21,10 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    public Product saveProduct(Product product){
+        return this.productRepository.save(product);
+    }
+
     public List<Product> getProducts(){
         return this.productRepository.findAll();
     }
@@ -31,6 +35,18 @@ public class ProductService {
 
     public Optional<Product> findByGtin(int gtin){
         return this.productRepository.findByGtin(gtin);
+    }
+
+    public boolean existsByid(int productId){
+        return this.productRepository.existsById(productId);
+    }
+
+    public void deleteByid(int productId){
+        this.productRepository.deleteById(productId);
+    }
+
+    public Optional<Product> findByid(int productId){
+        return this.productRepository.findById(productId);
     }
 }
 

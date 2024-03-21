@@ -1,5 +1,6 @@
 package wms.rest.wms.api.controller;
 
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,19 @@ public class TripController {
             response = new ResponseEntity(trip, HttpStatus.OK);
         } else {
             response = new ResponseEntity(trip, HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteTripById(@PathVariable("id") int tripId){
+        ResponseEntity response;
+
+        if (this.tripService.existsById(tripId)) {
+                this.tripService.deleteById(tripId);
+                response = new ResponseEntity(tripId, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity(tripId, HttpStatus.NOT_FOUND);
         }
         return response;
     }
