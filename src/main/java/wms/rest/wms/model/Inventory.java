@@ -2,6 +2,7 @@ package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -29,15 +30,15 @@ public class Inventory {
     @Column(name = "inventory_id", nullable = false)
     private int inventoryId;
 
-    @NotNull(message = "Stock is mandatory")
+    @Min(1)
     @Column(name = "total_stock")
     private int totalStock;
 
-    @NotNull(message = "Reserved stock is mandatory")
+    @Min(1)
     @Column(name = "reserved_stock")
     private int reservedStock;
 
-    @NotNull(message = "Available stock is mandatory")
+    @Min(1)
     @Column(name = "available_stock")
     private int availableStock;
 

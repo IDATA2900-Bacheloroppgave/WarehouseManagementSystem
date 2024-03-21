@@ -6,6 +6,8 @@ import wms.rest.wms.api.model.RegistrationBody;
 import wms.rest.wms.exception.UserAlreadyExistsException;
 import wms.rest.wms.model.Customer;
 import wms.rest.wms.repository.UserRepository;
+import wms.rest.wms.service.security.EncryptionService;
+import wms.rest.wms.service.security.JwtService;
 
 import java.util.Optional;
 

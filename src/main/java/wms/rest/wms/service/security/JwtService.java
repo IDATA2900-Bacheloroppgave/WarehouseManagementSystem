@@ -1,4 +1,4 @@
-package wms.rest.wms.service;
+package wms.rest.wms.service.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

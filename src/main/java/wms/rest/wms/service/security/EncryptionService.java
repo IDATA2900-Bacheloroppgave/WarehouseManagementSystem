@@ -1,4 +1,4 @@
-package wms.rest.wms.service;
+package wms.rest.wms.service.security;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;

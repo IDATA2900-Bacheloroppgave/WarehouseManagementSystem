@@ -2,6 +2,7 @@ package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -42,15 +43,15 @@ public class Packaging {
     @Column(name = "package_type")
     private PackageType packageType;
 
-    @NotNull(message = "Quantity per package is mandatory")
+    @Min(1)
     @Column(name = "quantity_pr_package")
     private int quantityPrPackage;
 
-    @NotNull(message = "Weight is mandatory")
+    @Min(1)
     @Column(name = "weight_in_gram", nullable = false)
     private double weightInGrams;
 
-    @NotNull(message = "Dimensions is mandatory")
+    @Min(1)
     @Column(name = "dimension_cm_3", nullable = false)
     private double dimensionInCm3;
 

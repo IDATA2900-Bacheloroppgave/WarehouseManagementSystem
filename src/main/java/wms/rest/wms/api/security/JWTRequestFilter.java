@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import wms.rest.wms.model.Customer;
 import wms.rest.wms.repository.UserRepository;
-import wms.rest.wms.service.JwtService;
+import wms.rest.wms.service.security.JwtService;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -2,6 +2,7 @@ package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,7 +28,7 @@ public class OrderQuantities {
     @Column(name = "customer_order_quantities_id", nullable = false)
     private int customerOrderQuantitiesId;
 
-    @NotNull(message = "Product quantity is mandatory")
+    @Min(1)
     @Column(name = "product_quantity")
     private int productQuantity;
 

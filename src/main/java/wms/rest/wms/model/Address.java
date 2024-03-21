@@ -2,6 +2,7 @@ package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -42,7 +43,7 @@ public class Address {
     @Column(name = "city", nullable = false)
     private String city;
 
-    @NotNull(message = "Postal code is mandatory")
+    @Min(1)
     @Column(name = "postal_code", nullable = false)
     private int postalCode;
 

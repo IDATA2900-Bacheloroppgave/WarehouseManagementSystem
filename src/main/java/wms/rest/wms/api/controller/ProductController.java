@@ -1,5 +1,8 @@
 package wms.rest.wms.api.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.apache.coyote.Response;
 import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpStatus;
@@ -45,7 +48,7 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Optional<Product>> getProductById(@PathVariable("id") int id) {
+    public ResponseEntity<Optional<Product>> getProductById(@PathVariable("id") int id) { //TODO: VALIDATE Pathvariable ?? Nødvendig?
         ResponseEntity response;
 
         Optional<Product> product = this.productService.findByid(id);
@@ -119,7 +122,7 @@ public class ProductController {
     }
 
     @PostMapping()
-    public ResponseEntity<Product> createProduct(@RequestBody Product product){
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
         ResponseEntity response;
         try{
             Product newProduct = this.productService.saveProduct(product);

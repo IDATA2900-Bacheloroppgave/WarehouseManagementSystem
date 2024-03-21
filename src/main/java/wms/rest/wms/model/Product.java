@@ -3,6 +3,7 @@ package wms.rest.wms.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -53,15 +54,15 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
-    @NotNull(message = "Price is mandatory")
+    @Min(1)
     @Column(name = "price", nullable = false)
     private Double price;
 
-    @NotNull(message = "Gtin is mandatory")
+    @Min(1)
     @Column(name = "gtin", nullable = false)
     private int gtin;
 
-    @NotNull(message = "Batch is mandatory")
+    @Min(1)
     @Column(name = "batch", nullable = false)
     private int batch;
 
