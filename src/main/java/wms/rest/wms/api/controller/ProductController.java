@@ -1,13 +1,10 @@
 package wms.rest.wms.api.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import org.apache.coyote.Response;
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import wms.rest.wms.model.OrderStatus;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.service.ProductService;
 
@@ -46,6 +43,8 @@ public class ProductController {
         }
         return response;
     }
+
+
 
     @GetMapping("{id}")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable("id") int id) { //TODO: VALIDATE Pathvariable ?? Nødvendig?
