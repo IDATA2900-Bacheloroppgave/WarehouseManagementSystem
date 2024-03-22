@@ -2,6 +2,7 @@ package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -31,22 +32,31 @@ public class Shipment {
     @Column(name = "shipment_id", nullable = false)
     private int shipmentId;
 
-    //Dato?
-    //Ønsket levering?
+    @Column(name = "shipment_start_location")
+    private String shipmentStartLocation;
+
+    @Column(name = "shipment_end_location")
+    private String shipmentEndLocation;
 
     @NotBlank(message = "Shipment load is mandatory")
     @Column(name = "shipment_load")
-    private String shipmentLoad;
+    private String shipmentLoadLocation;
 
     @NotBlank(message = "Shipment unload is mandatory")
     @Column(name = "shipment_unload")
-    private String shipmentUnload;
+    private String shipmentUnloadLocation;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
+    @JsonIgnore
+    private TripStatus tripStatus;
+
     @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Order> orders = new LinkedHashSet<>();
+
+    //Dato?
+    //Ønsket levering?
 }

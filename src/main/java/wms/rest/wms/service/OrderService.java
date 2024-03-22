@@ -1,5 +1,6 @@
 package wms.rest.wms.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Order;
@@ -7,6 +8,7 @@ import wms.rest.wms.model.OrderStatus;
 import wms.rest.wms.model.Trip;
 import wms.rest.wms.model.Customer;
 import wms.rest.wms.repository.OrderRepository;
+import wms.rest.wms.repository.ShipmentRepository;
 import wms.rest.wms.repository.TripRepository;
 
 import javax.swing.text.html.Option;
@@ -19,12 +21,15 @@ import java.util.Optional;
 @Service
 public class OrderService {
 
+    @Autowired
     private OrderRepository orderRepository;
-    private TripRepository tripRepository;
 
-    public OrderService(OrderRepository orderRepository, TripRepository tripRepository){
+    @Autowired
+    private ShipmentService shipmentService;
+
+    public OrderService(OrderRepository orderRepository, ShipmentService shipmentService){
         this.orderRepository = orderRepository;
-        this.tripRepository = tripRepository;
+        this.shipmentService = shipmentService;
     }
 
     public List<Order> getOrders(Customer customer){
@@ -68,7 +73,6 @@ public class OrderService {
     @Scheduled(fixedRate = 180000) //Runs method every 3 minutes
     public void updateOrderStatuses(){
         List<Order> orders = orderRepository.findAll();
-        List<Trip> trips = tripRepository.findAll();
 
         for (Order order : orders) {
             if (order.getOrderStatus() == OrderStatus.REGISTERED) {
@@ -79,4 +83,16 @@ public class OrderService {
             orderRepository.save(order);
         }
     }
+
+    public void updateOrderStatus(int orderId, OrderStatus orderStatus){
+        Optional<Order> orderOptional = this.orderRepository.findById(orderId);
+        Order order = orderOptional.get();
+
+        order.setOrderStatus(orderStatus);
+        this.orderRepository.save(order);
+
+        this.shipmentService.updateTripStatus(order.getShipment().getShipmentId());
+    }
+
+
 }
