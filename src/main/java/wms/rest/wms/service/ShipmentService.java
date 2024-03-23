@@ -3,6 +3,7 @@ package wms.rest.wms.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.ShipmentNotFoundException;
 import wms.rest.wms.model.Order;
@@ -41,15 +42,17 @@ public class ShipmentService {
 
         Optional<Shipment> shipmentOptional = this.shipmentRepository.findById(shipmentId);
 
-        Shipment shipment = shipmentOptional.get();
+        if(shipmentOptional.isPresent()){
+            Shipment shipment = shipmentOptional.get();
 
+            boolean isPicked = shipment.getOrders().stream().allMatch(order
+                    -> order.getOrderStatus() == OrderStatus.PICKED);
+            if(isPicked){
+                shipment.setTripStatus(TripStatus.READY_FOR_DEPARTURE);
+                this.shipmentRepository.save(shipment);
 
-        boolean isPicked = shipment.getOrders().stream().allMatch(order -> order.getOrderStatus() == OrderStatus.PICKED);
-        if(isPicked){
-            shipment.setTripStatus(TripStatus.READY_FOR_DEPARTURE);
-            this.shipmentRepository.save(shipment);
+            }
         }
-
     }
 
 }

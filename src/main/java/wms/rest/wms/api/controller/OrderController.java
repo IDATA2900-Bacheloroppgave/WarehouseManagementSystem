@@ -27,14 +27,15 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Order>> getOrderById(@PathVariable("id") int orderId){
+    public ResponseEntity<?> getOrderById(@PathVariable("id") int orderId){
         ResponseEntity response;
 
         Optional<Order> order = this.orderService.getOrderById(orderId);
         if(order.isPresent()){
-            response = new ResponseEntity(order, HttpStatus.OK);
+
+            response =  ResponseEntity.ok().body("Order with id: " + orderId);
         } else {
-            response = new ResponseEntity(order, HttpStatus.NOT_FOUND);
+            response = ResponseEntity.badRequest().body("There are no orders associated with the customer");
         }
         return response;
     }

@@ -67,22 +67,6 @@ public class OrderService {
         return false;
     }
 
-    /**
-     * Runs every 3 minutes. Updates every OrderStatus for development purposes.
-     */
-    @Scheduled(fixedRate = 180000) //Runs method every 3 minutes
-    public void updateOrderStatuses(){
-        List<Order> orders = orderRepository.findAll();
-
-        for (Order order : orders) {
-            if (order.getOrderStatus() == OrderStatus.REGISTERED) {
-                order.setOrderStatus(OrderStatus.PICKING);
-            } else if (order.getOrderStatus() == OrderStatus.PICKING) {
-                order.setOrderStatus(OrderStatus.PICKED);
-            } //TODO: CHANGE TRIPSTATUS TO READY_FOR_DEPARTURE
-            orderRepository.save(order);
-        }
-    }
 
     public void updateOrderStatus(int orderId, OrderStatus orderStatus){
         Optional<Order> orderOptional = this.orderRepository.findById(orderId);
