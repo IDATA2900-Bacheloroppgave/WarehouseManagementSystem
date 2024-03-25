@@ -77,6 +77,4 @@ public class OrderService {
 
         this.shipmentService.updateTripStatus(order.getShipment().getShipmentId());
     }
-
-
 }

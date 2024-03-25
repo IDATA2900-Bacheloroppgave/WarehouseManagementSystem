@@ -3,6 +3,7 @@ package wms.rest.wms.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -58,7 +59,8 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    @Min(1)
+    @Min(10000) // Ensures the number is at least 5 digits
+    @Max(99999) // Ensures the number does not exceed 5 digits
     @Column(name = "gtin", nullable = false)
     private int gtin;
 

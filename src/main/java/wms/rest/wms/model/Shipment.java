@@ -51,9 +51,6 @@ public class Shipment {
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
-    @JsonIgnore
-    private TripStatus tripStatus;
-
     @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Order> orders = new LinkedHashSet<>();
 

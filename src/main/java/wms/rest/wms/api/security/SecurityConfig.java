@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class) // Run authentication filter before http request filter.
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/products/**", "/auth/register", "/auth/login", "/api/orders/**",
-                                "/api/trips/**", "/api/shipments").permitAll() // Exclusion rules
+                                "/api/trips/**", "/api/shipments/**").permitAll() // Exclusion rules
                         .anyRequest().authenticated()); // Everything else needs authorization
         return http.build();
     }

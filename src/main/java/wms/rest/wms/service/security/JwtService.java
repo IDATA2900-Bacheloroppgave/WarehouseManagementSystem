@@ -30,9 +30,9 @@ public class JwtService {
         algorithm = Algorithm.HMAC256(algorithmKey);
     }
 
-    public String generateJWT(Customer user){
+    public String generateJWT(Customer customer){
         return JWT.create()
-                .withClaim(EMAIL_KEY, user.getEmail())
+                .withClaim(EMAIL_KEY, customer.getEmail())
                 .withExpiresAt(new Date(System.currentTimeMillis() + (1000 * expiryInSeconds)))
                 .withIssuer(issuer)
                 .sign(algorithm);

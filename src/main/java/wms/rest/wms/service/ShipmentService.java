@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.ShipmentNotFoundException;
-import wms.rest.wms.model.Order;
-import wms.rest.wms.model.OrderStatus;
-import wms.rest.wms.model.Shipment;
-import wms.rest.wms.model.TripStatus;
+import wms.rest.wms.model.*;
 import wms.rest.wms.repository.OrderRepository;
 import wms.rest.wms.repository.ShipmentRepository;
+import wms.rest.wms.repository.TripRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +20,13 @@ public class ShipmentService {
     @Autowired
     private ShipmentRepository shipmentRepository;
 
+    @Autowired
+    private TripRepository tripRepository;
 
-    public ShipmentService(ShipmentRepository shipmentRepository) {
+
+    public ShipmentService(ShipmentRepository shipmentRepository, TripRepository tripRepository) {
         this.shipmentRepository = shipmentRepository;
+        this.tripRepository = tripRepository;
     }
 
     public List<Shipment> getShipments(){
@@ -38,19 +40,16 @@ public class ShipmentService {
      *
      * @param shipmentId
      */
-    public void updateTripStatus(int shipmentId){
-
-        Optional<Shipment> shipmentOptional = this.shipmentRepository.findById(shipmentId);
-
-        if(shipmentOptional.isPresent()){
+    public void updateTripStatus(int shipmentId) {
+        Optional<Shipment> shipmentOptional = shipmentRepository.findById(shipmentId);
+        if (shipmentOptional.isPresent()) {
             Shipment shipment = shipmentOptional.get();
-
-            boolean isPicked = shipment.getOrders().stream().allMatch(order
-                    -> order.getOrderStatus() == OrderStatus.PICKED);
-            if(isPicked){
-                shipment.setTripStatus(TripStatus.READY_FOR_DEPARTURE);
-                this.shipmentRepository.save(shipment);
-
+            Trip trip = shipment.getTrip();
+            boolean isPicked = shipment.getOrders().stream()
+                    .allMatch(order -> order.getOrderStatus() == OrderStatus.PICKED);
+            if (isPicked) {
+                trip.setTripStatus(TripStatus.READY_FOR_DEPARTURE);
+                tripRepository.save(trip);
             }
         }
     }
