@@ -1,6 +1,7 @@
 package wms.rest.wms.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,7 +43,8 @@ public class ShipmentService {
      */
     public void updateTripStatus(int shipmentId) {
         Optional<Shipment> shipmentOptional = shipmentRepository.findById(shipmentId);
-        if (shipmentOptional.isPresent()) {
+
+        try {
             Shipment shipment = shipmentOptional.get();
             Trip trip = shipment.getTrip();
             boolean isPicked = shipment.getOrders().stream()
@@ -51,7 +53,47 @@ public class ShipmentService {
                 trip.setTripStatus(TripStatus.READY_FOR_DEPARTURE);
                 tripRepository.save(trip);
             }
+        } catch(Exception e){
         }
     }
+
+    /**
+     * Automatically update the TripStatus with Spring @Scheduled annotation. This means we dont have to
+     * send a Put request to the API, but rather Spring runs this method every 10 minutes. Mainly
+     * a utility method.
+     *
+     * Updates the TripStatus from NOT_STARTED to READY_FOR_DEPARTURE. Requires all Orders on Shipments
+     * aboard the Trip to have OrderStatus as PICKED.
+     */
+    @Transactional
+    @Scheduled(initialDelay = 1000, fixedRate = 600000)
+    public void updateTripStatusWithScheduler(){
+        List<Shipment> shipments = this.shipmentRepository.findAll();
+
+        for(Shipment shipment : shipments){
+
+            try{
+
+                Trip trip = shipment.getTrip();
+
+                boolean isPicked = shipment.getOrders().stream().allMatch(order ->
+                        order.getOrderStatus() == OrderStatus.PICKED);
+
+                // A shipment needs 2 or more Orders to update its TripStatus
+                boolean hasMinimumOrders = shipment.getOrders().size() >= 2;
+
+                if(isPicked
+                        && hasMinimumOrders
+                        && trip.getTripStatus() != TripStatus.READY_FOR_DEPARTURE){
+                    trip.setTripStatus(TripStatus.READY_FOR_DEPARTURE);
+                    tripRepository.save(trip);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
 }
