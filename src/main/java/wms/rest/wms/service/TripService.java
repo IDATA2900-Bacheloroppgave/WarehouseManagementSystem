@@ -84,14 +84,20 @@ public class TripService {
         return trip;
     }
 
-    public void estimatedArrival(int tripId){
+    public String estimatedArrival(int tripId){
         Optional<Trip> tripOptional = this.tripRepository.findByTripId(tripId);
+
+        String eta = null;
 
         if(tripOptional.isPresent()){
             Trip trip = tripOptional.get();
+            String currentLocation = trip.getTripCurrentLocation();
 
-
+            if(currentLocation.equals("Ålesund")) {
+                eta = "2 Days";
+            }
         }
+        return eta;
     }
 
 }
