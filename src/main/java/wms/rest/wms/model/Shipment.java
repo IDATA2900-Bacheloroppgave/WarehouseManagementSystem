@@ -33,10 +33,10 @@ public class Shipment {
     private int shipmentId;
 
     @Column(name = "shipment_start_location")
-    private String shipmentStartLocation;
+    private String shipmentStartLocation; //Usikker på denne
 
     @Column(name = "shipment_end_location")
-    private String shipmentEndLocation;
+    private String shipmentEndLocation; //Usikker på denne
 
     @NotBlank(message = "Shipment load is mandatory")
     @Column(name = "shipment_load")

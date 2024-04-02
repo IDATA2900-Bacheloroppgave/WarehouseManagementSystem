@@ -67,7 +67,6 @@ public class OrderService {
         return false;
     }
 
-
     public void updateOrderStatus(int orderId, OrderStatus orderStatus){
         Optional<Order> orderOptional = this.orderRepository.findById(orderId);
         Order order = orderOptional.get();
@@ -76,5 +75,9 @@ public class OrderService {
         this.orderRepository.save(order);
 
         this.shipmentService.updateTripStatus(order.getShipment().getShipmentId());
+    }
+
+    public void updateOrderStatusWhenDelivered(){
+
     }
 }

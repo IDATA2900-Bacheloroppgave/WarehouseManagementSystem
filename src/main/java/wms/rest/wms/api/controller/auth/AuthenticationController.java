@@ -14,6 +14,7 @@ import wms.rest.wms.model.Customer;
 import wms.rest.wms.service.UserService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/auth")
 public class AuthenticationController {
 

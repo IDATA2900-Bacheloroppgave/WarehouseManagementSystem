@@ -69,11 +69,8 @@ public class ShipmentService {
     @Scheduled(initialDelay = 1000, fixedRate = 600000)
     public void updateTripStatusWithScheduler(){
         List<Shipment> shipments = this.shipmentRepository.findAll();
-
         for(Shipment shipment : shipments){
-
             try{
-
                 Trip trip = shipment.getTrip();
 
                 boolean isPicked = shipment.getOrders().stream().allMatch(order ->
@@ -93,7 +90,5 @@ public class ShipmentService {
             }
         }
     }
-
-
 
 }

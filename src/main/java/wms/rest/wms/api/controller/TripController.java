@@ -50,4 +50,34 @@ public class TripController {
         }
         return response;
     }
+
+    /**
+     * Utility method for projecting trip route.
+     * Not neccessarily needed.
+     *
+     * @param tripId
+     * @return
+     */
+    @GetMapping("/{id}/unloadlocations")
+    public List<String> getUnloadLocationsForTripById(@PathVariable("id") int tripId){
+        return this.tripService.findAllShipmentUnloadLocations(tripId);
+    }
+
+    @PutMapping("/{id}/updatelocation")
+    public ResponseEntity<?> updateCurrentTripLocation(@PathVariable("id") int tripId) {
+        try {
+            Trip updatedTrip = tripService.updateCurrentLocation(tripId);
+
+            if (updatedTrip != null) {
+                return ResponseEntity.ok(updatedTrip);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @GetMapping
+
 }

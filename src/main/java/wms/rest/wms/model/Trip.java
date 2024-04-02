@@ -13,9 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class represents a Trip within the warehouse management system, encapsulating the details about each trip,
@@ -48,6 +46,10 @@ public class Trip {
     @NotBlank
     @Column(name = "end_location", nullable = false)
     private String tripEndLocation;
+
+    @NotBlank
+    @Column(name = "current_location")
+    private String tripCurrentLocation;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "start_date", nullable = false)
