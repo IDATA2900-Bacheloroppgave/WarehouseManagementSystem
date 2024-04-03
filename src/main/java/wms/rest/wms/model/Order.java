@@ -53,7 +53,7 @@ public class Order {
     private Address address;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
 

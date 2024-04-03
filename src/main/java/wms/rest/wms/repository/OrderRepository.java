@@ -11,6 +11,4 @@ import java.util.Optional;
 public interface OrderRepository extends ListCrudRepository<Order, Integer> {
     List<Order> findByCustomer(Customer customer);
 
-    Optional<Order> findByOrderStatus(OrderStatus orderStatus);
-
 }

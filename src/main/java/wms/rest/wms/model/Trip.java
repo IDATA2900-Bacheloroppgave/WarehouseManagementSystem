@@ -40,31 +40,32 @@ public class Trip {
     private TripStatus tripStatus;
 
     @NotBlank(message = "Trip start location is mandatory")
-    @Column(name = "start_location", nullable = false)
+    @Column(name = "start_location")
     private String tripStartLocation;
 
-    @NotBlank
-    @Column(name = "end_location", nullable = false)
+    @Column(name = "end_location")
     private String tripEndLocation;
 
-    @NotBlank
     @Column(name = "current_location")
     private String tripCurrentLocation;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
-    @Column(name = "start_date", nullable = false)
-    private Date tripStartDate;
+    @Column(name = "next_location")
+    private String tripNextLocation;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "start_date")
+    private Date tripStartDate;
+
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
+    @Column(name = "end_date", nullable = true)
     private Date tripEndDate;
 
     @NotBlank(message = "Trip driver is mandatory")
-    @Column(name = "driver", nullable = false)
+    @Column(name = "driver")
     private String tripDriver;
 
     @Min(1)
-    @Column(name = "phone", nullable = false)
+    @Column(name = "phone")
     private int tripDriverPhone;
 
     @JsonManagedReference

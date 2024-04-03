@@ -77,6 +77,9 @@ public class TripService {
             List<String> unloadLocations = findAllShipmentUnloadLocations(tripId);
 
             if (!unloadLocations.isEmpty()) {
+
+
+
                 trip.setTripCurrentLocation(unloadLocations.get(0));
                 trip = tripRepository.save(trip);
             }

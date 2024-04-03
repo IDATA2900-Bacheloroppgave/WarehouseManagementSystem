@@ -14,25 +14,21 @@ public class SecurityConfig {
     @Autowired
     private JWTRequestFilter jwtRequestFilter;
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())           //TODO: MIGHT NEED TO LOOK INTO THIS MORE
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/api/products", "/auth/register", "/auth/login").permitAll() // Allow unauthorized access
-//                        .anyRequest().authenticated()) // Any other
-//                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Apply the JWTRequestFilter
-//
-//        return http.build();
-//    }
+    // All permitted endpoints
+    private static final String[] WHITELIST = {
+            "/api/products/**", "/auth/register"
+            , "/auth/login", "/api/orders/**",
+            "/api/trips/**", "/api/shipments/**"
+            , "/swagger-ui/**", "/v3/api-docs/**"
+            , "/swagger-resources/**", "/swagger-resources"
+    };
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class) // Run authentication filter before http request filter.
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/products/**", "/auth/register", "/auth/login", "/api/orders/**",
-                                "/api/trips/**", "/api/shipments/**").permitAll() // Exclusion rules
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers(WHITELIST).permitAll() // Exclusion rules
                         .anyRequest().authenticated()); // Everything else needs authorization
         return http.build();
     }
