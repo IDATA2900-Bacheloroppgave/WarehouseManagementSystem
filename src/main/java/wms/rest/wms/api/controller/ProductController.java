@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.service.ProductService;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,114 +31,92 @@ public class ProductController {
         this.productService = productService;
     }
 
-    /**
-     * Returns a list of all products.
-     *
-     * @return a list of all products.
-     *          Http status code 404 if list is empty.
-     *          Http status code 200 if list is not empty.
-     */
     @Operation(summary = "Get a list of all products", description = "Returns a list of all products in database", responses = {
         @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Request"),
-        @ApiResponse(responseCode = "404", description = "Product not found")
-    })
+        @ApiResponse(responseCode = "400", description = "Bad Request"),})
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts() {
-        List<Product> products = this.productService.getProducts();
+    public ResponseEntity<String> getProducts() {
         ResponseEntity response;
-
+        List<Product> products = this.productService.getProducts();
         if(!products.isEmpty()){
             response = new ResponseEntity(products, HttpStatus.OK);
         } else {
-            response = new ResponseEntity(products, HttpStatus.NOT_FOUND);
+            response =  new ResponseEntity("There is no products available", HttpStatus.BAD_REQUEST);
         }
         return response;
     }
 
-
+    @Operation(summary = "Get a specific product by id", description = "Returns a specific product by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Request"),})
     @GetMapping("{id}")
     public ResponseEntity<Optional<Product>> getProductById(@PathVariable("id") int id) { //TODO: VALIDATE Pathvariable ?? Nødvendig?
         ResponseEntity response;
-
-        Optional<Product> product = this.productService.findByid(id);
+        Optional<Product> product = this.productService.findById(id);
         if(product.isPresent()){
             response = new ResponseEntity(product, HttpStatus.OK);
         } else {
-            response = new ResponseEntity(product, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity("Product with id: " + id + " does not exist", HttpStatus.BAD_REQUEST);
         }
         return response;
     }
 
-    /**
-     * Search for a product that contains 'name' query.
-     *
-     * @param name query of product to search for.
-     * @return a list of products that contains query.
-     *          Http status code 404 if no products found.
-     *          Http status code 200 if product(s) are found.
-     */
+    @Operation(summary = "Search for a product by name query", description = "Returns a list of products containing search query", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Not found"),})
     @GetMapping("/search/name/{name}")
     public ResponseEntity<List<Product>> findProductByName(@PathVariable("name") String name) {
-        List<Product> products = this.productService.findByNameContaining(name);
         ResponseEntity response;
-
+        List<Product> products = this.productService.findByNameContaining(name);
         if(!products.isEmpty()){
             response = new ResponseEntity(products, HttpStatus.OK);
         } else {
-            response = new ResponseEntity(products, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity("No such product with search query: " + name + " exists", HttpStatus.NOT_FOUND);
         }
         return response;
     }
 
-    /**
-     * Search for a product that has a specific global trade identification number.
-     *
-     * @param gtin query of gtin number of product to search for.
-     * @return a specific product with queried gtin number.
-     *          Http status code 404 if no associated product.
-     *          Http status code 200 if product is found.
-     *
-     */
+    @Operation(summary = "Search for a product by gtin query", description = "Returns a list of products containing search query", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Not found"),})
     @GetMapping("/search/gtin/{gtin}")
     public ResponseEntity<Optional<Product>> findProductByGtin(@PathVariable("gtin") int gtin){
-        Optional<Product> product = this.productService.findByGtin(gtin);
         ResponseEntity response;
-
+        Optional<Product> product = this.productService.findByGtin(gtin);
         if(product.isPresent()){
            response = new ResponseEntity(product, HttpStatus.OK);
         } else {
-            response = new ResponseEntity(product, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity("No such product with search query: " + gtin + " exists", HttpStatus.NOT_FOUND);
         }
         return response;
     }
 
-    /**
-     * Ikke testet
-     * @param productId
-     * @return
-     */
+    @Operation(summary = "Delete a product by id", description = "Delete a product by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful delete", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request"),})
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable("id") int productId){
+    public ResponseEntity<String> deleteProductById(@PathVariable("id") int productId){
         ResponseEntity response;
-
-        if(this.productService.existsByid(productId)){
-            response = new ResponseEntity(productId, HttpStatus.OK);
-            this.productService.deleteByid(productId);
+        if(this.productService.existsById(productId)) {
+            this.productService.deleteById(productId);
+            response = new ResponseEntity("Product with productId: " + productId + " was deleted", HttpStatus.OK);
         } else {
-            response = new ResponseEntity(productId, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity("Product was not deleted. The main reason could be that the product already exists inside customer_order_quantites table", HttpStatus.BAD_REQUEST);
         }
         return response;
     }
 
+    @Operation(summary = "Create a new product", description = "Create a new product", responses = {
+            @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request"),})
     @PostMapping()
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
         ResponseEntity response;
-        try{
-            Product newProduct = this.productService.saveProduct(product);
-            response = new ResponseEntity(newProduct, HttpStatus.OK);
-        } catch (Exception e){
-            response = new ResponseEntity(null, HttpStatus.BAD_REQUEST);
+        Product newProduct = this.productService.saveProduct(product);
+        if(newProduct != null) {
+            response = new ResponseEntity(newProduct, HttpStatus.CREATED);
+        } else {
+            response = new ResponseEntity("Product could not be created", HttpStatus.BAD_REQUEST);
         }
         return response;
     }

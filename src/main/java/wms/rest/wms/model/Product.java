@@ -61,16 +61,16 @@ public class Product {
 
     @Min(10000) // Ensures the number is at least 5 digits
     @Max(99999) // Ensures the number does not exceed 5 digits
-    @Column(name = "gtin", nullable = false)
+    @Column(name = "gtin", nullable = false, unique = true)
     private int gtin;
 
     @Min(1)
     @Column(name = "batch", nullable = false)
     private int batch;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Inventory inventory;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Packaging packaging;
 }

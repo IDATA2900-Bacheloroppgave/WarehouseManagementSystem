@@ -42,15 +42,17 @@ public class OrderController {
             @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@AuthenticationPrincipal Customer customer, @PathVariable("id") int orderId){
+        ResponseEntity response;
         if(customer == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Customer needs to be authenticated to access order");
+            return new ResponseEntity("Customer is unauthorized", HttpStatus.UNAUTHORIZED);
         }
         Optional<Order> order = this.orderService.getOrderById(orderId);
         if(order.isPresent()){
-            return ResponseEntity.status(HttpStatus.OK).body("Order with id: " + orderId);
+            response = new ResponseEntity(order, HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is no such order associated with the authenticated customer");
+            response = new ResponseEntity("There is no such order associated with the authenticated customer", HttpStatus.BAD_REQUEST);
         }
+        return response;
     }
 
     @Operation(summary = "Cancel a specific order associated to authenticated customer by id", description = "Cancels a specific order based on the path variable id." +
@@ -60,14 +62,16 @@ public class OrderController {
             @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
     @PostMapping("/cancel/{id}")
     public ResponseEntity<?> cancelOrder(@AuthenticationPrincipal Customer customer, @PathVariable("id") int orderId) {
+        ResponseEntity response;
         if(customer == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Customer needs to be authenticated to access order");
+            return new ResponseEntity("Customer needs to be authenticated to access order", HttpStatus.UNAUTHORIZED);
         }
         boolean success = orderService.cancelOrderById(orderId);
         if (success) {
-            return ResponseEntity.status(HttpStatus.OK).body("Order with orderId: " + orderId + " was cancelled");
+            response = new ResponseEntity("Order with orderId: " + orderId + " was cancelled", HttpStatus.OK);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order was not cancelled");
+            response = new ResponseEntity("Order was not cancelled", HttpStatus.BAD_REQUEST);
         }
+        return response;
     }
 }

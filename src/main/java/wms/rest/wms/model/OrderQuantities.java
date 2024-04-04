@@ -32,12 +32,12 @@ public class OrderQuantities {
     @Column(name = "product_quantity")
     private int productQuantity;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @JsonIgnore
     @ManyToOne(optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id")
     private Order order;
 }

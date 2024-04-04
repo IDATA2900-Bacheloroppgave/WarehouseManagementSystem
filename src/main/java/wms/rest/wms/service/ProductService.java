@@ -1,5 +1,6 @@
 package wms.rest.wms.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.ProductDoesNotExistException;
@@ -37,15 +38,19 @@ public class ProductService {
         return this.productRepository.findByGtin(gtin);
     }
 
-    public boolean existsByid(int productId){
+    public boolean existsById(int productId){
         return this.productRepository.existsById(productId);
     }
 
-    public void deleteByid(int productId){
+    public void delete(Product product){
+        this.productRepository.delete(product);
+    }
+
+    public void deleteById(int productId) {
         this.productRepository.deleteById(productId);
     }
 
-    public Optional<Product> findByid(int productId){
+    public Optional<Product> findById(int productId){
         return this.productRepository.findById(productId);
     }
 }
