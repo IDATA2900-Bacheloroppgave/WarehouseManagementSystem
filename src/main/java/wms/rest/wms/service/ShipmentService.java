@@ -66,7 +66,7 @@ public class ShipmentService {
      * When a new Order is created by the client, it sets the OrderStatus to REGISTERD. Method finds all
      * laying orders with this status and adds them to a shipment.
      */
-    @Scheduled(initialDelay = 1000, fixedRate = 12000) //TODO: NEEDS ADJUSTMENTS
+    @Scheduled(initialDelay = 180000, fixedRate = 12000) //TODO: NEEDS ADJUSTMENTS
     public void addRegisteredOrdersToShipmentWithScheduler(){
 
         Random random = new Random();
@@ -97,7 +97,7 @@ public class ShipmentService {
     /**
      * Updates the OrderStatus from a Order from PICKING to PICKED.
      */
-    @Scheduled(initialDelay = 12000, fixedRate = 240000) //TODO: NEEDS ADJUSTMENTS
+    @Scheduled(initialDelay = 120000, fixedRate = 240000) //TODO: NEEDS ADJUSTMENTS
    public void updatePickingOrdersWithScheduler(){
         List<Order> orders = this.orderRepository.findAll();
         if(!orders.isEmpty()){
