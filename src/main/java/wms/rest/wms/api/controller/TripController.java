@@ -1,15 +1,22 @@
 package wms.rest.wms.api.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import wms.rest.wms.model.Product;
 import wms.rest.wms.model.Trip;
 import wms.rest.wms.service.TripService;
 
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Trips", description = "All endpoint operations related to Trips")
 @RestController
 @RequestMapping("/api/trips")
 public class TripController {
@@ -20,16 +27,28 @@ public class TripController {
         this.tripService = tripService;
     }
 
+    @Operation(summary = "Get a list of all trips", description = "Returns a list of all trips", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "204", description = "No content"),})
     @GetMapping
-    public List<Trip> getTrips(){
-        return this.tripService.findAll();
+    public ResponseEntity<List<Trip>> getTrips(){
+        ResponseEntity response;
+        List<Trip> trips = this.tripService.findAll();
+        if(!trips.isEmpty()){
+            response = new ResponseEntity(trips, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity("There is no trips available", HttpStatus.NO_CONTENT);
+        }
+        return response;
     }
 
+    @Operation(summary = "Get a specific trip by id", description = "Returns a specific trip by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Not found"),})
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Trip>> getTripById(@PathVariable("id") int id){
         Optional<Trip> trip = this.tripService.findTripById(id);
         ResponseEntity response;
-
         if(trip.isPresent()){
             response = new ResponseEntity(trip, HttpStatus.OK);
         } else {

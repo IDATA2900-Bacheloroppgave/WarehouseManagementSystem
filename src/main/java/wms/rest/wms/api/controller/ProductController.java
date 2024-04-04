@@ -13,14 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.service.ProductService;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Class represents the /products endpoint.
- */
-@Tag(name = "Products", description = "All endpoint operations related to Products.")
+@Tag(name = "Products", description = "All endpoint operations related to Products")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -33,7 +29,7 @@ public class ProductController {
 
     @Operation(summary = "Get a list of all products", description = "Returns a list of all products in database", responses = {
         @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Request"),})
+        @ApiResponse(responseCode = "204", description = "Bad Request"),})
     @GetMapping
     public ResponseEntity<String> getProducts() {
         ResponseEntity response;
@@ -41,7 +37,7 @@ public class ProductController {
         if(!products.isEmpty()){
             response = new ResponseEntity(products, HttpStatus.OK);
         } else {
-            response =  new ResponseEntity("There is no products available", HttpStatus.BAD_REQUEST);
+            response =  new ResponseEntity("There is no products available", HttpStatus.NO_CONTENT);
         }
         return response;
     }

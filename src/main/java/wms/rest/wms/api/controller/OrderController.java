@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +17,7 @@ import wms.rest.wms.service.OrderService;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "Orders", description = "All endpoint operations related to Orders.")
+@Tag(name = "Orders", description = "All endpoint operations related to Orders")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
