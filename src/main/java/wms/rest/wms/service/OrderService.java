@@ -12,6 +12,7 @@ import wms.rest.wms.repository.ShipmentRepository;
 import wms.rest.wms.repository.TripRepository;
 
 import javax.swing.text.html.Option;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +78,13 @@ public class OrderService {
         this.shipmentService.updateTripStatus(order.getShipment().getShipmentId());
     }
 
-    public void updateOrderStatusWhenDelivered(){
-
+    public Order createOrder(Order order) {
+        order.setCustomer(order.getCustomer());
+        order.setOrderStatus(OrderStatus.REGISTERED);
+        order.setOrderDate(new Date(System.currentTimeMillis()));
+        order.setAddress(order.getAddress());
+        order.setQuantities(order.getQuantities());
+        Order savedOrder = this.orderRepository.save(order);
+        return savedOrder;
     }
 }

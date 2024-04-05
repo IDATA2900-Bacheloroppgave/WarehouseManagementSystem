@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.catalina.core.PropertiesRoleMappingListener;
 
 import java.util.Date;
 
@@ -51,7 +52,7 @@ public class Product {
     private Date bestBeforeDate;
 
     @NotNull(message = "Product type is mandatory")
-    @Column(name = "item", nullable = false)
+    @Column(name = "product_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 

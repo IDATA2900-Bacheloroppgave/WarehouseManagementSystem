@@ -36,11 +36,11 @@ public class Order {
     private int orderId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private Date orderDate;
 
     @NotNull(message = "Order status is mandatory")
-    @Column(name = "order_status", nullable = false)
+    @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -48,8 +48,8 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "address_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @JsonIgnore

@@ -35,6 +35,11 @@ public class ShipmentService {
         this.orderRepository = orderRepository;
     }
 
+    /**
+     * Returns a list of all shipments
+     *
+     * @return returns a list of all shipments.
+     */
     public List<Shipment> getShipments(){
         return this.shipmentRepository.findAll();
     }

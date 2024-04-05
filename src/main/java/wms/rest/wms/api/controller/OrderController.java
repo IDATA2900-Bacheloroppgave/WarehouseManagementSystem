@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +24,6 @@ import java.util.Optional;
 public class OrderController {
 
     private OrderService orderService;
-
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
@@ -73,4 +73,18 @@ public class OrderController {
         }
         return response;
     }
+
+    @PostMapping("/createorder")
+    public ResponseEntity<?> createOrder(@AuthenticationPrincipal Customer customer, @RequestBody Order order) {
+        if (customer != null) {
+            Order createdOrder = this.orderService.createOrder(order);
+            if (createdOrder != null) {
+                return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("Order was not created", HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>("Customer is not authenticated", HttpStatus.FORBIDDEN);
+    }
+
 }
