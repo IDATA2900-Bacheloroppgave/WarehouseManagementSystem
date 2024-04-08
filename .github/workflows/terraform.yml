@@ -70,8 +70,11 @@ jobs:
       
       # Run app
       - name: SSH and run the new application
-        uses: appleboy/ssh-action@v0.1.4
+        uses: fifsky/ssh-action@master
         with:
+          command: | 
+            cd /tmp
+            ls -a
           host: ${{env.VM_IP}}
           username: ${{vars.SSH_USERNAME}}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
