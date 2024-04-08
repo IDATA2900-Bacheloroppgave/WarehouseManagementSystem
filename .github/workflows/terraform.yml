@@ -39,6 +39,11 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
 
+      # Print SSH Public Key
+      - name: Print SSH Public Key for Verification
+        run: | 
+          echo "SSH Public Key: ${{vars.SSH_PUB_KEY}}"
+
       # Initialize Terraform
       - name: Terraform Initialize
         run: |
