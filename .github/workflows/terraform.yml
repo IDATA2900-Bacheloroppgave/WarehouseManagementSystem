@@ -66,6 +66,7 @@ jobs:
           VM_IP=$(gcloud compute instances describe spring-boot-vm --zone ${{vars.GOOGLE_ZONE}} --format='value(networkInterfaces[0].accessConfigs[0].natIP)')
           echo "VM_IP=$VM_IP" >> $GITHUB_ENV
           echo $VM_IP
+          echo ${{vars.SSH_PUB_KEY}}
       
       
       # Run app test
