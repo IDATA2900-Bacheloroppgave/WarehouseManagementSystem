@@ -70,7 +70,7 @@ jobs:
       
       # Run app
       - name: SSH and run the new application
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{env.VM_IP}}
           username: ${{vars.SSH_USERNAME}}
