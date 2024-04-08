@@ -1,93 +1,88 @@
-# This workflow installs the latest version of Terraform CLI and configures the Terraform CLI configuration file
-# with an API token for Terraform Cloud (app.terraform.io). On pull request events, this workflow will run
-# `terraform init`, `terraform fmt`, and `terraform plan` (speculative plan via Terraform Cloud). On push events
-# to the "main" branch, `terraform apply` will be executed.
-#
-# Documentation for `hashicorp/setup-terraform` is located here: https://github.com/hashicorp/setup-terraform
-#
-# To use this workflow, you will need to complete the following setup steps.
-#
-# 1. Create a `main.tf` file in the root of this repository with the `remote` backend and one or more resources defined.
-#   Example `main.tf`:
-#     # The configuration for the `remote` backend.
-#     terraform {
-#       backend "remote" {
-#         # The name of your Terraform Cloud organization.
-#         organization = "example-organization"
-#
-#         # The name of the Terraform Cloud workspace to store Terraform state files in.
-#         workspaces {
-#           name = "example-workspace"
-#         }
-#       }
-#     }
-#
-#     # An example resource that does nothing.
-#     resource "null_resource" "example" {
-#       triggers = {
-#         value = "A example resource that does nothing!"
-#       }
-#     }
-#
-#
-# 2. Generate a Terraform Cloud user API token and store it as a GitHub secret (e.g. TF_API_TOKEN) on this repository.
-#   Documentation:
-#     - https://www.terraform.io/docs/cloud/users-teams-organizations/api-tokens.html
-#     - https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
-#
-# 3. Reference the GitHub secret in step using the `hashicorp/setup-terraform` GitHub Action.
-#   Example:
-#     - name: Setup Terraform
-#       uses: hashicorp/setup-terraform@v1
-#       with:
-#         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-name: 'Terraform'
+name: deploy
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-
-permissions:
-  contents: read
+    branches:
+      - main
 
 jobs:
-  terraform:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    # Arbituary version that is LTS.
+    runs-on: ubuntu-20.04
     environment: production
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      # Builds and pushes the docker image to the Docker Hub
+      - name: Build and push Docker image
+        run: |
+          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_ACCESS_TOKEN}}
+          docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest
 
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      # Google cloud CLI
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: '${{vars.GOOGLE_PROJECT_NAME}}'
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform init
+      # Google cloud authenticaiton
+      - name: Set up Google Cloud Authentication
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{secrets.GOOGLE_CREDENTIALS}}"
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
+      # Terraform 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform plan -input=false
+      # Initialize Terraform
+      - name: Terraform Initialize
+        run: |
+          terraform init -input=false -backend-config="bucket=${{secrets.BUCKET}}"
 
-      # On push to "main", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
+      # Plan resources to create test
+      - name: Terraform Plan
+        env:
+          GOOGLE_CREDENTIALS: ${{secrets.GOOGLE_CREDENTIALS}}
+        run: |
+          terraform plan -var "SSH_PUB_KEY=${{vars.SSH_PUB_KEY}}" -var "ZONE=${{vars.GOOGLE_ZONE}}" -input=false -state="gs://${{secrets.BUCKET}}/default.tfstate"
+
+      # Creates or updates the resources given the current state 
+      - name: Terraform Apply
+        env:
+          GOOGLE_CLOUD_KEYFILE_JSON: ${{secrets.GOOGLE_CREDENTIALS}}
+        run: |
+          terraform apply -auto-approve -input=false -var "SSH_PUB_KEY=${{vars.SSH_PUB_KEY}}" -var "ZONE=${{vars.GOOGLE_ZONE}}" -state="gs://${BUCKET}/default.tfstate"
+
+      # Retrives the IP from the VM as it is ephemeral this is done after the terraform process
+      - name: Get the VM IP Address and do ssh
+        id: get-vm-ip
+        run: |
+          echo gcloud compute instances describe virtual-machine --zone ${{vars.GOOGLE_ZONE}} 
+          VM_IP=$(gcloud compute instances describe virtual-machine --zone ${{vars.GOOGLE_ZONE}} --format='value(networkInterfaces[0].accessConfigs[0].natIP)')
+          echo "VM_IP=$VM_IP" >> $GITHUB_ENV
+          echo $VM_IP
+      
+      
+      # Run app
+      - name: SSH and run the new application
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{env.VM_IP}}
+          username: ${{vars.SSH_USERNAME}}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo apt update
+            sudo apt install -y docker.io
+            
+            sudo systemctl stop docker
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            
+            sudo docker rm ${{vars.DOCKER_CONTAINER_NAME}}
+            sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{vars.DOCKER_ACCESS_TOKEN}}
+            sudo docker pull ${{secrets.DOCKER_USERNAME}}/${{vars.DOCKER_IMAGE_NAME}}:latest
+            sudo docker run -d -p 5000:5000 -e WEBSERVER_PORT=5000 --name ${{vars.DOCKER_CONTAINER_NAME}} ${{secrets.DOCKER_USERNAME}}/${{vars.DOCKER_IMAGE_NAME}}
