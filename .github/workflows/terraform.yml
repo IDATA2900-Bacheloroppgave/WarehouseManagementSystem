@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - cicd-pipeline
 
 jobs:
   build-and-deploy:
@@ -15,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       
-      # Builds and pushes the docker image to the Docker Hub
+      # Builds and pushes the docker image to the Docker Hub, test
       - name: Build and push Docker image
         run: |
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_ACCESS_TOKEN}}
