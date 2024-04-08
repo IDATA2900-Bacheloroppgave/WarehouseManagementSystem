@@ -68,7 +68,7 @@ jobs:
           echo $VM_IP
       
       
-      # Run app
+      # Run app test
       - name: SSH and run the new application
         uses: appleboy/ssh-action@v1.0.0
         with:
