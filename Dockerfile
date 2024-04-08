@@ -18,7 +18,7 @@ FROM openjdk:17-slim
 COPY --from=build /home/app/target/*.jar /usr/local/lib/app.jar
 
 # Expose the port the app runs on
-EXPOSE 8081
+EXPOSE 8080
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "/usr/local/lib/app.jar"]
