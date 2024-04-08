@@ -62,8 +62,8 @@ jobs:
       - name: Get the VM IP Address and do ssh
         id: get-vm-ip
         run: |
-          echo gcloud compute instances describe virtual-machine --zone ${{vars.GOOGLE_ZONE}} 
-          VM_IP=$(gcloud compute instances describe virtual-machine --zone ${{vars.GOOGLE_ZONE}} --format='value(networkInterfaces[0].accessConfigs[0].natIP)')
+          echo gcloud compute instances describe spring-boot-vm --zone ${{vars.GOOGLE_ZONE}} 
+          VM_IP=$(gcloud compute instances describe spring-boot-vm --zone ${{vars.GOOGLE_ZONE}} --format='value(networkInterfaces[0].accessConfigs[0].natIP)')
           echo "VM_IP=$VM_IP" >> $GITHUB_ENV
           echo $VM_IP
       
