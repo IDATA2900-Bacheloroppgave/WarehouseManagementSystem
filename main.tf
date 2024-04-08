@@ -13,7 +13,7 @@ variable "GOOGLE_ZONE" {
 }
 
 provider "google" {
-  project = "Solwr"
+  project = "solwr-413414"
   region  = "us-central1"
 }
 
