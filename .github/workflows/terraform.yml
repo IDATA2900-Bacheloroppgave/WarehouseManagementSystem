@@ -15,12 +15,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       
-      # Builds and pushes the docker image to the Docker Hub
+      # Builds and pushes the docker image to the Docker Hub, test
       - name: Build and push Docker image
         run: |
           docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_ACCESS_TOKEN}}
           docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest 
 
       # Google cloud CLI
       - name: Set up Google Cloud SDK
