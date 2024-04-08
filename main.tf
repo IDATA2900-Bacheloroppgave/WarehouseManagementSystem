@@ -22,6 +22,7 @@ resource "google_compute_instance" "spring_boot_vm" {
   name         = "spring-boot-vm"
   machine_type = "e2-medium"
   zone         = var.GOOGLE_ZONE
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
