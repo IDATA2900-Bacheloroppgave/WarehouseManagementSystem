@@ -67,7 +67,11 @@ jobs:
           echo "VM_IP=$VM_IP" >> $GITHUB_ENV
           echo $VM_IP
           echo ${{vars.SSH_PUB_KEY}}
-      
+
+      - name: List SSH Keys for VM
+        run: |
+          echo gcloud compute os-login describe-profile --format="value(sshPublicKeys)"
+          
       
       # Run app test
       - name: SSH and run the new application
