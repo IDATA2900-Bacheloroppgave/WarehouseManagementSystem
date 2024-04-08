@@ -32,7 +32,7 @@ public class OrderQuantities {
     @Column(name = "product_quantity")
     private int productQuantity;
 
-    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 

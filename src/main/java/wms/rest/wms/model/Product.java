@@ -29,7 +29,6 @@ import java.util.Date;
 @Table(name = "product")
 public class Product {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")

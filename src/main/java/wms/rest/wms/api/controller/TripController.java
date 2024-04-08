@@ -57,10 +57,12 @@ public class TripController {
         return response;
     }
 
+    @Operation(summary = "Delete a specific trip by id", description = "Deletes a specific trip by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Not found"),})
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteTripById(@PathVariable("id") int tripId){
         ResponseEntity response;
-
         if (this.tripService.existsById(tripId)) {
                 this.tripService.deleteById(tripId);
                 response = new ResponseEntity(tripId, HttpStatus.OK);
@@ -70,31 +72,31 @@ public class TripController {
         return response;
     }
 
-    /**
-     * Utility method for projecting trip route.
-     * Not neccessarily needed.
-     *
-     * @param tripId
-     * @return
-     */
-    @GetMapping("/{id}/unloadlocations")
+    @Operation(summary = "Get all unload locations for trip by id", description = "Returns a list of all unload locations for trip", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class)))})
+    @GetMapping("/unload-locations/{id}")
     public List<String> getUnloadLocationsForTripById(@PathVariable("id") int tripId){
         return this.tripService.findAllShipmentUnloadLocations(tripId);
     }
 
-    @PutMapping("/{id}/updatelocation")
+    @Operation(summary = "Update the current location of trip by id", description = "Update the current location of trip", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = Product.class))),})
+    @PutMapping("/update-location/{id}")
     public ResponseEntity<?> updateCurrentTripLocation(@PathVariable("id") int tripId) {
+        ResponseEntity response;
         try {
             Trip updatedTrip = tripService.updateCurrentLocation(tripId);
 
             if (updatedTrip != null) {
-                return ResponseEntity.ok(updatedTrip);
+                response = new ResponseEntity(updatedTrip, HttpStatus.OK);
             } else {
-                return ResponseEntity.notFound().build();
+                response = new ResponseEntity(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+        return response;
     }
-
 }

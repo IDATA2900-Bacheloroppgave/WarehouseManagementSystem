@@ -74,10 +74,15 @@ public class OrderController {
         return response;
     }
 
+    @Operation(summary = "Create a order associated to authenticated customer", description = "Creates a new order associated to the authenticate customer" +
+            "  that places the order", responses = {
+            @ApiResponse(responseCode = "201", description = "Successful order creation", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
     @PostMapping("/createorder")
     public ResponseEntity<?> createOrder(@AuthenticationPrincipal Customer customer, @RequestBody Order order) {
         if (customer != null) {
-            Order createdOrder = this.orderService.createOrder(order);
+            Order createdOrder = this.orderService.createOrder(order, customer);
             if (createdOrder != null) {
                 return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
             } else {

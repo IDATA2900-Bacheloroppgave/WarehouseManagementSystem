@@ -57,7 +57,7 @@ public class Order {
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderQuantities> quantities = new LinkedHashSet<>();
 }
 

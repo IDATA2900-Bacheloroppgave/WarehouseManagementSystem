@@ -78,9 +78,7 @@ public class TripService {
 
             if (!unloadLocations.isEmpty()) {
 
-
-
-                trip.setTripCurrentLocation(unloadLocations.get(0));
+                trip.setTripCurrentLocation(unloadLocations.get(0)); //TODO: CURRENLY SETS UNLOADLOCATION TO INDEX 0.
                 trip = tripRepository.save(trip);
             }
         }

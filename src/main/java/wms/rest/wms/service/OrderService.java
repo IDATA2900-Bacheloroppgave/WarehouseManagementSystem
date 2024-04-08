@@ -1,13 +1,13 @@
 package wms.rest.wms.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import wms.rest.wms.model.Order;
-import wms.rest.wms.model.OrderStatus;
-import wms.rest.wms.model.Trip;
-import wms.rest.wms.model.Customer;
+import wms.rest.wms.model.*;
 import wms.rest.wms.repository.OrderRepository;
+import wms.rest.wms.repository.ProductRepository;
 import wms.rest.wms.repository.ShipmentRepository;
 import wms.rest.wms.repository.TripRepository;
 
@@ -28,9 +28,13 @@ public class OrderService {
     @Autowired
     private ShipmentService shipmentService;
 
-    public OrderService(OrderRepository orderRepository, ShipmentService shipmentService){
+    @Autowired
+    private ProductRepository productRepository;
+
+    public OrderService(OrderRepository orderRepository, ShipmentService shipmentService, ProductRepository productRepository){
         this.orderRepository = orderRepository;
         this.shipmentService = shipmentService;
+        this.productRepository = productRepository;
     }
 
     public List<Order> getOrders(Customer customer){
@@ -78,13 +82,28 @@ public class OrderService {
         this.shipmentService.updateTripStatus(order.getShipment().getShipmentId());
     }
 
-    public Order createOrder(Order order) {
-        order.setCustomer(order.getCustomer());
+    /**
+     * Creates a new order associated to a customer.
+     *
+     * @param order JSON data payload of order.
+     * @param customer Authenticated customer.
+     * @return saves the order with the orderrepository.
+     */
+    @Transactional
+    public Order createOrder(Order order, Customer customer) {
+        order.setCustomer(customer);
         order.setOrderStatus(OrderStatus.REGISTERED);
         order.setOrderDate(new Date(System.currentTimeMillis()));
-        order.setAddress(order.getAddress());
-        order.setQuantities(order.getQuantities());
-        Order savedOrder = this.orderRepository.save(order);
-        return savedOrder;
+        order.setAddress(customer.getAddress());
+
+        for (OrderQuantities quantity : order.getQuantities()) {
+
+            Product product = productRepository.findById(quantity.getProduct().getProductId())
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + quantity.getProduct().getProductId()));
+
+            quantity.setProduct(product);
+            quantity.setOrder(order);
+        }
+        return this.orderRepository.save(order);
     }
 }
