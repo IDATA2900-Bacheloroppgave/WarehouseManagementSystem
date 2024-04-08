@@ -14,7 +14,7 @@ variable "GOOGLE_ZONE" {
 
 provider "google" {
   project = "solwr-413414"
-  region  = "us-central1"
+  region  = "europe-north1"
 }
 
 # Define virtual machine for Spring Boot application

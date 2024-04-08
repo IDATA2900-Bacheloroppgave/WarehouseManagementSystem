@@ -12,7 +12,7 @@ import wms.rest.wms.model.Product;
  * isn't ideal because they mean nothing to external systems.
  */
 @Configuration
-public class RepositoryConfig implements RepositoryRestConfigurer {
+public class  RepositoryConfig implements RepositoryRestConfigurer {
 
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
         config.exposeIdsFor(Product.class);
