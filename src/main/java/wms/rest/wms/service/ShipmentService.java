@@ -71,7 +71,7 @@ public class ShipmentService {
      * When a new Order is created by the client, it sets the OrderStatus to REGISTERD. Method finds all
      * laying orders with this status and adds them to a shipment.
      */
-    @Scheduled(initialDelay = 180000, fixedRate = 12000) //TODO: NEEDS ADJUSTMENTS
+    @Scheduled(initialDelay = 300000, fixedRate = 600000) //TODO: NEEDS ADJUSTMENTS
     public void addRegisteredOrdersToShipmentWithScheduler(){
 
         Random random = new Random();
@@ -102,7 +102,7 @@ public class ShipmentService {
     /**
      * Updates the OrderStatus from a Order from PICKING to PICKED.
      */
-    @Scheduled(initialDelay = 120000, fixedRate = 240000) //TODO: NEEDS ADJUSTMENTS
+    @Scheduled(initialDelay = 420000, fixedRate = 720000) //TODO: NEEDS ADJUSTMENTS
    public void updatePickingOrdersWithScheduler(){
         List<Order> orders = this.orderRepository.findAll();
         if(!orders.isEmpty()){
@@ -119,11 +119,10 @@ public class ShipmentService {
      * Method assigns laying shipments into a new Trip.
      */
     @Transactional
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(initialDelay = 540000, fixedRate = 900000)
     public void updateTripStatusWithScheduler() {
 
-        Calendar calendar = Calendar.getInstance();
-        Date date = calendar.getTime();
+        long twoDaysInMillis = 2 * 24 * 60 * 60 * 1000;
 
         List<Shipment> shipments = this.shipmentRepository.findAll();
         for (Shipment shipment : shipments) {
@@ -131,12 +130,12 @@ public class ShipmentService {
                     Trip trip = new Trip();
                     trip.setTripDriver("Didrik");
                     trip.setTripDriverPhone(48056693);
-                    trip.setTripStartDate(date);
-                    trip.setTripEndDate(date);
+                    trip.setTripStartDate(new Date(System.currentTimeMillis()));
+                    trip.setTripEndDate(new Date(System.currentTimeMillis() + twoDaysInMillis));
                     trip.setTripStartLocation("Trondheim");
                     trip.setTripEndLocation("Ålesund");
                     trip.setTripStatus(TripStatus.NOT_STARTED);
-                    trip.setTripCurrentLocation("Trondheim");
+                    trip.setTripCurrentLocation(trip.getTripStartLocation());
 
                     boolean isPicked = shipment.getOrders().stream().allMatch(order ->
                             order.getOrderStatus() == OrderStatus.PICKED);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class Inventory {
     @Column(name = "inventory_id", nullable = false)
     private int inventoryId;
 
-    @Min(1)
+    @Positive
     @Column(name = "total_stock")
     private int totalStock;
 

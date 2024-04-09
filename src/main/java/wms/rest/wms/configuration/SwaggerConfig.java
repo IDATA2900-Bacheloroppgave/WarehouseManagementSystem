@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Access API documentation at http://localhost:8081/swagger-ui/index.html#/
+ * Access API documentation at http://localhost:8080/swagger-ui/index.html#/
  */
 @Configuration
 public class SwaggerConfig {
