@@ -72,7 +72,7 @@ jobs:
           echo "VM_IP=$VM_IP" >> $GITHUB_ENV
           echo $VM_IP
       
-      # Run app test
+      # Run app
       - name: SSH and run the new application
         uses: fifsky/ssh-action@master
         with:
