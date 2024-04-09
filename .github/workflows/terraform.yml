@@ -83,12 +83,18 @@ jobs:
           command: |
             sudo apt update
             sudo apt install -y docker.io
-
             sudo systemctl stop docker
             sudo systemctl start docker
             sudo systemctl enable docker
-
-            sudo docker rm ${{ vars.DOCKER_CONTAINER_NAME }} || true # Added '|| true' to prevent the step from failing if the container does not exist
+            sudo docker rm ${{ vars.DOCKER_CONTAINER_NAME }} || true
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ vars.DOCKER_ACCESS_TOKEN }}
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}:latest
-            sudo docker run -d -p 8080:8080 -e WEBSERVER_PORT=8080 --name ${{ vars.DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}
+            sudo docker run -d -p 8080:8080 \
+            -e MYSQL_DATABASE_URL=${{ secrets.MYSQL_DATABASE_URL }} \
+            -e MYSQL_DATABASE_USERNAME=${{ secrets.MYSQL_DATABASE_USERNAME }} \
+            -e MYSQL_DATABASE_PASSWORD=${{ secrets.MYSQL_DATABASE_PASSWORD }} \
+            -e JWT_ALGORITHM_KEY=${{ secrets.JWT_ALGORITHM_KEY }} \
+            -e JWT_ISSUER=${{ secrets.JWT_ISSUER }} \
+            -e JWT_EXPIRY_IN_SECONDS=${{ secrets.JWT_EXPIRY_IN_SECONDS }} \
+            --name ${{ vars.DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}
+      
