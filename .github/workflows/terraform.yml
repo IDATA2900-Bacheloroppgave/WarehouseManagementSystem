@@ -93,8 +93,5 @@ jobs:
             -e MYSQL_DATABASE_URL=${{ secrets.MYSQL_DATABASE_URL }} \
             -e MYSQL_DATABASE_USERNAME=${{ secrets.MYSQL_DATABASE_USERNAME }} \
             -e MYSQL_DATABASE_PASSWORD=${{ secrets.MYSQL_DATABASE_PASSWORD }} \
-            -e JWT_ALGORITHM_KEY=${{ secrets.JWT_ALGORITHM_KEY }} \
-            -e JWT_ISSUER=${{ secrets.JWT_ISSUER }} \
-            -e JWT_EXPIRY_IN_SECONDS=${{ secrets.JWT_EXPIRY_IN_SECONDS }} \
             --name ${{ vars.DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_IMAGE_NAME }}
       
