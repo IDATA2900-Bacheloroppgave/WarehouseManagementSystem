@@ -76,7 +76,7 @@ jobs:
           echo $VM_IP
 
 
-      # SSH and run application
+      # SSH and run application test
       - name: SSH and run the new application
         uses: fifsky/ssh-action@master
         with:
