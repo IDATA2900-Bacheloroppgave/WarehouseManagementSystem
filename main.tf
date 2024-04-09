@@ -13,15 +13,16 @@ variable "GOOGLE_ZONE" {
 }
 
 provider "google" {
-  project = "Solwr"
-  region  = "us-central1"
+  project = "solwr-413414"
+  region  = "europe-west2"
 }
 
 # Define virtual machine for Spring Boot application
 resource "google_compute_instance" "spring_boot_vm" {
   name         = "spring-boot-vm"
-  machine_type = "n1-standard-1"
+  machine_type = "e2-medium"
   zone         = var.GOOGLE_ZONE
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
@@ -61,7 +62,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_subnetwork" "default" {
   name          = "cloud-subnet"
   ip_cidr_range = "10.0.1.0/24"
-  region        = "us-central1"
+  region        = "europe-west2"
   network       = google_compute_network.vpc_network.id
 }
 
