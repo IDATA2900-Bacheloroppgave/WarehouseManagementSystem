@@ -3,15 +3,10 @@ package wms.rest.wms.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.*;
-import wms.rest.wms.repository.OrderRepository;
-import wms.rest.wms.repository.ProductRepository;
-import wms.rest.wms.repository.ShipmentRepository;
-import wms.rest.wms.repository.TripRepository;
+import wms.rest.wms.repository.*;
 
-import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,10 +26,16 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepository;
 
-    public OrderService(OrderRepository orderRepository, ShipmentService shipmentService, ProductRepository productRepository){
+    @Autowired
+    private InventoryRepository inventoryRepository;
+
+    public OrderService(OrderRepository orderRepository, ShipmentService shipmentService
+            , ProductRepository productRepository
+            , InventoryRepository inventoryRepository){
         this.orderRepository = orderRepository;
         this.shipmentService = shipmentService;
         this.productRepository = productRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     public List<Order> getOrders(Customer customer){
@@ -100,6 +101,21 @@ public class OrderService {
 
             Product product = productRepository.findById(quantity.getProduct().getProductId())
                     .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + quantity.getProduct().getProductId()));
+
+            // Need to subtract order quantity from inventory stock
+            Inventory inventory = product.getInventory();
+
+
+            int orderedQuantity = quantity.getProductQuantity();
+            int availableStock = inventory.getAvailableStock();
+
+            if(orderedQuantity <= availableStock){
+                inventory.setAvailableStock(availableStock - orderedQuantity);
+                //inventory.setReservedStock(inventory.getReservedStock() + orderedQuantity); //TODO, RESERVED UNTIL PICKED?
+                inventoryRepository.save(inventory);
+            } else {
+                //TODO: FIX NotEnoughStockException
+            }
 
             quantity.setProduct(product);
             quantity.setOrder(order);
