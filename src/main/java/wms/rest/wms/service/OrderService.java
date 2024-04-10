@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.*;
 import wms.rest.wms.repository.*;
 
@@ -84,14 +85,15 @@ public class OrderService {
     }
 
     /**
-     * Creates a new order associated to a customer.
+     * Creates a new order associated to a customer. Reserves the quantity of each product
+     * in inventory under reserved stock.
      *
      * @param order JSON data payload of order.
      * @param customer Authenticated customer.
      * @return saves the order with the orderrepository.
      */
     @Transactional
-    public Order createOrder(Order order, Customer customer) {
+    public Order createOrder(Order order, Customer customer) throws NotEnoughStockException {
         order.setCustomer(customer);
         order.setOrderStatus(OrderStatus.REGISTERED);
         order.setOrderDate(new Date(System.currentTimeMillis()));
@@ -102,21 +104,20 @@ public class OrderService {
             Product product = productRepository.findById(quantity.getProduct().getProductId())
                     .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + quantity.getProduct().getProductId()));
 
-            // Need to subtract order quantity from inventory stock
+            // Need to reserve product quantity in stock
             Inventory inventory = product.getInventory();
-
-
             int orderedQuantity = quantity.getProductQuantity();
             int availableStock = inventory.getAvailableStock();
 
             if(orderedQuantity <= availableStock){
-                inventory.setAvailableStock(availableStock - orderedQuantity);
-                //inventory.setReservedStock(inventory.getReservedStock() + orderedQuantity); //TODO, RESERVED UNTIL PICKED?
+                // Reserve stock
+                inventory.setReservedStock(inventory.getReservedStock() + orderedQuantity);
+                // Subtract reserved from available
+                inventory.setAvailableStock(inventory.getAvailableStock() - orderedQuantity);
                 inventoryRepository.save(inventory);
             } else {
-                //TODO: FIX NotEnoughStockException
+                throw new NotEnoughStockException("There is not enough stock of product with ID: " + product.getProductId());
             }
-
             quantity.setProduct(product);
             quantity.setOrder(order);
         }

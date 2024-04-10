@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.Order;
 import wms.rest.wms.model.Customer;
 import wms.rest.wms.model.Product;
@@ -80,7 +81,7 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
     @PostMapping("/createorder")
-    public ResponseEntity<?> createOrder(@AuthenticationPrincipal Customer customer, @RequestBody Order order) {
+    public ResponseEntity<?> createOrder(@AuthenticationPrincipal Customer customer, @RequestBody Order order) throws NotEnoughStockException {
         if (customer != null) {
             Order createdOrder = this.orderService.createOrder(order, customer);
             if (createdOrder != null) {
@@ -91,5 +92,4 @@ public class OrderController {
         }
         return new ResponseEntity<>("Customer is not authenticated", HttpStatus.FORBIDDEN);
     }
-
 }

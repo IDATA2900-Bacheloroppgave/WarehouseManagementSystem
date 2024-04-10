@@ -30,15 +30,15 @@ public class Inventory {
     @Column(name = "inventory_id", nullable = false)
     private int inventoryId;
 
-    @Min(1)
+    @Min(0)
     @Column(name = "total_stock")
     private int totalStock;
 
-    @Min(1)
+    @Min(0)
     @Column(name = "reserved_stock")
     private int reservedStock;
 
-    @Min(1)
+    @Min(0)
     @Column(name = "available_stock")
     private int availableStock;
 

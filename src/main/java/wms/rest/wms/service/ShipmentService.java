@@ -8,9 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.ShipmentNotFoundException;
 import wms.rest.wms.model.*;
-import wms.rest.wms.repository.OrderRepository;
-import wms.rest.wms.repository.ShipmentRepository;
-import wms.rest.wms.repository.TripRepository;
+import wms.rest.wms.repository.*;
 
 import java.util.*;
 
@@ -26,13 +24,19 @@ public class ShipmentService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private InventoryRepository inventoryRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     public ShipmentService(ShipmentRepository shipmentRepository
             , TripRepository tripRepository
-            , OrderRepository orderRepository) {
+            , OrderRepository orderRepository
+            , InventoryRepository inventoryRepository) {
         this.shipmentRepository = shipmentRepository;
         this.tripRepository = tripRepository;
         this.orderRepository = orderRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
     /**
@@ -67,29 +71,49 @@ public class ShipmentService {
         }
     }
 
+    @Transactional
+    public void updateInventoryForPickingOrders(Order order) {
+        for (OrderQuantities quantity : order.getQuantities()) {
+            Product product = quantity.getProduct();
+            Inventory inventory = product.getInventory();
+            inventory.setTotalStock(1000);
+            this.inventoryRepository.save(inventory);
+        }
+    }
+
+
+    //TODO: DOESNT WORK???????
     /**
-     * When a new Order is created by the client, it sets the OrderStatus to REGISTERD. Method finds all
+     * When a new Order is created by the client, it sets the OrderStatus to REGISTERED. Method finds all
      * laying orders with this status and adds them to a shipment.
      */
-    @Scheduled(initialDelay = 180000, fixedRate = 12000) //TODO: NEEDS ADJUSTMENTS
-    public void addRegisteredOrdersToShipmentWithScheduler(){
-
+    @Transactional
+    @Scheduled(initialDelay = 180000, fixedRate = 12000)
+    public void addRegisteredOrdersToShipmentWithScheduler() {
         Random random = new Random();
-        List<String> randomUnloadLocations = new ArrayList<>(Arrays.asList("Kristiansund", "Molde", "Ålesund")); //Initialize random unload locations
-        int randomIndex = random.nextInt(randomUnloadLocations.size()); // get a random index
-        String randomLocation = randomUnloadLocations.get(randomIndex); // assign a string to the random location
-
+        List<String> randomUnloadLocations = new ArrayList<>(Arrays.asList("Kristiansund", "Molde", "Ålesund"));
+        int randomIndex = random.nextInt(randomUnloadLocations.size());
+        String randomLocation = randomUnloadLocations.get(randomIndex);
 
         List<Order> orders = this.orderRepository.findAll();
-        if(!orders.isEmpty()){
-
+        if (!orders.isEmpty()) {
             Shipment shipment = new Shipment();
             shipment.setShipmentLoadLocation("Trondheim");
-            shipment.setShipmentUnloadLocation(randomLocation); //set shipment unload location to the random string
+            shipment.setShipmentUnloadLocation(randomLocation);
 
-            for(Order order : orders){
-                if(order.getOrderStatus() == OrderStatus.REGISTERED){
+            for (Order order : orders) {
+                if (order.getOrderStatus() == OrderStatus.REGISTERED) {
                     order.setOrderStatus(OrderStatus.PICKING);
+
+                    for(OrderQuantities quantity : order.getQuantities()) {
+                        Product product = productRepository.findById(quantity.getProduct().getProductId())
+                                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + quantity.getProduct().getProductId()));
+
+                        Inventory inventory = product.getInventory();
+                        inventory.setReservedStock(1000);
+                        this.inventoryRepository.save(inventory);
+                    }
+
                     order.setShipment(shipment);
                     shipment.getOrders().add(order);
                     orderRepository.save(order);

@@ -42,6 +42,7 @@ public class AuthenticationController {
         } else {
             LoginResponse response = new LoginResponse();
             response.setJwt(jwt);
+            System.out.printf("Customer with email: " + loginBody.getEmail() + " just logged in!");
             return ResponseEntity.ok(response);
         }
     }
