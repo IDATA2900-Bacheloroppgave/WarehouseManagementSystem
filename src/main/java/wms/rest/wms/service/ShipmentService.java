@@ -3,6 +3,7 @@ package wms.rest.wms.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.PropertyAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import wms.rest.wms.model.*;
 import wms.rest.wms.repository.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShipmentService {
@@ -26,17 +28,20 @@ public class ShipmentService {
 
     @Autowired
     private InventoryRepository inventoryRepository;
+
     @Autowired
     private ProductRepository productRepository;
 
     public ShipmentService(ShipmentRepository shipmentRepository
             , TripRepository tripRepository
             , OrderRepository orderRepository
-            , InventoryRepository inventoryRepository) {
+            , InventoryRepository inventoryRepository
+            , ProductRepository productRepository) {
         this.shipmentRepository = shipmentRepository;
         this.tripRepository = tripRepository;
         this.orderRepository = orderRepository;
         this.inventoryRepository = inventoryRepository;
+        this.productRepository = productRepository;
     }
 
     /**
@@ -71,69 +76,65 @@ public class ShipmentService {
         }
     }
 
-    @Transactional
-    public void updateInventoryForPickingOrders(Order order) {
-        for (OrderQuantities quantity : order.getQuantities()) {
-            Product product = quantity.getProduct();
-            Inventory inventory = product.getInventory();
-            inventory.setTotalStock(1000);
-            this.inventoryRepository.save(inventory);
-        }
-    }
-
-
-    //TODO: DOESNT WORK???????
     /**
      * When a new Order is created by the client, it sets the OrderStatus to REGISTERED. Method finds all
      * laying orders with this status and adds them to a shipment.
      */
     @Transactional
-    @Scheduled(initialDelay = 180000, fixedRate = 12000)
+    @Scheduled(initialDelay = 60000, fixedRate = 12000)
     public void addRegisteredOrdersToShipmentWithScheduler() {
+        // Generate a random unload location
         Random random = new Random();
         List<String> randomUnloadLocations = new ArrayList<>(Arrays.asList("Kristiansund", "Molde", "Ålesund"));
         int randomIndex = random.nextInt(randomUnloadLocations.size());
         String randomLocation = randomUnloadLocations.get(randomIndex);
 
-        List<Order> orders = this.orderRepository.findAll();
-        if (!orders.isEmpty()) {
-            Shipment shipment = new Shipment();
-            shipment.setShipmentLoadLocation("Trondheim");
-            shipment.setShipmentUnloadLocation(randomLocation);
+        try {
+            // Fetch all orders with status REGISTERED
+            List<Order> orders = orderRepository.findAll().stream()
+                    .filter(order -> order.getOrderStatus() == OrderStatus.REGISTERED)
+                    .toList();
 
-            for (Order order : orders) {
-                if (order.getOrderStatus() == OrderStatus.REGISTERED) {
+            if (!orders.isEmpty()) {
+                // Create a new shipment if there are registered orders
+                Shipment shipment = new Shipment();
+                shipment.setShipmentLoadLocation("Trondheim");
+                shipment.setShipmentUnloadLocation(randomLocation);
+
+                // Associate orders with the new shipment
+                for (Order order : orders) {
                     order.setOrderStatus(OrderStatus.PICKING);
-
-                    for(OrderQuantities quantity : order.getQuantities()) {
-                        Product product = productRepository.findById(quantity.getProduct().getProductId())
-                                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + quantity.getProduct().getProductId()));
-
-                        Inventory inventory = product.getInventory();
-                        inventory.setReservedStock(1000);
-                        this.inventoryRepository.save(inventory);
-                    }
-
+                    order.setProgressInPercent(10);
+                    System.out.println("Order with ID: " + order.getOrderId() + " was changed from REGISTERED to PICKING.");
                     order.setShipment(shipment);
                     shipment.getOrders().add(order);
-                    orderRepository.save(order);
-                    this.shipmentRepository.save(shipment);
                 }
+
+                // Save the shipment once after all orders are associated
+                shipmentRepository.save(shipment);
+                System.out.println("Shipment saved with ID: " + shipment.getShipmentId());
+            } else {
+                System.out.println("No registered orders found to add to a new shipment.");
             }
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     /**
      * Updates the OrderStatus from a Order from PICKING to PICKED.
      */
-    @Scheduled(initialDelay = 120000, fixedRate = 240000) //TODO: NEEDS ADJUSTMENTS
-   public void updatePickingOrdersWithScheduler(){
+    @Scheduled(fixedRate = 60000) //TODO: NEEDS ADJUSTMENTS
+    public void updatePickingOrdersWithScheduler(){
         List<Order> orders = this.orderRepository.findAll();
         if(!orders.isEmpty()){
             for(Order order : orders){
                 if(order.getOrderStatus() == OrderStatus.PICKING){
                     order.setOrderStatus(OrderStatus.PICKED);
+                    order.setProgressInPercent(20);
                     this.orderRepository.save(order);
+                    System.out.println("Order with ID: " + order.getOrderId() + " was changed from PICKING to PICKED.");
                 }
             }
         }
@@ -143,14 +144,14 @@ public class ShipmentService {
      * Method assigns laying shipments into a new Trip.
      */
     @Transactional
-    @Scheduled(fixedRate = 300000)
+    //@Scheduled(fixedRate = 300000)
     public void updateTripStatusWithScheduler() {
 
         Calendar calendar = Calendar.getInstance();
         Date date = calendar.getTime();
-
         List<Shipment> shipments = this.shipmentRepository.findAll();
-        for (Shipment shipment : shipments) {
+        if(!shipments.isEmpty()){
+            for (Shipment shipment : shipments) {
                 if (shipment.getTrip() == null) {
                     Trip trip = new Trip();
                     trip.setTripDriver("Didrik");
@@ -178,6 +179,10 @@ public class ShipmentService {
                         tripRepository.save(trip);
                     }
                 }
+            }
+        } else {
+            System.out.println("No shipments");
         }
+
     }
 }

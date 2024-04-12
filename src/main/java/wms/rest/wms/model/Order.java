@@ -44,6 +44,12 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @Column(name = "wished_delivery_date")
+    private String wishedDeliveryDate;
+
+    @Column(name = "progress_in_percent")
+    private int progressInPercent;
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

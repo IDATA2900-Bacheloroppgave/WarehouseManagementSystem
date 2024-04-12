@@ -47,7 +47,7 @@ public class Trip {
     private String tripEndLocation;
 
     @Column(name = "current_location")
-    private String tripCurrentLocation;
+    private String tripCurrentLocation; //ved = startLocation -> currentLocation -> shipment
 
     @Column(name = "next_location")
     private String tripNextLocation;

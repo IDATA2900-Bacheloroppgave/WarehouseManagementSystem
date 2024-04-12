@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -32,12 +33,6 @@ public class Shipment {
     @Column(name = "shipment_id", nullable = false)
     private int shipmentId;
 
-    @Column(name = "shipment_start_location")
-    private String shipmentStartLocation; //Usikker på denne
-
-    @Column(name = "shipment_end_location")
-    private String shipmentEndLocation; //Usikker på denne
-
     @NotBlank(message = "Shipment load is mandatory")
     @Column(name = "shipment_load")
     private String shipmentLoadLocation;
@@ -46,6 +41,12 @@ public class Shipment {
     @Column(name = "shipment_unload")
     private String shipmentUnloadLocation;
 
+    @Column(name = "sequence_at_trip")
+    private int sequenceAtTrip;
+
+    @Column(name = "shipment_delivery")
+    private String shipmentDeliveryDate;
+
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "trip_id")
@@ -53,7 +54,4 @@ public class Shipment {
 
     @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Order> orders = new LinkedHashSet<>();
-
-    //Dato?
-    //Ønsket levering?
 }
