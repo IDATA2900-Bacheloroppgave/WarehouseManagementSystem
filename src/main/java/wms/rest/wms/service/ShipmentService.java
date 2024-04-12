@@ -81,7 +81,7 @@ public class ShipmentService {
      * laying orders with this status and adds them to a shipment.
      */
     @Transactional
-    @Scheduled(initialDelay = 60000, fixedRate = 12000)
+    @Scheduled(initialDelay = 60000, fixedRate = 12000) //TODO: NEEDS ADJUSTMNETS
     public void addRegisteredOrdersToShipmentWithScheduler() {
         // Generate a random unload location
         Random random = new Random();
@@ -108,6 +108,16 @@ public class ShipmentService {
                     System.out.println("Order with ID: " + order.getOrderId() + " was changed from REGISTERED to PICKING.");
                     order.setShipment(shipment);
                     shipment.getOrders().add(order);
+
+                    for(OrderQuantities quantity : order.getQuantities()){
+                        Product product = quantity.getProduct();
+                        Inventory inventory = product.getInventory();
+
+                        // Update inventory when order is PICKING
+                        inventory.setReservedStock(inventory.getReservedStock() - quantity.getProductQuantity());
+                        inventory.setTotalStock(inventory.getTotalStock() - quantity.getProductQuantity());
+                        inventory.setAvailableStock(inventory.getTotalStock());
+                    }
                 }
 
                 // Save the shipment once after all orders are associated
@@ -125,17 +135,17 @@ public class ShipmentService {
     /**
      * Updates the OrderStatus from a Order from PICKING to PICKED.
      */
-    @Scheduled(fixedRate = 60000) //TODO: NEEDS ADJUSTMENTS
+    @Scheduled(fixedRate = 180000) //TODO: NEEDS ADJUSTMENTS
     public void updatePickingOrdersWithScheduler(){
-        List<Order> orders = this.orderRepository.findAll();
+        List<Order> orders = this.orderRepository.findAll().stream()
+                .filter(order -> order.getOrderStatus() == OrderStatus.PICKING).toList();
+
         if(!orders.isEmpty()){
             for(Order order : orders){
-                if(order.getOrderStatus() == OrderStatus.PICKING){
-                    order.setOrderStatus(OrderStatus.PICKED);
-                    order.setProgressInPercent(20);
-                    this.orderRepository.save(order);
-                    System.out.println("Order with ID: " + order.getOrderId() + " was changed from PICKING to PICKED.");
-                }
+                order.setOrderStatus(OrderStatus.PICKED);
+                order.setProgressInPercent(20);
+                this.orderRepository.save(order);
+                System.out.println("Order with ID: " + order.getOrderId() + " was changed from PICKING to PICKED.");
             }
         }
    }
@@ -143,7 +153,7 @@ public class ShipmentService {
     /**
      * Method assigns laying shipments into a new Trip.
      */
-    @Transactional
+    //@Transactional
     //@Scheduled(fixedRate = 300000)
     public void updateTripStatusWithScheduler() {
 

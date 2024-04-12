@@ -45,10 +45,10 @@ public class Shipment {
     private int sequenceAtTrip;
 
     @Column(name = "shipment_delivery")
-    private String shipmentDeliveryDate;
+    private String shipmentDeliveryDate; //Should be grouped. So add all Orders with same Delivery date to one Shipment with the same delivery date
 
     @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 

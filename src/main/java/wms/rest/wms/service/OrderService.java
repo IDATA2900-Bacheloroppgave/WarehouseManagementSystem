@@ -74,16 +74,6 @@ public class OrderService {
         return false;
     }
 
-    public void updateOrderStatus(int orderId, OrderStatus orderStatus){
-        Optional<Order> orderOptional = this.orderRepository.findById(orderId);
-        Order order = orderOptional.get();
-
-        order.setOrderStatus(orderStatus);
-        this.orderRepository.save(order);
-
-        this.shipmentService.updateTripStatus(order.getShipment().getShipmentId());
-    }
-
     /**
      * Creates a new order associated to a customer. Reserves the quantity of each product
      * in inventory under reserved stock.
