@@ -16,9 +16,9 @@ public class SecurityConfig {
 
     // All permitted endpoints
     private static final String[] WHITELIST = {
-            "/api/products/**", "/auth/register"
+            "/api/products/**", "/api/auth/register"
             , "/api/customers/**", "/api/address/**"
-            , "/auth/login", "/api/orders/**"
+            , "/api/auth/login", "/api/orders/**"
             , "/api/trips/**", "/api/shipments/**"
             , "/swagger-ui/**", "/v3/api-docs/**"
             , "/swagger-resources/**", "/swagger-resources"
