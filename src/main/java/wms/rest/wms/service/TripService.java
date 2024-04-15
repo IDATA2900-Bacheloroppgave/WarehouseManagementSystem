@@ -1,10 +1,15 @@
 package wms.rest.wms.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import wms.rest.wms.model.OrderStatus;
 import wms.rest.wms.model.Shipment;
 import wms.rest.wms.model.Trip;
+import wms.rest.wms.model.TripStatus;
+import wms.rest.wms.repository.ShipmentRepository;
 import wms.rest.wms.repository.TripRepository;
 
 import java.util.*;
@@ -12,11 +17,13 @@ import java.util.*;
 @Service
 public class TripService {
 
-    @Autowired
     private TripRepository tripRepository;
 
-    public TripService(TripRepository tripRepository) {
+    private ShipmentRepository shipmentRepository;
+
+    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository) {
         this.tripRepository = tripRepository;
+        this.shipmentRepository = shipmentRepository;
     }
 
     public List<Trip> findAll() {
@@ -66,7 +73,7 @@ public class TripService {
      * @param tripId
      * @return
      */
-    public Trip updateCurrentLocation(int tripId){
+    public Trip updateCurrentLocation(int tripId) {
         Trip trip = null;
 
         Optional<Trip> tripOptional = this.tripRepository.findByTripId(tripId);
@@ -85,20 +92,51 @@ public class TripService {
         return trip;
     }
 
-    public String estimatedArrival(int tripId){
-        Optional<Trip> tripOptional = this.tripRepository.findByTripId(tripId);
+    @Transactional
+    @Scheduled(initialDelay = 300000, fixedRate = 600000)
+    public void createTripWithScheduler() {
+        List<Shipment> shipments = this.shipmentRepository.findAll();
+        if (!shipments.isEmpty()) {
+            for (Shipment shipment : shipments) {
+                if (shipment.getTrip() == null) {
+                    Trip trip = new Trip();
+                    System.out.println("Trip with ID: " + trip.getTripId() + " was created.");
+                    Map.Entry<String, Integer> randomDriver = getRandomDriver();
+                    trip.setTripDriver(randomDriver.getKey());
+                    trip.setTripDriverPhone(randomDriver.getValue());
+                    trip.setTripStartDate(new Date(System.currentTimeMillis()));
+                    trip.setTripStartLocation(shipment.getShipmentLoadLocation());
+                    trip.setTripCurrentLocation(shipment.getShipmentUnloadLocation());
+                    trip.setTripStatus(TripStatus.NOT_STARTED);
 
-        String eta = null;
+                    boolean isPicked = shipment.getOrders().stream().allMatch(order ->
+                            order.getOrderStatus() == OrderStatus.PICKED);
 
-        if(tripOptional.isPresent()){
-            Trip trip = tripOptional.get();
-            String currentLocation = trip.getTripCurrentLocation();
-
-            if(currentLocation.equals("Ålesund")) {
-                eta = "2 Days";
+                    if(isPicked){
+                        shipment.setTrip(trip);
+                        tripRepository.save(trip);
+                    } else {
+                        System.out.println("Orders inside shipment has not yet been picked.");
+                    }
+                }
             }
+        } else {
+            System.out.println("No shipments to add to trip.");
         }
-        return eta;
     }
 
+    private Map.Entry<String, Integer> getRandomDriver() {
+        HashMap<String, Integer> driverInformation = getTripDriverInformation();
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(driverInformation.entrySet());
+        Random random = new Random();
+        return entries.get(random.nextInt(entries.size()));
+    }
+
+    public HashMap<String, Integer> getTripDriverInformation(){
+        HashMap<String, Integer> driverInformation = new HashMap<>();
+        driverInformation.put("Pietr Didrik", 48056693);
+        driverInformation.put("Hans Pettersen", 49285943);
+        driverInformation.put("Lus Hoston", 94682497);
+        return driverInformation;
+    }
 }

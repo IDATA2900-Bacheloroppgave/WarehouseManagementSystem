@@ -40,21 +40,4 @@ public class ShipmentController {
         }
         return response;
     }
-
-    //TODO: ENDPOINT MIGHT NOT BE NECCESSARY, BUT KEEP UNTIL NOW.
-    @Operation(summary = "Updates the status of a Trip", description = "Updates the Trip if from NOT_STARTED to READY_FOR_DEPARTURE" +
-            " if all orders inside shipments have the order status of PICKED", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request"),})
-    @PutMapping("/update-status/{id}")
-    public ResponseEntity<?> updateShipment(@PathVariable("id") int shipmentId){
-        ResponseEntity response;
-        try{
-            this.shipmentService.updateTripStatus(shipmentId);
-            response = new ResponseEntity("Successfull update", HttpStatus.OK);
-        } catch(Exception e){
-            response = new ResponseEntity("Couldnt not update shipment with shipmentId: " + shipmentId, HttpStatus.BAD_REQUEST);
-        }
-        return response;
-    }
 }

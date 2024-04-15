@@ -3,6 +3,7 @@ package wms.rest.wms.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.*;
@@ -18,23 +19,16 @@ import java.util.Optional;
 @Service
 public class OrderService {
 
-    @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
-    private ShipmentService shipmentService;
-
-    @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
     private InventoryRepository inventoryRepository;
 
-    public OrderService(OrderRepository orderRepository, ShipmentService shipmentService
+    public OrderService(OrderRepository orderRepository
             , ProductRepository productRepository
             , InventoryRepository inventoryRepository){
         this.orderRepository = orderRepository;
-        this.shipmentService = shipmentService;
         this.productRepository = productRepository;
         this.inventoryRepository = inventoryRepository;
     }
@@ -112,5 +106,34 @@ public class OrderService {
             quantity.setOrder(order);
         }
         return this.orderRepository.save(order);
+    }
+
+    public List<Order> getRegisteredOrders() {
+        List<Order> registeredOrders = this.orderRepository.findAll().stream()
+                .filter((order -> order.getOrderStatus() == OrderStatus.REGISTERED))
+                .toList();
+        return registeredOrders;
+    }
+
+    @Transactional
+    public void updateFromRegisteredToPicking(Order order) {
+        order.setProgressInPercent(10);
+        order.setOrderStatus(OrderStatus.PICKING);
+        this.orderRepository.save(order);
+    }
+
+    @Transactional
+    public List<Order> updateFromPickingToPicked() {
+        List<Order> orders = this.orderRepository.findAll().stream()
+                .filter((order -> order.getOrderStatus() == OrderStatus.PICKING))
+                .toList();
+        if(!orders.isEmpty()){
+            for(Order order : orders){
+                order.setOrderStatus(OrderStatus.PICKED);
+                order.setProgressInPercent(20);
+                this.orderRepository.save(order);
+            }
+        }
+        return orders;
     }
 }

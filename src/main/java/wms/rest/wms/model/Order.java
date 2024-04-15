@@ -45,7 +45,7 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Column(name = "wished_delivery_date")
-    private String wishedDeliveryDate;
+    private Date wishedDeliveryDate;
 
     @Column(name = "progress_in_percent")
     private int progressInPercent;

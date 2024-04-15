@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -45,10 +47,10 @@ public class Shipment {
     private int sequenceAtTrip;
 
     @Column(name = "shipment_delivery")
-    private String shipmentDeliveryDate; //Should be grouped. So add all Orders with same Delivery date to one Shipment with the same delivery date
+    private Date shipmentDeliveryDate; //Should be grouped. So add all Orders with same Delivery date to one Shipment with the same delivery date
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
