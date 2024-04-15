@@ -30,7 +30,7 @@ import java.util.Set;
 @Table(name = "store")
 public class Store {
 
-    @JsonIgnore
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)

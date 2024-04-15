@@ -27,7 +27,7 @@ public class ShipmentController {
     }
 
     @Operation(summary = "Get a list of all shipments", description = "Returns a list of all shipments", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Shipment.class))),
             @ApiResponse(responseCode = "204", description = "No content"),})
     @GetMapping
     public ResponseEntity<Optional<Shipment>> getShipments() {

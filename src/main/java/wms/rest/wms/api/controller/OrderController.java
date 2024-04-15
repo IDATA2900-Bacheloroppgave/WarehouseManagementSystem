@@ -25,21 +25,22 @@ import java.util.Optional;
 public class OrderController {
 
     private OrderService orderService;
+
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @Operation(summary = "Get a list of all orders associated to authenticated customer", description = "Returns a list of all orders associated to authenticated customer", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),})
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Order.class))),})
     @GetMapping
     public List<Order> getOrders(@AuthenticationPrincipal Customer user){
         return this.orderService.getOrders(user);
     }
 
     @Operation(summary = "Get a specific order associated to authenticated customer by id", description = "Returns a specific order based on the path variable id", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Order.class))),})
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@AuthenticationPrincipal Customer customer, @PathVariable("id") int orderId){
         ResponseEntity response;
@@ -57,9 +58,9 @@ public class OrderController {
 
     @Operation(summary = "Cancel a specific order associated to authenticated customer by id", description = "Cancels a specific order based on the path variable id." +
             " The order that is going to be cancelled can only be cancelled if the order status is REGISTERED", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful order cancel", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
+            @ApiResponse(responseCode = "200", description = "Successful order cancel", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Order.class))),})
     @PostMapping("/cancel/{id}")
     public ResponseEntity<?> cancelOrder(@AuthenticationPrincipal Customer customer, @PathVariable("id") int orderId) {
         ResponseEntity response;
@@ -77,9 +78,9 @@ public class OrderController {
 
     @Operation(summary = "Create a order associated to authenticated customer", description = "Creates a new order associated to the authenticate customer" +
             "  that places the order", responses = {
-            @ApiResponse(responseCode = "201", description = "Successful order creation", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Product.class))),})
+            @ApiResponse(responseCode = "201", description = "Successful order creation", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access", content = @Content(schema = @Schema(implementation = Order.class))),})
     @PostMapping("/createorder")
     public ResponseEntity<?> createOrder(@AuthenticationPrincipal Customer customer, @RequestBody Order order) throws NotEnoughStockException {
         if (customer != null) {

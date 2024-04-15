@@ -66,6 +66,7 @@ public class ShipmentService {
                     this.orderService.updateFromRegisteredToPicking(order);
                     System.out.println("Order with ID: " + order.getOrderId() + " was changed from REGISTERED to PICKING.");
                     order.setShipment(shipment);
+                    System.out.println("Order with ID: " + order.getOrderId() + " was added to shipment with ID: " + shipment.getShipmentId());
                     shipment.getOrders().add(order);
 
                     for(OrderQuantities quantity : order.getQuantities()){

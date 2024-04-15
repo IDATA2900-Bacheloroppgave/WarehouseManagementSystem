@@ -11,5 +11,4 @@ public class OrderQuantitiesController {
 
     private OrderQuantitiesService orderQuantitiesService;
 
-
 }

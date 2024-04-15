@@ -16,19 +16,19 @@ public class RegistrationBody {
 
     @NotNull
     @NotBlank
-    @Email
+    @Email //xxx@xxx.xxx
     private String email;
 
     @NotNull
     @NotBlank
-    @Size(min = 3)
-    @Size(max = 20)
+    @Size(min = 3) // min 3 letters
+    @Size(max = 20) // max 20 letters
     private String firstName;
 
     @NotNull
     @NotBlank
-    @Size(min = 3)
-    @Size(max = 20)
+    @Size(min = 3) // min 3 letters
+    @Size(max = 20) // max 20 letters
     private String lastName;
 
     @NotNull
@@ -36,6 +36,6 @@ public class RegistrationBody {
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$") //Minimum eight characters, atleast one letter and one number
     private String password;
 
-    @Min(0)
+    @Min(0) //min 0
     private int storeId;
 }

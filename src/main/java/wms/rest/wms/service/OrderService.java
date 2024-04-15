@@ -9,6 +9,7 @@ import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.*;
 import wms.rest.wms.repository.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -109,10 +110,9 @@ public class OrderService {
     }
 
     public List<Order> getRegisteredOrders() {
-        List<Order> registeredOrders = this.orderRepository.findAll().stream()
+        return this.orderRepository.findAll().stream()
                 .filter((order -> order.getOrderStatus() == OrderStatus.REGISTERED))
                 .toList();
-        return registeredOrders;
     }
 
     @Transactional
@@ -127,5 +127,12 @@ public class OrderService {
         order.setProgressInPercent(20);
         order.setOrderStatus(OrderStatus.PICKING);
         this.orderRepository.save(order);
+    }
+
+    public void groupOrders(List<Order> orders){
+        orders = getRegisteredOrders();
+        for(Order order : orders){
+            
+        }
     }
 }

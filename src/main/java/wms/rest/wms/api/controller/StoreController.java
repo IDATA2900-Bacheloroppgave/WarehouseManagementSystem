@@ -1,5 +1,6 @@
 package wms.rest.wms.api.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import wms.rest.wms.service.StoreService;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Shipments", description = "All endpoint operations related to Shipments")
 @RestController
 @RequestMapping("/api/stores")
 public class StoreController {

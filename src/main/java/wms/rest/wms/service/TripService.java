@@ -102,6 +102,7 @@ public class TripService {
                     Trip trip = new Trip();
                     System.out.println("Trip with ID: " + trip.getTripId() + " was created.");
                     Map.Entry<String, Integer> randomDriver = getRandomDriver();
+                    //shipment.setShipmentDeliveryDate(); //TODO: FIX
                     trip.setTripDriver(randomDriver.getKey());
                     trip.setTripDriverPhone(randomDriver.getValue());
                     trip.setTripStartDate(new Date(System.currentTimeMillis()));
