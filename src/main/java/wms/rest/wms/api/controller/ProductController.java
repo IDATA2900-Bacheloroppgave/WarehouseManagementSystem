@@ -52,7 +52,7 @@ public class ProductController {
         if(product.isPresent()){
             response = new ResponseEntity(product, HttpStatus.OK);
         } else {
-            response = new ResponseEntity("Product with id: " + id + " does not exist", HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity("Product with ID: " + id + " does not exist", HttpStatus.BAD_REQUEST);
         }
         return response;
     }

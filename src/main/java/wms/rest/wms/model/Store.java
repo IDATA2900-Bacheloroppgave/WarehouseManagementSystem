@@ -1,14 +1,19 @@
 package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class represents the address in the warehouse management system. This class is a part of the model layer and maps to the
@@ -22,24 +27,25 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "address")
-public class Address {
+@Table(name = "store")
+public class Store {
 
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_id", nullable = false)
-    private int addressId;
+    @Column(name = "store_id", nullable = false)
+    @JsonProperty
+    private int storeId;
 
-    @NotBlank(message = "Address is mandatory")
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "address", nullable = false)
     private String address;
 
-    @NotBlank(message = "Country is mandatory")
     @Column(name = "country", nullable = false)
     private String country;
 
-    @NotBlank(message = "City is mandatory")
     @Column(name = "city", nullable = false)
     private String city;
 
@@ -48,7 +54,6 @@ public class Address {
     private int postalCode;
 
     @JsonIgnore
-    @OneToOne(optional = false, orphanRemoval = true)
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private Customer customer;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Customer> customers = new LinkedHashSet<>();
 }

@@ -81,7 +81,7 @@ public class OrderService {
         order.setCustomer(customer);
         order.setOrderStatus(OrderStatus.REGISTERED);
         order.setOrderDate(new Date(System.currentTimeMillis()));
-        order.setAddress(customer.getAddress());
+        order.setAddress(customer.getStore());
 
         for (OrderQuantities quantity : order.getQuantities()) {
 
@@ -123,17 +123,9 @@ public class OrderService {
     }
 
     @Transactional
-    public List<Order> updateFromPickingToPicked() {
-        List<Order> orders = this.orderRepository.findAll().stream()
-                .filter((order -> order.getOrderStatus() == OrderStatus.PICKING))
-                .toList();
-        if(!orders.isEmpty()){
-            for(Order order : orders){
-                order.setOrderStatus(OrderStatus.PICKED);
-                order.setProgressInPercent(20);
-                this.orderRepository.save(order);
-            }
-        }
-        return orders;
+    public void updateFromPickingToPicked(Order order) {
+        order.setProgressInPercent(20);
+        order.setOrderStatus(OrderStatus.PICKING);
+        this.orderRepository.save(order);
     }
 }

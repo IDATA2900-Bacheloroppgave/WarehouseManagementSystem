@@ -3,7 +3,6 @@ package wms.rest.wms.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,7 +55,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
-    private Address address;
+    private Store address;
 
     @JsonIgnore
     @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)

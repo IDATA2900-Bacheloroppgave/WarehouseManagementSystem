@@ -19,6 +19,7 @@ public class SecurityConfig {
             "/api/products/**", "/auth/register"
             , "/api/customers/**", "/api/address/**"
             , "/auth/login", "/api/orders/**"
+            , "/api/stores/**"
             , "/api/trips/**", "/api/shipments/**"
             , "/swagger-ui/**", "/v3/api-docs/**"
             , "/swagger-resources/**", "/swagger-resources"

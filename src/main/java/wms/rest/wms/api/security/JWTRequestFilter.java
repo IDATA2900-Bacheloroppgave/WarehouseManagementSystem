@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import wms.rest.wms.model.Customer;
-import wms.rest.wms.repository.UserRepository;
+import wms.rest.wms.repository.CustomerRepository;
 import wms.rest.wms.service.security.JwtService;
 
 import java.io.IOException;
@@ -22,11 +22,11 @@ import java.util.Optional;
 public class JWTRequestFilter extends OncePerRequestFilter {
 
     private JwtService jwtService;
-    private UserRepository userRepository;
+    private CustomerRepository customerRepository;
 
-    public JWTRequestFilter(JwtService jwtService, UserRepository userRepository) {
+    public JWTRequestFilter(JwtService jwtService, CustomerRepository customerRepository) {
         this.jwtService = jwtService;
-        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             String token = tokenHeader.substring(7);
             try {
                 String email = jwtService.getEmail(token);
-                Optional<Customer> opUser = userRepository.findByEmail(email);
+                Optional<Customer> opUser = customerRepository.findByEmail(email);
                 if(opUser.isPresent()){
                     Customer user = opUser.get();
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList());

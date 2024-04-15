@@ -3,14 +3,10 @@ package wms.rest.wms.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Class represents a Customer entity in a warehouse management system. Each customer has
@@ -48,7 +44,7 @@ public class Customer {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.REMOVE, optional = false, orphanRemoval = true)
-    private Address address;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 }

@@ -78,7 +78,6 @@ public class ShipmentService {
                         inventory.setAvailableStock(inventory.getTotalStock());
                     }
                 }
-
                 // Save the shipment once after all orders are associated
                 shipmentRepository.save(shipment);
                 System.out.println("Shipment saved with ID: " + shipment.getShipmentId());

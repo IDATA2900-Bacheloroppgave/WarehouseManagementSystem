@@ -11,23 +11,23 @@ import wms.rest.wms.api.model.LoginResponse;
 import wms.rest.wms.api.model.RegistrationBody;
 import wms.rest.wms.exception.UserAlreadyExistsException;
 import wms.rest.wms.model.Customer;
-import wms.rest.wms.service.UserService;
+import wms.rest.wms.service.CustomerService;
 
 @RestController
 @CrossOrigin
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    private UserService userService;
+    private CustomerService customerService;
 
-    public AuthenticationController(UserService userService){
-        this.userService = userService;
+    public AuthenticationController(CustomerService customerService){
+        this.customerService = customerService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Validated @RequestBody RegistrationBody registrationBody){
         try{
-            userService.registerUser(registrationBody);
+            customerService.registerCustomer(registrationBody);
             return ResponseEntity.ok().build();
         } catch(UserAlreadyExistsException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -36,7 +36,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginBody loginBody){
-        String jwt = userService.loginUser(loginBody);
+        String jwt = customerService.loginCustomer(loginBody);
         if(jwt == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {
