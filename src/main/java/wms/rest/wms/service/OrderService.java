@@ -2,17 +2,13 @@ package wms.rest.wms.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.*;
 import wms.rest.wms.repository.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service class for order api controller.
@@ -38,17 +34,23 @@ public class OrderService {
         return this.orderRepository.findByCustomer(customer);
     }
 
+    /**
+     * Get an Optional object of Order
+     *
+     * @param orderId the ID of the order to get
+     * @return a Optional object of Order. Can contain and Order or not.
+     */
     public Optional<Order> getOrderById(int orderId){
         return this.orderRepository.findById(orderId);
     }
 
     /**
-     * Utility method for cancelOrderbyId.
+     * Utility method for cancelOrderbyId
      * Checks if an order has the orderStatus as REGISTERED, which is the only
-     * status a Order can have for the customer to cancel the order.
+     * status an Order can have for the customer to cancel the order
      *
      * @param order the order to check if has orderStatus as REGISTERED
-     * @return true if orderStatus is REGISTERED, false otherwise
+     * @return returns true if orderStatus is REGISTERED, false otherwise
      */
     public boolean cancelOrder(Order order){
         if(order.getOrderStatus() == OrderStatus.REGISTERED){
@@ -57,6 +59,13 @@ public class OrderService {
         }
         return false;
     }
+
+    /**
+     * Cancels an Order by ID
+     *
+     * @param orderId the ID of the Order to cancel
+     * @return returns true if Order is cancelled, false otherwise
+     */
     public boolean cancelOrderById(int orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
@@ -82,7 +91,7 @@ public class OrderService {
         order.setCustomer(customer);
         order.setOrderStatus(OrderStatus.REGISTERED);
         order.setOrderDate(new Date(System.currentTimeMillis()));
-        order.setAddress(customer.getStore());
+        order.setStore(customer.getStore());
 
         for (OrderQuantities quantity : order.getQuantities()) {
 
@@ -109,12 +118,39 @@ public class OrderService {
         return this.orderRepository.save(order);
     }
 
+    /**
+     * Fetch all orders that has the OrderStatus as REGISTERED
+     *
+     * @return a List of Order with orderStatus REGISTERED
+     */
     public List<Order> getRegisteredOrders() {
         return this.orderRepository.findAll().stream()
                 .filter((order -> order.getOrderStatus() == OrderStatus.REGISTERED))
                 .toList();
     }
 
+    /**
+     * Fetch all registered orders from getRegisteredOrders and sorts them into a Map of key-value pairs
+     *
+     * @return a Map of Store and Order. All Orders associated to each Store
+     *          Output:
+     *          [Store 1] -> [Order 1, Order 2]
+     *          [Store 2] -> [Order 3, Order 4, Order 5]
+     *          [Store n] -> [Order n, Order n]
+     */
+    public Map<Store, List<Order>> groupByStore() {
+        List<Order> registeredOrders = this.getRegisteredOrders();
+        return registeredOrders.stream()
+                .filter(order -> order.getCustomer() != null && order.getCustomer().getStore() != null)
+                .collect(Collectors.groupingBy(order -> order.getCustomer().getStore()));
+    }
+
+    /**
+     * Updates an Order from orderStatus REGISTERED to PICKING
+     * Also set progressInPercent to 10
+     *
+     * @param order the order to update the orderStatus and progressInPercent
+     */
     @Transactional
     public void updateFromRegisteredToPicking(Order order) {
         order.setProgressInPercent(10);
@@ -122,17 +158,15 @@ public class OrderService {
         this.orderRepository.save(order);
     }
 
+    /**
+     * Updates an Order from orderStatus PICKING to PICKED
+     *
+     * @param order the order to update the orderStatus
+     */
     @Transactional
     public void updateFromPickingToPicked(Order order) {
         order.setProgressInPercent(20);
         order.setOrderStatus(OrderStatus.PICKING);
         this.orderRepository.save(order);
-    }
-
-    public void groupOrders(List<Order> orders){
-        orders = getRegisteredOrders();
-        for(Order order : orders){
-            
-        }
     }
 }

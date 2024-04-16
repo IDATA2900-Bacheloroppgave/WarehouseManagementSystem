@@ -1,6 +1,8 @@
 package wms.rest.wms.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.*;
@@ -14,6 +16,8 @@ public class ShipmentService {
     private ShipmentRepository shipmentRepository;
 
     private OrderService orderService;
+
+    private static final Logger log = LoggerFactory.getLogger(ShipmentService.class);
 
     public ShipmentService(
             ShipmentRepository shipmentRepository
@@ -52,42 +56,49 @@ public class ShipmentService {
     @Scheduled(initialDelay = 60000, fixedRate = 360000)
     public void createShipment() {
         try {
-            // Fetch REGISTERED orders
-            List<Order> registeredOrders = this.orderService.getRegisteredOrders();
-            if (!registeredOrders.isEmpty()) {
-                // Create a new shipment if there are registered orders
-                Shipment shipment = new Shipment();
-                System.out.println("Shipment with ID: " + shipment.getShipmentId() + " was created.");
-                shipment.setShipmentLoadLocation("Trondheim");
-                shipment.setShipmentUnloadLocation(getRandomUnloadLocation());
+            Map<Store, List<Order>> ordersByStore = this.orderService.groupByStore();
+            // [Store 1] -> [Order 1, Order 2]
+            // [Store 2] -> [Order 3, Order 4]
 
-                // Associate orders with the new shipment
-                for (Order order : registeredOrders) {
-                    this.orderService.updateFromRegisteredToPicking(order);
-                    System.out.println("Order with ID: " + order.getOrderId() + " was changed from REGISTERED to PICKING.");
-                    order.setShipment(shipment);
-                    System.out.println("Order with ID: " + order.getOrderId() + " was added to shipment with ID: " + shipment.getShipmentId());
-                    shipment.getOrders().add(order);
+            if (!ordersByStore.isEmpty()) {
+                for (Map.Entry<Store, List<Order>> entry : ordersByStore.entrySet()) {
+                    Store store = entry.getKey();
+                    List<Order> orders = entry.getValue();
 
-                    for(OrderQuantities quantity : order.getQuantities()){
-                        Product product = quantity.getProduct();
-                        Inventory inventory = product.getInventory();
+                    // Create a new shipment for each store if there are registered orders
+                    Shipment shipment = new Shipment();
+                    shipment.setShipmentLoadLocation("Trondheim");
+                    shipment.setShipmentUnloadLocation(orders.get(0).getCustomer().getStore().getCity()); //All orders inside same shipment have same address, so this is fine
+                    shipment = shipmentRepository.save(shipment); // Generate ID for logger
 
-                        // Update inventory when order is PICKING
-                        inventory.setReservedStock(inventory.getReservedStock() - quantity.getProductQuantity());
-                        inventory.setTotalStock(inventory.getTotalStock() - quantity.getProductQuantity());
-                        inventory.setAvailableStock(inventory.getTotalStock());
+                    log.info("Shipment created for store {}. Shipment ID: {}", store.getName(), shipment.getShipmentId());
+
+                    // Associate orders with the new shipment
+                    for (Order order : orders) {
+                        this.orderService.updateFromRegisteredToPicking(order);
+                        order.setShipment(shipment);
+                        shipment.getOrders().add(order);
+                        // Log the association of the order with the new shipment ID
+                        log.info("Associating Order ID: {} with Shipment ID: {}", order.getOrderId(), shipment.getShipmentId());
+
+                        for (OrderQuantities quantity : order.getQuantities()) {
+                            Product product = quantity.getProduct();
+                            Inventory inventory = product.getInventory();
+
+                            // Update inventory when order is PICKING
+                            inventory.setReservedStock(inventory.getReservedStock() - quantity.getProductQuantity());
+                            inventory.setTotalStock(inventory.getTotalStock() - quantity.getProductQuantity());
+                            inventory.setAvailableStock(inventory.getTotalStock());
+                        }
                     }
+                    // The shipment is already saved above; if you need to update it again after changes, you could call save again.
                 }
-                // Save the shipment once after all orders are associated
-                shipmentRepository.save(shipment);
-                System.out.println("Shipment saved with ID: " + shipment.getShipmentId());
             } else {
-                System.out.println("No registered orders found to add to a new shipment.");
+                log.info("No registered orders found to add to a new shipment.");
             }
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-            e.printStackTrace();
+            log.error("An error occurred while creating shipments: {}", e.getMessage(), e);
         }
     }
+
 }

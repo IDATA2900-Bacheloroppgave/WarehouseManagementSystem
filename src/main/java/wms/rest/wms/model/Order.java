@@ -54,8 +54,8 @@ public class Order {
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "address_id")
-    private Store address;
+    @JoinColumn(name = "store_id")
+    private Store store;
 
     @JsonIgnore
     @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
