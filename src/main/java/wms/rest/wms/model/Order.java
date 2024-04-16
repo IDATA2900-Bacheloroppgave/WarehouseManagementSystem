@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,9 +35,9 @@ public class Order {
     @Column(name = "order_id", nullable = false)
     private int orderId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "date")
-    private Date orderDate;
+    private LocalDate orderDate;
 
     @NotNull(message = "Order status is mandatory")
     @Column(name = "order_status")
@@ -44,7 +45,7 @@ public class Order {
     private OrderStatus orderStatus;
 
     @Column(name = "wished_delivery_date")
-    private Date wishedDeliveryDate;
+    private LocalDate wishedDeliveryDate;
 
     @Column(name = "progress_in_percent")
     private int progressInPercent;

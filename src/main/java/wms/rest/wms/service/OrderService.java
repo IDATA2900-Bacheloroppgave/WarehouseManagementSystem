@@ -7,6 +7,7 @@ import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.*;
 import wms.rest.wms.repository.*;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,7 +91,7 @@ public class OrderService {
     public Order createOrder(Order order, Customer customer) throws NotEnoughStockException {
         order.setCustomer(customer);
         order.setOrderStatus(OrderStatus.REGISTERED);
-        order.setOrderDate(new Date(System.currentTimeMillis()));
+        order.setOrderDate(LocalDate.now());
         order.setStore(customer.getStore());
 
         for (OrderQuantities quantity : order.getQuantities()) {
@@ -143,6 +144,22 @@ public class OrderService {
         return registeredOrders.stream()
                 .filter(order -> order.getCustomer() != null && order.getCustomer().getStore() != null)
                 .collect(Collectors.groupingBy(order -> order.getCustomer().getStore()));
+    }
+
+    /**
+     * Fetch all registered orders from getRegisteredOrders and sorts them into a Map of key-value pairs
+     * grouped by both Store and wishedDeliveryDate.
+     *
+     * @return a Map where each key is a Pair of Store and LocalDate, and each value is a list of Orders.
+     * Output Example:
+     * [Store 1, 2023-04-15] -> [Order 1, Order 2]
+     * [Store 2, 2023-04-16] -> [Order 3, Order 4, Order 5]
+     */
+    public Map<AbstractMap.SimpleEntry<Store, LocalDate>, List<Order>> groupByStoreAndDeliveryDate() {
+        List<Order> registeredOrders = this.getRegisteredOrders();
+        return registeredOrders.stream()
+                .filter(order -> order.getCustomer() != null && order.getCustomer().getStore() != null)
+                .collect(Collectors.groupingBy(order -> new AbstractMap.SimpleEntry<>(order.getCustomer().getStore(), order.getWishedDeliveryDate())));
     }
 
     /**

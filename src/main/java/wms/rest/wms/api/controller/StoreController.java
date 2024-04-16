@@ -13,7 +13,7 @@ import wms.rest.wms.service.StoreService;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "Shipments", description = "All endpoint operations related to Shipments")
+@Tag(name = "Stores", description = "All endpoint operations related to Stores")
 @RestController
 @RequestMapping("/api/stores")
 public class StoreController {
