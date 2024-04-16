@@ -79,15 +79,6 @@ public class TripService {
         }
     }
 
-    public void createTrip() {
-        List<Shipment> shipments = this.shipmentService.findAndSortAllShipments();
-        if (!shipments.isEmpty()) {
-
-        }
-    }
-
-
-
     private Map.Entry<String, Integer> getRandomDriver() {
         HashMap<String, Integer> driverInformation = getTripDriverInformation();
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(driverInformation.entrySet());
