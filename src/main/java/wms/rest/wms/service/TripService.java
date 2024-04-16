@@ -21,9 +21,12 @@ public class TripService {
 
     private ShipmentRepository shipmentRepository;
 
-    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository) {
+    private ShipmentService shipmentService;
+
+    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository, ShipmentService shipmentService) {
         this.tripRepository = tripRepository;
         this.shipmentRepository = shipmentRepository;
+        this.shipmentService = shipmentService;
     }
 
     public List<Trip> findAll() {
@@ -55,7 +58,7 @@ public class TripService {
                     //shipment.setShipmentDeliveryDate(); //TODO: FIX
                     trip.setTripDriver(randomDriver.getKey());
                     trip.setTripDriverPhone(randomDriver.getValue());
-                    trip.setTripStartDate(new Date(System.currentTimeMillis()));
+                    trip.setTripStartDate(new Date(System.currentTimeMillis())); //TODO: USE LOCALDATE- NOT DATE
                     trip.setTripStartLocation(shipment.getShipmentLoadLocation());
                     trip.setTripCurrentLocation(shipment.getShipmentUnloadLocation());
                     trip.setTripStatus(TripStatus.NOT_STARTED);
@@ -75,6 +78,15 @@ public class TripService {
             System.out.println("No shipments to add to trip.");
         }
     }
+
+    public void createTrip() {
+        List<Shipment> shipments = this.shipmentService.findAndSortAllShipments();
+        if (!shipments.isEmpty()) {
+
+        }
+    }
+
+
 
     private Map.Entry<String, Integer> getRandomDriver() {
         HashMap<String, Integer> driverInformation = getTripDriverInformation();

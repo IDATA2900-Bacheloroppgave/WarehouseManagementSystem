@@ -132,6 +132,7 @@ public class OrderService {
 
     /**
      * Fetch all registered orders from getRegisteredOrders and sorts them into a Map of key-value pairs
+     * grouped by Store
      *
      * @return a Map of Store and Order. All Orders associated to each Store
      *          Output:
@@ -152,14 +153,17 @@ public class OrderService {
      *
      * @return a Map where each key is a Pair of Store and LocalDate, and each value is a list of Orders.
      * Output Example:
-     * [Store 1, 2023-04-15] -> [Order 1, Order 2]
-     * [Store 2, 2023-04-16] -> [Order 3, Order 4, Order 5]
+     * [Store 1, 2024-04-15] -> [Order 1, Order 2]
+     * [Store 1, 2024-04-16] -> [Order 3, Order 4]
+     * [Store 2, 2024-04-16] -> [Order 5, Order 6, Order 7]
      */
     public Map<AbstractMap.SimpleEntry<Store, LocalDate>, List<Order>> groupByStoreAndDeliveryDate() {
         List<Order> registeredOrders = this.getRegisteredOrders();
         return registeredOrders.stream()
                 .filter(order -> order.getCustomer() != null && order.getCustomer().getStore() != null)
-                .collect(Collectors.groupingBy(order -> new AbstractMap.SimpleEntry<>(order.getCustomer().getStore(), order.getWishedDeliveryDate())));
+                .collect(Collectors.groupingBy(order ->
+                        new AbstractMap.SimpleEntry<>
+                                (order.getCustomer().getStore(), order.getWishedDeliveryDate())));
     }
 
     /**

@@ -87,6 +87,14 @@ public class ShipmentService {
         }
     }
 
+    /**
+     * Retrieve all shipments and sort them by end location (store)
+     */
+    public void findAndSortAllShipments() {
+        List<Shipment> shipments = this.shipmentRepository.findAll();
+
+    }
+
 
     @Transactional
     //@Scheduled(initialDelay = 90000, fixedRate = 360000)
