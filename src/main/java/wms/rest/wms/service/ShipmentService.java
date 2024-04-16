@@ -36,24 +36,11 @@ public class ShipmentService {
     }
 
     /**
-     * Utility method for generating a random unload location for shipments.
-     *
-     * @return a random location from list.
-     */
-    public String getRandomUnloadLocation(){
-        Random random = new Random();
-        List<String> randomUnloadLocations = new ArrayList<>(Arrays.asList("Kristiansund", "Molde", "Ålesund"));
-        int randomIndex = random.nextInt(randomUnloadLocations.size());
-        String randomLocation = randomUnloadLocations.get(randomIndex);
-        return randomLocation;
-    }
-
-    /**
      * When a new Order is created by the client, it sets the OrderStatus to REGISTERED. Method finds all
      * laying orders with this status and adds them to a shipment.
      */
     @Transactional
-    @Scheduled(initialDelay = 60000, fixedRate = 360000)
+    @Scheduled(initialDelay = 80000, fixedRate = 360000)
     public void createShipment() {
         try {
             Map<Store, List<Order>> ordersByStore = this.orderService.groupByStore();
@@ -68,7 +55,7 @@ public class ShipmentService {
                     // Create a new shipment for each store if there are registered orders
                     Shipment shipment = new Shipment();
                     shipment.setShipmentLoadLocation("Trondheim");
-                    shipment.setShipmentUnloadLocation(orders.get(0).getCustomer().getStore().getCity()); //All orders inside same shipment have same address, so this is fine
+                    shipment.setShipmentUnloadLocation(orders.get(0).getCustomer().getStore().getName()); //All orders inside same shipment have same address, so this is fine
                     shipment = shipmentRepository.save(shipment); // Generate ID for logger
 
                     log.info("Shipment created for store {}. Shipment ID: {}", store.getName(), shipment.getShipmentId());
@@ -91,7 +78,6 @@ public class ShipmentService {
                             inventory.setAvailableStock(inventory.getTotalStock());
                         }
                     }
-                    // The shipment is already saved above; if you need to update it again after changes, you could call save again.
                 }
             } else {
                 log.info("No registered orders found to add to a new shipment.");
@@ -101,4 +87,14 @@ public class ShipmentService {
         }
     }
 
+    @Transactional
+    @Scheduled(initialDelay = 90000, fixedRate = 360000)
+    public void updateShipmentOrdersToPicked() {
+        List<Shipment> shipments = this.shipmentRepository.findAll();
+        for (Shipment shipment : shipments) {
+            shipment.getOrders().stream().filter(order -> order.getOrderStatus() == OrderStatus.PICKING).forEach(order ->
+                    order.setOrderStatus(OrderStatus.PICKED));
+            this.shipmentRepository.save(shipment);
+        }
+    }
 }

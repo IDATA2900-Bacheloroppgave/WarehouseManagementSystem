@@ -29,8 +29,7 @@ import java.util.Set;
 @Entity
 @Table(name = "store")
 public class Store {
-
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "store_id", nullable = false)
