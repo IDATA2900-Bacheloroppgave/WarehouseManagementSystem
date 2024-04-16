@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import wms.rest.wms.model.*;
 import wms.rest.wms.repository.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -40,32 +41,31 @@ public class ShipmentService {
      * laying orders with this status and adds them to a shipment.
      */
     @Transactional
-    @Scheduled(initialDelay = 80000, fixedRate = 360000)
+    @Scheduled(initialDelay = 100000, fixedRate = 360000)
     public void createShipment() {
         try {
-            Map<Store, List<Order>> ordersByStore = this.orderService.groupByStore();
-            // [Store 1] -> [Order 1, Order 2]
-            // [Store 2] -> [Order 3, Order 4]
+            // Group orders by both Store and LocalDate
+            Map<AbstractMap.SimpleEntry<Store, LocalDate>, List<Order>> ordersByStoreDate = this.orderService.groupByStoreAndDeliveryDate();
 
-            if (!ordersByStore.isEmpty()) {
-                for (Map.Entry<Store, List<Order>> entry : ordersByStore.entrySet()) {
-                    Store store = entry.getKey();
+            if (!ordersByStoreDate.isEmpty()) {
+                for (Map.Entry<AbstractMap.SimpleEntry<Store, LocalDate>, List<Order>> entry : ordersByStoreDate.entrySet()) {
+                    Store store = entry.getKey().getKey();
+                    LocalDate deliveryDate = entry.getKey().getValue();
                     List<Order> orders = entry.getValue();
 
-                    // Create a new shipment for each store if there are registered orders
+                    // Create a new shipment for each store and delivery date if there are registered orders
                     Shipment shipment = new Shipment();
                     shipment.setShipmentLoadLocation("Trondheim");
-                    shipment.setShipmentUnloadLocation(orders.get(0).getCustomer().getStore().getName()); //All orders inside same shipment have same address, so this is fine
+                    shipment.setShipmentUnloadLocation(store.getName()); // Set the unload location to the store's city
                     shipment = shipmentRepository.save(shipment); // Generate ID for logger
 
-                    log.info("Shipment created for store {}. Shipment ID: {}", store.getName(), shipment.getShipmentId());
+                    log.info("Shipment created for store {} for delivery date {}. Shipment ID: {}", store.getName(), deliveryDate, shipment.getShipmentId());
 
                     // Associate orders with the new shipment
                     for (Order order : orders) {
                         this.orderService.updateFromRegisteredToPicking(order);
                         order.setShipment(shipment);
                         shipment.getOrders().add(order);
-                        // Log the association of the order with the new shipment ID
                         log.info("Associating Order ID: {} with Shipment ID: {}", order.getOrderId(), shipment.getShipmentId());
 
                         for (OrderQuantities quantity : order.getQuantities()) {
@@ -87,8 +87,9 @@ public class ShipmentService {
         }
     }
 
+
     @Transactional
-    @Scheduled(initialDelay = 90000, fixedRate = 360000)
+    //@Scheduled(initialDelay = 90000, fixedRate = 360000)
     public void updateShipmentOrdersToPicked() {
         List<Shipment> shipments = this.shipmentRepository.findAll();
         for (Shipment shipment : shipments) {
