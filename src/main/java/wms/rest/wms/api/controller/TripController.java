@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class TripController {
     @GetMapping
     public ResponseEntity<List<Trip>> getTrips(){
         ResponseEntity response;
-        List<Trip> trips = this.tripService.findAll();
+        List<Trip> trips = this.tripService.getAll();
         if(!trips.isEmpty()){
             response = new ResponseEntity(trips, HttpStatus.OK);
         } else {

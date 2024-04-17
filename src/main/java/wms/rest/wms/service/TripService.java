@@ -1,10 +1,8 @@
 package wms.rest.wms.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.OrderStatus;
@@ -17,41 +15,68 @@ import wms.rest.wms.repository.TripRepository;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Service class for Trip API controller
+ */
 @Service
 public class TripService {
+
+    private static final Logger log = LoggerFactory.getLogger(TripService.class);
 
     private TripRepository tripRepository;
 
     private ShipmentRepository shipmentRepository;
 
-    private ShipmentService shipmentService;
-
-    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository, ShipmentService shipmentService) {
+    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository) {
         this.tripRepository = tripRepository;
         this.shipmentRepository = shipmentRepository;
-        this.shipmentService = shipmentService;
     }
 
-    public List<Trip> findAll() {
+    /**
+     * Returns a List of all Trips
+     *
+     * @return a list of all Trips
+     */
+    public List<Trip> getAll() {
         return this.tripRepository.findAll();
     }
 
+    /**
+     * Find a Trip by ID
+     *
+     * @param id the ID of the Trip to find
+     * @return Optional object of the Trip, can be present or not
+     */
     public Optional<Trip> findTripById(int id) {
         return this.tripRepository.findByTripId(id);
     }
 
+    /**
+     * Check if a Trip exists by ID
+     *
+     * @param tripId the ID of the Trip to check if exists
+     * @return true if the Trip exists, false otherwise
+     */
     public boolean existsById(int tripId) {
         return this.tripRepository.existsById(tripId);
     }
 
+    /**
+     * Delete a Trip by ID
+     *
+     * @param tripId the ID of the Trip to delete
+     */
     public void deleteById(int tripId) {
         this.tripRepository.deleteById(tripId);
     }
 
+    /**
+     * Creates a Trip and adds all Shipments with the same wishedDeliveryDate. All orders inside a Shipment has
+     * to have the OrderStatus as PICKED.
+     */
     @Transactional
-    @Scheduled(initialDelay = 120000, fixedDelay = 300000)
-    public void createTripsByWishedDeliveryDate() {
-        Logger log = LoggerFactory.getLogger(this.getClass());
+    @Scheduled(initialDelay = 120000, fixedRate = 300000)
+    public void createTrip() {
         List<Shipment> shipments = this.shipmentRepository.findAll();
         Map<LocalDate, List<Shipment>> shipmentsByDeliveryDate = new HashMap<>();
         // Group shipments by wished delivery date if they are ready to be picked.
@@ -94,6 +119,7 @@ public class TripService {
     /**
      * Updates the TripStatus on a Trip from LOADING to DEPARTED
      */
+    @Scheduled(initialDelay = 130000, fixedRate = 300000 )
     public void updateTripStatusFromLoadingToDeparted() {
         List<Trip> trips = this.tripRepository.findAll();
         for (Trip trip : trips) {
@@ -103,6 +129,24 @@ public class TripService {
         }
     }
 
+    /**
+     * Updates the TripStatus on a Trip from DEPARTED to IN_TRANSIT
+     */
+    @Scheduled(initialDelay = 150000, fixedRate = 300000 )
+    public void updateTripStatusFromDepartedToInTransit() {
+        List<Trip> trips = this.tripRepository.findAll();
+        for(Trip trip : trips) {
+            if(trip.getTripStatus() == TripStatus.DEPARTED) {
+                trip.setTripStatus(TripStatus.IN_TRANSIT);
+            }
+        }
+    }
+
+    /**
+     * Find a random driver from getTripDriverInformation() and return it
+     *
+     * @return a random driver from HashMap in getTripDriverInformation()
+     */
     private Map.Entry<String, Integer> getRandomDriver() {
         HashMap<String, Integer> driverInformation = getTripDriverInformation();
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(driverInformation.entrySet());
@@ -110,6 +154,11 @@ public class TripService {
         return entries.get(random.nextInt(entries.size()));
     }
 
+    /**
+     * Create a HashMap with drivers and add them into key-value pairs
+     *
+     * @return a HashMap of drivers
+     */
     public HashMap<String, Integer> getTripDriverInformation(){
         HashMap<String, Integer> driverInformation = new HashMap<>();
         driverInformation.put("Pietr Didrik", 48056693);

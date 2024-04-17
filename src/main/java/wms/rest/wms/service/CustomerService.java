@@ -14,7 +14,7 @@ import wms.rest.wms.service.security.JwtService;
 import java.util.Optional;
 
 /**
- * Service class for user api controller.
+ * Service class for Customer API controller
  */
 @Service
 public class CustomerService {
@@ -37,7 +37,14 @@ public class CustomerService {
         this.storeRepository = storeRepository;
     }
 
-    public Customer registerCustomer(RegistrationBody registrationBody) throws UserAlreadyExistsException {
+    /**
+     * Register a Customer service method for endpoint /auth/register
+     *
+     * @param registrationBody the registration body required JSON payload
+     * @throws UserAlreadyExistsException if Customer tries to register with an
+     *         email that is already registered to another Customer
+     */
+    public void registerCustomer(RegistrationBody registrationBody) throws UserAlreadyExistsException {
         if (customerRepository.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("User already exists with this email.");
         }
@@ -52,10 +59,16 @@ public class CustomerService {
         customer.setLastName(registrationBody.getLastName());
         customer.setPassword(encryptionService.encryptPassword(registrationBody.getPassword()));
         customer.setStore(store);
-        return customerRepository.save(customer);
+        customerRepository.save(customer);
     }
 
-
+    /**
+     * Login a Customer service method for endpoint /auth/login
+     *
+     * @param loginBody the login body required JSON payload
+     * @return a json web token (JWT) if the Customer login is successful.
+     *         Otherwise return null
+     */
     public String loginCustomer(LoginBody loginBody){
         Optional<Customer> optionalCustomer = customerRepository.findByEmail(loginBody.getEmail());
         if(optionalCustomer.isPresent()){
@@ -66,6 +79,4 @@ public class CustomerService {
         }
         return null;
     }
-
-
 }

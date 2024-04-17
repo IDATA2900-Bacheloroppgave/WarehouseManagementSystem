@@ -12,14 +12,17 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for Shipment API controller
+ */
 @Service
 public class ShipmentService {
+
+    private static final Logger log = LoggerFactory.getLogger(ShipmentService.class);
 
     private ShipmentRepository shipmentRepository;
 
     private OrderService orderService;
-
-    private static final Logger log = LoggerFactory.getLogger(ShipmentService.class);
 
     public ShipmentService(
             ShipmentRepository shipmentRepository

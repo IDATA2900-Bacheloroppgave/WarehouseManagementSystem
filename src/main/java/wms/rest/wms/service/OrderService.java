@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service class for order api controller.
+ * Service class for Order API controller
  */
 @Service
 public class OrderService {
@@ -31,6 +31,12 @@ public class OrderService {
         this.inventoryRepository = inventoryRepository;
     }
 
+    /**
+     * Return a List of all Orders placed by a Customer
+     *
+     * @param customer the Customer to have placed the Order
+     * @return a List of Orders placed by the Customer
+     */
     public List<Order> getOrders(Customer customer){
         return this.orderRepository.findByCustomer(customer);
     }
@@ -38,8 +44,8 @@ public class OrderService {
     /**
      * Get an Optional object of Order
      *
-     * @param orderId the ID of the order to get
-     * @return a Optional object of Order. Can contain and Order or not.
+     * @param orderId the ID of the Order to get
+     * @return an Optional object of Order, can be present or not
      */
     public Optional<Order> getOrderById(int orderId){
         return this.orderRepository.findById(orderId);
@@ -128,23 +134,6 @@ public class OrderService {
         return this.orderRepository.findAll().stream()
                 .filter((order -> order.getOrderStatus() == OrderStatus.REGISTERED))
                 .toList();
-    }
-
-    /**
-     * Fetch all registered orders from getRegisteredOrders and sorts them into a Map of key-value pairs
-     * grouped by Store
-     *
-     * @return a Map of Store and Order. All Orders associated to each Store
-     * Output example:
-     * [Store 1] -> [Order 1, Order 2]
-     * [Store 2] -> [Order 3, Order 4, Order 5]
-     * [Store n] -> [Order n, Order n]
-     */
-    public Map<Store, List<Order>> groupByStore() {
-        List<Order> registeredOrders = this.getRegisteredOrders();
-        return registeredOrders.stream()
-                .filter(order -> order.getCustomer() != null && order.getCustomer().getStore() != null)
-                .collect(Collectors.groupingBy(order -> order.getCustomer().getStore()));
     }
 
     /**
