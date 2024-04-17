@@ -119,7 +119,7 @@ public class TripService {
     }
 
     @Transactional
-    @Scheduled(initialDelay = 150000, fixedRate = 600000)
+    //@Scheduled(initialDelay = 150000, fixedRate = 600000)
     public void startTrip(int tripId) {
         Logger log = LoggerFactory.getLogger(this.getClass());
         Optional<Trip> tripOptional = tripRepository.findById(tripId);
