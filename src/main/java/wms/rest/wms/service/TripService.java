@@ -5,15 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import wms.rest.wms.model.OrderStatus;
-import wms.rest.wms.model.Shipment;
-import wms.rest.wms.model.Trip;
-import wms.rest.wms.model.TripStatus;
+import wms.rest.wms.model.*;
+import wms.rest.wms.repository.OrderRepository;
 import wms.rest.wms.repository.ShipmentRepository;
 import wms.rest.wms.repository.TripRepository;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service class for Trip API controller
@@ -27,9 +26,12 @@ public class TripService {
 
     private ShipmentRepository shipmentRepository;
 
-    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository) {
+    private OrderRepository orderRepository;
+
+    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository, OrderRepository orderRepository) {
         this.tripRepository = tripRepository;
         this.shipmentRepository = shipmentRepository;
+        this.orderRepository = orderRepository;
     }
 
     /**
@@ -116,8 +118,41 @@ public class TripService {
         }
     }
 
+    @Transactional
+    @Scheduled(initialDelay = 150000, fixedRate = 600000)
+    public void startTrip(int tripId) {
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        Optional<Trip> tripOptional = tripRepository.findById(tripId);
+
+        if (tripOptional.isPresent()) {
+            Trip trip = tripOptional.get();
+            // Sort shipments by sequenceAtTrip
+            List<Shipment> sortedShipments = trip.getShipments().stream()
+                    .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
+                    .toList();
+
+            for (Shipment shipment : sortedShipments) {
+                for (Order order : shipment.getOrders()) {
+                    order.setOrderStatus(OrderStatus.DELIVERED); //TODO: SEND PUSH NOTIFICATION
+                    orderRepository.save(order);
+                    log.info("Order ID: {} from Shipment ID: {} marked as DELIVERED", order.getOrderId(), shipment.getShipmentId());
+                }
+                shipmentRepository.save(shipment);
+                log.info("Shipment ID: {} has been delivered.", shipment.getShipmentId());
+            }
+
+            // Optionally, update the trip status to COMPLETE if all shipments are delivered
+            trip.setTripStatus(TripStatus.FINISHED);
+            tripRepository.save(trip);
+            log.info("Trip ID: {} has been completed.", trip.getTripId());
+        } else {
+            log.warn("Trip ID: {} not found.", tripId);
+        }
+    }
+
     /**
      * Updates the TripStatus on a Trip from LOADING to DEPARTED
+     * //TODO: SEND PUSH NOTIFICATION
      */
     @Scheduled(initialDelay = 130000, fixedRate = 300000 )
     public void updateTripStatusFromLoadingToDeparted() {
@@ -131,6 +166,8 @@ public class TripService {
 
     /**
      * Updates the TripStatus on a Trip from DEPARTED to IN_TRANSIT
+     * and update the progressInPercent
+     * //TODO: SEND PUSH NOTIFICATION
      */
     @Scheduled(initialDelay = 150000, fixedRate = 300000 )
     public void updateTripStatusFromDepartedToInTransit() {
@@ -138,6 +175,10 @@ public class TripService {
         for(Trip trip : trips) {
             if(trip.getTripStatus() == TripStatus.DEPARTED) {
                 trip.setTripStatus(TripStatus.IN_TRANSIT);
+            } for(Shipment shipment : trip.getShipments()) {
+                for(Order order : shipment.getOrders()) {
+                    order.setProgressInPercent(40);
+                }
             }
         }
     }

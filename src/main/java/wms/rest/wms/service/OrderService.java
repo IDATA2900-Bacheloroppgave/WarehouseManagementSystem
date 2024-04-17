@@ -164,7 +164,7 @@ public class OrderService {
     @Transactional
     public void updateFromRegisteredToPicking(Order order) {
         order.setProgressInPercent(10);
-        order.setOrderStatus(OrderStatus.PICKING);
+        order.setOrderStatus(OrderStatus.PICKING); //TODO: SEND PUSH NOTIFICATION
         this.orderRepository.save(order);
     }
 
@@ -177,7 +177,7 @@ public class OrderService {
     @Transactional
     public void updateFromPickingToPicked(Order order) {
         order.setProgressInPercent(20);
-        order.setOrderStatus(OrderStatus.PICKED);
+        order.setOrderStatus(OrderStatus.PICKED); //TODO: SEND PUSH NOTIFICATION
         this.orderRepository.save(order);
     }
 }

@@ -22,12 +22,15 @@ public class ShipmentService {
 
     private ShipmentRepository shipmentRepository;
 
+    private TripRepository tripRepository;
+
     private OrderService orderService;
 
     public ShipmentService(
-            ShipmentRepository shipmentRepository
+            ShipmentRepository shipmentRepository, TripRepository tripRepository
             , OrderService orderService) {
         this.shipmentRepository = shipmentRepository;
+        this.tripRepository = tripRepository;
         this.orderService = orderService;
     }
 
@@ -107,5 +110,10 @@ public class ShipmentService {
             }
             this.shipmentRepository.save(shipment);
         }
+    }
+
+    public void deliverShipments() {
+        List<Trip> trips = this.tripRepository.findAll();
+
     }
 }

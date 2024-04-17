@@ -9,19 +9,24 @@ import wms.rest.wms.repository.OrderQuantitiesRepository;
 
 import java.util.List;
 
+/**
+ * Service class for OrderQuantity API controller
+ */
 @Service
 public class OrderQuantitiesService {
 
-    @Autowired
     private OrderQuantitiesRepository orderQuantitiesRepository;
 
-    @Autowired
-    private OrderService orderService;
 
-    public OrderQuantitiesService(OrderQuantitiesRepository orderQuantitiesRepository, OrderService orderService){
+    public OrderQuantitiesService(OrderQuantitiesRepository orderQuantitiesRepository){
         this.orderQuantitiesRepository = orderQuantitiesRepository;
-        this.orderService = orderService;
     }
+
+    /**
+     * Returns a list of all OrderQuantities
+     *
+     * @return a list of all OrderQuantities
+     */
     public List<OrderQuantities> getOrderQuantities(){
         return this.orderQuantitiesRepository.findAll();
     }
