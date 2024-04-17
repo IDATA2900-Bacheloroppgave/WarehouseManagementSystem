@@ -85,7 +85,7 @@ public class OrderService {
      *
      * @param order JSON data payload of order.
      * @param customer Authenticated customer.
-     * @return saves the order with the orderrepository.
+     * @return saves the order with the orderRepository.
      */
     @Transactional
     public Order createOrder(Order order, Customer customer) throws NotEnoughStockException {
@@ -135,10 +135,10 @@ public class OrderService {
      * grouped by Store
      *
      * @return a Map of Store and Order. All Orders associated to each Store
-     *          Output:
-     *          [Store 1] -> [Order 1, Order 2]
-     *          [Store 2] -> [Order 3, Order 4, Order 5]
-     *          [Store n] -> [Order n, Order n]
+     * Output example:
+     * [Store 1] -> [Order 1, Order 2]
+     * [Store 2] -> [Order 3, Order 4, Order 5]
+     * [Store n] -> [Order n, Order n]
      */
     public Map<Store, List<Order>> groupByStore() {
         List<Order> registeredOrders = this.getRegisteredOrders();
@@ -151,8 +151,8 @@ public class OrderService {
      * Fetch all registered orders from getRegisteredOrders and sorts them into a Map of key-value pairs
      * grouped by both Store and wishedDeliveryDate.
      *
-     * @return a Map where each key is a Pair of Store and LocalDate, and each value is a list of Orders.
-     * Output Example:
+     * @return a Map where each key is a Pair of Store and wishedDeliveryDate, and each value is a list of Orders
+     * Output example:
      * [Store 1, 2024-04-15] -> [Order 1, Order 2]
      * [Store 1, 2024-04-16] -> [Order 3, Order 4]
      * [Store 2, 2024-04-16] -> [Order 5, Order 6, Order 7]
@@ -181,13 +181,14 @@ public class OrderService {
 
     /**
      * Updates an Order from orderStatus PICKING to PICKED
+     * Also set progressInPercent to 20
      *
      * @param order the order to update the orderStatus
      */
     @Transactional
     public void updateFromPickingToPicked(Order order) {
         order.setProgressInPercent(20);
-        order.setOrderStatus(OrderStatus.PICKING);
+        order.setOrderStatus(OrderStatus.PICKED);
         this.orderRepository.save(order);
     }
 }

@@ -2,6 +2,8 @@ package wms.rest.wms.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import wms.rest.wms.model.TripStatus;
 import wms.rest.wms.repository.ShipmentRepository;
 import wms.rest.wms.repository.TripRepository;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -46,36 +49,57 @@ public class TripService {
     }
 
     @Transactional
-    //@Scheduled(initialDelay = 300000, fixedRate = 600000)
-    public void createTripWithScheduler() {
+    @Scheduled(initialDelay = 120000, fixedDelay = 300000)
+    public void createTripsByWishedDeliveryDate() {
+        Logger log = LoggerFactory.getLogger(this.getClass());
         List<Shipment> shipments = this.shipmentRepository.findAll();
-        if (!shipments.isEmpty()) {
-            for (Shipment shipment : shipments) {
-                if (shipment.getTrip() == null) {
-                    Trip trip = new Trip();
-                    System.out.println("Trip with ID: " + trip.getTripId() + " was created.");
-                    Map.Entry<String, Integer> randomDriver = getRandomDriver();
-                    //shipment.setShipmentDeliveryDate(); //TODO: FIX
-                    trip.setTripDriver(randomDriver.getKey());
-                    trip.setTripDriverPhone(randomDriver.getValue());
-                    trip.setTripStartDate(new Date(System.currentTimeMillis())); //TODO: USE LOCALDATE- NOT DATE
-                    trip.setTripStartLocation(shipment.getShipmentLoadLocation());
-                    trip.setTripCurrentLocation(shipment.getShipmentUnloadLocation());
-                    trip.setTripStatus(TripStatus.NOT_STARTED);
-
-                    boolean isPicked = shipment.getOrders().stream().allMatch(order ->
-                            order.getOrderStatus() == OrderStatus.PICKED);
-
-                    if(isPicked){
-                        shipment.setTrip(trip);
-                        tripRepository.save(trip);
-                    } else {
-                        System.out.println("Orders inside shipment has not yet been picked.");
-                    }
-                }
+        Map<LocalDate, List<Shipment>> shipmentsByDeliveryDate = new HashMap<>();
+        // Group shipments by wished delivery date if they are ready to be picked.
+        for (Shipment shipment : shipments) {
+            if (shipment.getTrip() == null && shipment.getOrders().stream()
+                    .allMatch(order -> order.getOrderStatus() == OrderStatus.PICKED)) {
+                LocalDate deliveryDate = shipment.getShipmentDeliveryDate();
+                shipmentsByDeliveryDate.computeIfAbsent(deliveryDate, k -> new ArrayList<>()).add(shipment);
             }
-        } else {
-            System.out.println("No shipments to add to trip.");
+        }
+        // Create a trip for each delivery date with the corresponding shipments
+        for (Map.Entry<LocalDate, List<Shipment>> entry : shipmentsByDeliveryDate.entrySet()) {
+            LocalDate deliveryDate = entry.getKey();
+            List<Shipment> shipmentsForDate = entry.getValue();
+            if (!shipmentsForDate.isEmpty()) {
+                int i = 0;
+                Trip trip = new Trip();
+                trip.setTripStartDate(LocalDate.now());
+                trip.setTripStatus(TripStatus.LOADING);
+                trip.setTripDriver(getRandomDriver().getKey());
+                trip.setTripDriverPhone(getRandomDriver().getValue());
+                trip.setTripStartLocation(shipmentsForDate.get(0).getShipmentLoadLocation());
+                // Set other details for the trip as necessary
+                for (Shipment shipment : shipmentsForDate) {
+                    trip.getShipments().add(shipment);
+                    shipment.setSequenceAtTrip(i);
+                    shipment.setTrip(trip); // Ensure the bidirectional relationship is set
+                    log.info("Shipment with ID: {} added to Trip for delivery date {}.", shipment.getShipmentId(), deliveryDate);
+                    i++;
+                }
+                tripRepository.save(trip); // Save the trip with all its shipments
+                log.info("Trip created with ID: {} for delivery date {} with {} shipments.", trip.getTripId(), deliveryDate, shipmentsForDate.size());
+            }
+        }
+        if (shipmentsByDeliveryDate.isEmpty()) {
+            log.info("No shipments were ready to be added to a trip based on the wished delivery date.");
+        }
+    }
+
+    /**
+     * Updates the TripStatus on a Trip from LOADING to DEPARTED
+     */
+    public void updateTripStatusFromLoadingToDeparted() {
+        List<Trip> trips = this.tripRepository.findAll();
+        for (Trip trip : trips) {
+            if (trip.getTripStatus() == TripStatus.LOADING) {
+                trip.setTripStatus(TripStatus.DEPARTED);
+            }
         }
     }
 

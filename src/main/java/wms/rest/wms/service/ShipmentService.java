@@ -10,6 +10,7 @@ import wms.rest.wms.repository.*;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ShipmentService {
@@ -57,8 +58,8 @@ public class ShipmentService {
                     Shipment shipment = new Shipment();
                     shipment.setShipmentLoadLocation("Trondheim");
                     shipment.setShipmentUnloadLocation(store.getName()); // Set the unload location to the store's city
+                    shipment.setShipmentDeliveryDate(deliveryDate); //TODO: MAYBE RIGHT?
                     shipment = shipmentRepository.save(shipment); // Generate ID for logger
-
                     log.info("Shipment created for store {} for delivery date {}. Shipment ID: {}", store.getName(), deliveryDate, shipment.getShipmentId());
 
                     // Associate orders with the new shipment
@@ -88,21 +89,19 @@ public class ShipmentService {
     }
 
     /**
-     * Retrieve all shipments and sort them by end location (store)
+     * Update all orders inside a Shipment from orderStatus PICKING to PICKED
      */
-    public void findAndSortAllShipments() {
-        List<Shipment> shipments = this.shipmentRepository.findAll();
-
-    }
-
-
     @Transactional
-    //@Scheduled(initialDelay = 90000, fixedRate = 360000)
+    @Scheduled(initialDelay = 110000, fixedRate = 360000)
     public void updateShipmentOrdersToPicked() {
         List<Shipment> shipments = this.shipmentRepository.findAll();
         for (Shipment shipment : shipments) {
-            shipment.getOrders().stream().filter(order -> order.getOrderStatus() == OrderStatus.PICKING).forEach(order ->
-                    order.setOrderStatus(OrderStatus.PICKED));
+            List<Order> ordersToUpdate = shipment.getOrders().stream()
+                    .filter(order -> order.getOrderStatus() == OrderStatus.PICKING)
+                    .toList();
+            for (Order order : ordersToUpdate) {
+                this.orderService.updateFromPickingToPicked(order);
+            }
             this.shipmentRepository.save(shipment);
         }
     }

@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -52,13 +53,11 @@ public class Trip {
     @Column(name = "next_location")
     private String tripNextLocation;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "start_date")
-    private Date tripStartDate;
+    private LocalDate tripStartDate;
 
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "end_date", nullable = true)
-    private Date tripEndDate;
+    private LocalDate tripEndDate;
 
     @NotBlank(message = "Trip driver is mandatory")
     @Column(name = "driver")
