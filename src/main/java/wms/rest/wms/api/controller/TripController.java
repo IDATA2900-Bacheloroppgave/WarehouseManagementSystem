@@ -30,10 +30,10 @@ public class TripController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "204", description = "No content"),})
     @GetMapping
-    public ResponseEntity<List<Trip>> getTrips(){
+    public ResponseEntity<List<Trip>> getTrips() {
         ResponseEntity response;
         List<Trip> trips = this.tripService.getAll();
-        if(!trips.isEmpty()){
+        if (!trips.isEmpty()) {
             response = new ResponseEntity(trips, HttpStatus.OK);
         } else {
             response = new ResponseEntity("There is no trips available", HttpStatus.NO_CONTENT);
@@ -45,10 +45,10 @@ public class TripController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "404", description = "Not found"),})
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Trip>> getTripById(@PathVariable("id") int id){
+    public ResponseEntity<Optional<Trip>> getTripById(@PathVariable("id") int id) {
         Optional<Trip> trip = this.tripService.findTripById(id);
         ResponseEntity response;
-        if(trip.isPresent()){
+        if (trip.isPresent()) {
             response = new ResponseEntity(trip, HttpStatus.OK);
         } else {
             response = new ResponseEntity(trip, HttpStatus.NOT_FOUND);
@@ -60,13 +60,25 @@ public class TripController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "404", description = "Not found"),})
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteTripById(@PathVariable("id") int tripId){
+    public ResponseEntity<?> deleteTripById(@PathVariable("id") int tripId) {
         ResponseEntity response;
         if (this.tripService.existsById(tripId)) {
-                this.tripService.deleteById(tripId);
-                response = new ResponseEntity(tripId, HttpStatus.OK);
+            this.tripService.deleteById(tripId);
+            response = new ResponseEntity(tripId, HttpStatus.OK);
         } else {
             response = new ResponseEntity(tripId, HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
+    @PostMapping("{id}")
+    public ResponseEntity<?> startTripById(@PathVariable("id") int tripId) {
+        ResponseEntity response;
+        if(this.tripService.existsById(tripId)) {
+            this.tripService.startTripById(tripId);
+            response = new ResponseEntity(tripId, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity("Trip with ID: " + tripId + " was not found", HttpStatus.BAD_REQUEST);
         }
         return response;
     }

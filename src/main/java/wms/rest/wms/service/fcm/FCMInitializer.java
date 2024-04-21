@@ -33,5 +33,4 @@ public class FCMInitializer {
             log.error(e.getMessage());
         }
     }
-
 }
