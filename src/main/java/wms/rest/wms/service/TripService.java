@@ -153,14 +153,16 @@ public class TripService {
      * Updates the TripStatus on a Trip from LOADING to DEPARTED
      * //TODO: SEND PUSH NOTIFICATION
      */
+    @Transactional
     @Scheduled(initialDelay = 130000, fixedRate = 300000 )
     public void updateTripStatusFromLoadingToDeparted() {
-        List<Trip> trips = this.tripRepository.findAll();
-        for (Trip trip : trips) {
-            if (trip.getTripStatus() == TripStatus.LOADING) {
-                trip.setTripStatus(TripStatus.DEPARTED);
-            }
+        List<Trip> trips = this.tripRepository.findAll().stream().filter(trip ->
+                trip.getTripStatus() == TripStatus.LOADING).toList();
+        for(Trip trip : trips) {
+            trip.setTripStatus(TripStatus.DEPARTED);
+            this.tripRepository.save(trip);
         }
+        log.info("Updated {} trips from LOADING to DEPARTED", trips.size());
     }
 
     /**
@@ -168,18 +170,21 @@ public class TripService {
      * and update the progressInPercent
      * //TODO: SEND PUSH NOTIFICATION
      */
+    @Transactional
     @Scheduled(initialDelay = 150000, fixedRate = 300000 )
     public void updateTripStatusFromDepartedToInTransit() {
-        List<Trip> trips = this.tripRepository.findAll();
+        List<Trip> trips = this.tripRepository.findAll().stream().filter(trip ->
+                trip.getTripStatus() == TripStatus.DEPARTED).toList();
         for(Trip trip : trips) {
-            if(trip.getTripStatus() == TripStatus.DEPARTED) {
-                trip.setTripStatus(TripStatus.IN_TRANSIT);
-            } for(Shipment shipment : trip.getShipments()) {
+            trip.setTripStatus(TripStatus.IN_TRANSIT);
+            for(Shipment shipment : trip.getShipments()) {
                 for(Order order : shipment.getOrders()) {
                     order.setProgressInPercent(40);
                 }
             }
+            this.tripRepository.save(trip);
         }
+        log.info("Updated {} trips from DEPARTED to IN TRANSIT", trips.size());
     }
 
     /**

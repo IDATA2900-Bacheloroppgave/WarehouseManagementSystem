@@ -21,7 +21,6 @@ import lombok.Setter;
 @Table(name = "customer")
 public class Customer {
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id", nullable = false)

@@ -111,9 +111,4 @@ public class ShipmentService {
             this.shipmentRepository.save(shipment);
         }
     }
-
-    public void deliverShipments() {
-        List<Trip> trips = this.tripRepository.findAll();
-
-    }
 }

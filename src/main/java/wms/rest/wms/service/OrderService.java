@@ -2,6 +2,8 @@ package wms.rest.wms.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.NotEnoughStockException;
 import wms.rest.wms.model.*;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class OrderService {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     private OrderRepository orderRepository;
 
@@ -59,6 +63,7 @@ public class OrderService {
      * @param order the order to check if has orderStatus as REGISTERED
      * @return returns true if orderStatus is REGISTERED, false otherwise
      */
+    @Transactional
     public boolean cancelOrder(Order order){
         if(order.getOrderStatus() == OrderStatus.REGISTERED){
             order.setOrderStatus(OrderStatus.CANCELLED);
@@ -73,6 +78,7 @@ public class OrderService {
      * @param orderId the ID of the Order to cancel
      * @return returns true if Order is cancelled, false otherwise
      */
+    @Transactional
     public boolean cancelOrderById(int orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isPresent()) {
@@ -165,6 +171,7 @@ public class OrderService {
     public void updateFromRegisteredToPicking(Order order) {
         order.setProgressInPercent(10);
         order.setOrderStatus(OrderStatus.PICKING); //TODO: SEND PUSH NOTIFICATION
+        log.info("Updated Order with ID: {} from REGISTERED to PICKING", order.getOrderId());
         this.orderRepository.save(order);
     }
 
@@ -178,6 +185,7 @@ public class OrderService {
     public void updateFromPickingToPicked(Order order) {
         order.setProgressInPercent(20);
         order.setOrderStatus(OrderStatus.PICKED); //TODO: SEND PUSH NOTIFICATION
+        log.info("Updated Order with ID: {} from PICKING to PICKED", order.getOrderId());
         this.orderRepository.save(order);
     }
 }

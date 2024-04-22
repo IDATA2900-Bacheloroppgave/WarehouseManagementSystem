@@ -35,7 +35,6 @@ public class Order {
     @Column(name = "order_id", nullable = false)
     private int orderId;
 
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     @Column(name = "date")
     private LocalDate orderDate;
 
@@ -54,6 +53,7 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id")
     private Store store;
