@@ -138,19 +138,28 @@ public class OrderService {
      * @return the current location of the Order
      */
     public String getCurrentLocation(int orderId) {
-        String currentLocation = null;
-        Optional<Order> orderOptional = this.orderRepository.findById(orderId);
-        if (orderOptional.isPresent()) {
-            Order order = orderOptional.get();
-            if (order.getShipment() != null && order.getShipment().getTrip() != null) {
-                currentLocation = order.getShipment().getTrip().getTripCurrentLocation(); //TODO: SE PÅ DENNE
-                if(order.getOrderStatus() == OrderStatus.DELIVERED) {
-                    currentLocation = order.getShipment().getTrip().getTripCurrentLocation();//TODO: Må også sette currentLocation i startTrip
-                }
-            }
+        Optional<Order> orderOptional = orderRepository.findById(orderId);
+
+        if (!orderOptional.isPresent()) {
+            return "Order not found";
         }
-        return currentLocation;
+
+        Order order = orderOptional.get();
+        Shipment shipment = order.getShipment();
+
+        if (shipment == null || shipment.getTrip() == null) {
+            return "Location information not available";
+        }
+
+
+        if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+            return shipment.getShipmentUnloadLocation();
+        }
+
+        // Return the current location of the trip, which could be dynamic.
+        return shipment.getTrip().getTripCurrentLocation();
     }
+
 
 
     /**

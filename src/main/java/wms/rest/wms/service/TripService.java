@@ -119,39 +119,41 @@ public class TripService {
         }
     }
 
-    /**
-     * Starts all Trips and marks Orders as DELIVERED
-     */
     @Transactional
-    //@Scheduled(initialDelay = 170000, fixedRate = 300000)
+    @Scheduled(initialDelay = 170000, fixedRate = 300000)
     public void startAllTrips() {
-        List<Trip> trips = tripRepository.findAll();
+        List<Trip> trips = tripRepository.findAll(); // Fetch all trips
 
         for (Trip trip : trips) {
-            List<Shipment> sortedShipments = trip.getShipments().stream()
-                    .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
-                    .toList();
-
-
-            for (Shipment shipment : sortedShipments) {
-                int i = 0;
-                trip.setTripCurrentLocation(sortedShipments.get(i).getShipmentUnloadLocation());
-                //trip.setTripNextLocation(sortedShipments.get(i+1).getShipmentUnloadLocation()); // BLIR NULL PÅ SLUTTEN
-                for (Order order : shipment.getOrders()) {
-                    order.setOrderStatus(OrderStatus.DELIVERED); //TODO: Consider asynchronous notification sending
-                    order.setProgressInPercent(100);
-                    orderRepository.save(order);
-                    i++;
-                    log.info("Order ID: {} from Shipment ID: {} marked as DELIVERED", order.getOrderId(), shipment.getShipmentId());
-                }
-                shipmentRepository.save(shipment);
-                log.info("Shipment ID: {} has been delivered.", shipment.getShipmentId());
-            }
-
-            trip.setTripStatus(TripStatus.FINISHED);
-            tripRepository.save(trip);
-            log.info("Trip ID: {} has been completed.", trip.getTripId());
+            processTrip(trip);
         }
+    }
+
+    private void processTrip(Trip trip) {
+        // Creating a sorted list of shipments based on sequenceAtTrip
+        List<Shipment> sortedShipments = trip.getShipments().stream()
+                .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
+                .toList();
+
+        for (Shipment shipment : sortedShipments) {
+            updateShipmentAndOrders(shipment);
+        }
+
+        trip.setTripStatus(TripStatus.FINISHED);
+        tripRepository.save(trip); // Save the trip with updated status
+        log.info("Trip ID: {} has been completed.", trip.getTripId());
+    }
+
+    private void updateShipmentAndOrders(Shipment shipment) {
+        List<Order> orders = new ArrayList<>(shipment.getOrders()); //
+        for (Order order : orders) {
+            order.setOrderStatus(OrderStatus.DELIVERED);
+            order.setProgressInPercent(100);
+            orderRepository.save(order);
+            log.info("Order ID: {} from Shipment ID: {} marked as DELIVERED", order.getOrderId(), shipment.getShipmentId());
+        }
+        shipmentRepository.save(shipment);
+        log.info("Shipment ID: {} has been delivered.", shipment.getShipmentId());
     }
 
     /**
