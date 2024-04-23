@@ -123,7 +123,7 @@ public class TripService {
      * Starts all Trips and marks Orders as DELIVERED
      */
     @Transactional
-    @Scheduled(initialDelay = 170000, fixedRate = 300000)
+    //@Scheduled(initialDelay = 170000, fixedRate = 300000)
     public void startAllTrips() {
         List<Trip> trips = tripRepository.findAll();
 
