@@ -48,7 +48,7 @@ public class Trip {
     private String tripEndLocation;
 
     @Column(name = "current_location")
-    private String tripCurrentLocation; //ved = startLocation -> currentLocation -> shipment
+    private String tripCurrentLocation;
 
     @Column(name = "next_location")
     private String tripNextLocation;
@@ -56,7 +56,7 @@ public class Trip {
     @Column(name = "start_date")
     private LocalDate tripStartDate;
 
-    @Column(name = "end_date", nullable = true)
+    @Column(name = "end_date")
     private LocalDate tripEndDate;
 
     @NotBlank(message = "Trip driver is mandatory")

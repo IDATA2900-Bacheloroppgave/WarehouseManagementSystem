@@ -101,6 +101,7 @@ public class TripService {
                 trip.setTripDriver(getRandomDriver().getKey());
                 trip.setTripDriverPhone(getRandomDriver().getValue());
                 trip.setTripStartLocation(shipmentsForDate.get(0).getShipmentLoadLocation());
+                trip.setTripCurrentLocation(trip.getTripStartLocation());
                 // Set other details for the trip as necessary
                 for (Shipment shipment : shipmentsForDate) {
                     trip.getShipments().add(shipment);
@@ -118,34 +119,38 @@ public class TripService {
         }
     }
 
+    /**
+     * Starts all Trips and marks Orders as DELIVERED
+     */
     @Transactional
-    public void startTripById(int tripId) {
-        Logger log = LoggerFactory.getLogger(this.getClass());
-        Optional<Trip> tripOptional = tripRepository.findById(tripId);
+    @Scheduled(initialDelay = 170000, fixedRate = 300000)
+    public void startAllTrips() {
+        List<Trip> trips = tripRepository.findAll();
 
-        if (tripOptional.isPresent()) {
-            Trip trip = tripOptional.get();
-            // Sort shipments by sequenceAtTrip
+        for (Trip trip : trips) {
             List<Shipment> sortedShipments = trip.getShipments().stream()
                     .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
                     .toList();
 
+
             for (Shipment shipment : sortedShipments) {
+                int i = 0;
+                trip.setTripCurrentLocation(sortedShipments.get(i).getShipmentUnloadLocation());
+                //trip.setTripNextLocation(sortedShipments.get(i+1).getShipmentUnloadLocation()); // BLIR NULL PÅ SLUTTEN
                 for (Order order : shipment.getOrders()) {
-                    order.setOrderStatus(OrderStatus.DELIVERED); //TODO: SEND PUSH NOTIFICATION
+                    order.setOrderStatus(OrderStatus.DELIVERED); //TODO: Consider asynchronous notification sending
+                    order.setProgressInPercent(100);
                     orderRepository.save(order);
+                    i++;
                     log.info("Order ID: {} from Shipment ID: {} marked as DELIVERED", order.getOrderId(), shipment.getShipmentId());
                 }
                 shipmentRepository.save(shipment);
                 log.info("Shipment ID: {} has been delivered.", shipment.getShipmentId());
             }
 
-            // Optionally, update the trip status to COMPLETE if all shipments are delivered
             trip.setTripStatus(TripStatus.FINISHED);
             tripRepository.save(trip);
             log.info("Trip ID: {} has been completed.", trip.getTripId());
-        } else {
-            log.warn("Trip ID: {} not found.", tripId);
         }
     }
 
@@ -167,7 +172,7 @@ public class TripService {
 
     /**
      * Updates the TripStatus on a Trip from DEPARTED to IN_TRANSIT
-     * and update the progressInPercent
+     * and update the progressInPercent to 50
      * //TODO: SEND PUSH NOTIFICATION
      */
     @Transactional
@@ -179,7 +184,7 @@ public class TripService {
             trip.setTripStatus(TripStatus.IN_TRANSIT);
             for(Shipment shipment : trip.getShipments()) {
                 for(Order order : shipment.getOrders()) {
-                    order.setProgressInPercent(40);
+                    order.setProgressInPercent(50);
                 }
             }
             this.tripRepository.save(trip);

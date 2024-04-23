@@ -34,6 +34,7 @@ public class OrderController {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Order.class))),})
     @GetMapping
     public List<Order> getOrders(@AuthenticationPrincipal Customer user){
+        System.out.println("Orders returned");
         return this.orderService.getOrders(user);
     }
 
@@ -72,6 +73,18 @@ public class OrderController {
             response = new ResponseEntity("Order with orderId: " + orderId + " was cancelled", HttpStatus.OK);
         } else {
             response = new ResponseEntity("Order was not cancelled", HttpStatus.BAD_REQUEST);
+        }
+        return response;
+    }
+
+    @GetMapping("/currentlocation/{id}")
+    public ResponseEntity<?> getCurrentLocation(@PathVariable("id") int orderId) {
+        ResponseEntity response;
+        String currentLocation = this.orderService.getCurrentLocation(orderId);
+        if(currentLocation != null) {
+            response = new ResponseEntity(currentLocation, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity("Could not find Order with ID: " + orderId, HttpStatus.NOT_FOUND);
         }
         return response;
     }

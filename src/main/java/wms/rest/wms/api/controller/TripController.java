@@ -70,16 +70,4 @@ public class TripController {
         }
         return response;
     }
-
-    @PostMapping("{id}")
-    public ResponseEntity<?> startTripById(@PathVariable("id") int tripId) {
-        ResponseEntity response;
-        if(this.tripService.existsById(tripId)) {
-            this.tripService.startTripById(tripId);
-            response = new ResponseEntity(tripId, HttpStatus.OK);
-        } else {
-            response = new ResponseEntity("Trip with ID: " + tripId + " was not found", HttpStatus.BAD_REQUEST);
-        }
-        return response;
-    }
 }

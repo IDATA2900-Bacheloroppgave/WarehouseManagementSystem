@@ -132,6 +132,28 @@ public class OrderService {
     }
 
     /**
+     * Return the current location of an Order
+     *
+     * @param orderId the order id of the Order to get current location
+     * @return the current location of the Order
+     */
+    public String getCurrentLocation(int orderId) {
+        String currentLocation = null;
+        Optional<Order> orderOptional = this.orderRepository.findById(orderId);
+        if (orderOptional.isPresent()) {
+            Order order = orderOptional.get();
+            if (order.getShipment() != null && order.getShipment().getTrip() != null) {
+                currentLocation = order.getShipment().getTrip().getTripCurrentLocation(); //TODO: SE PÅ DENNE
+                if(order.getOrderStatus() == OrderStatus.DELIVERED) {
+                    currentLocation = order.getShipment().getTrip().getTripCurrentLocation();//TODO: Må også sette currentLocation i startTrip
+                }
+            }
+        }
+        return currentLocation;
+    }
+
+
+    /**
      * Fetch all orders that has the OrderStatus as REGISTERED
      *
      * @return a List of Order with orderStatus REGISTERED

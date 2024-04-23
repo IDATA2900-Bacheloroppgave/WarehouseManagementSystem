@@ -3,9 +3,16 @@ package wms.rest.wms.api.model;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
+
 public class LoginResponse {
 
     private String jwt;
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
 }
