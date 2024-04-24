@@ -131,6 +131,7 @@ public class OrderService {
         return this.orderRepository.save(order);
     }
 
+    //TODO: FIX PROPER GET CURRENT LOCATION
     /**
      * Return the current location of an Order
      *
@@ -143,18 +144,15 @@ public class OrderService {
         if (!orderOptional.isPresent()) {
             return "Order not found";
         }
-
         Order order = orderOptional.get();
         Shipment shipment = order.getShipment();
-
         if (shipment == null || shipment.getTrip() == null) {
             return "Location information not available";
         }
-
         if (order.getOrderStatus() == OrderStatus.DELIVERED) {
             return shipment.getShipmentUnloadLocation();
+            //return shipment.getTrip().getTripCurrentLocation(); //TODO: Kanskje denne istede?
         }
-
         return shipment.getTrip().getTripCurrentLocation();
     }
 

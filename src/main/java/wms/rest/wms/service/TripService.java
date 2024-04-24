@@ -202,23 +202,37 @@ public class TripService {
                 .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
                 .toList();
 
-        for (Shipment shipment : sortedShipments) {
+        for (int i = 0; i < sortedShipments.size(); i++) {
+            Shipment shipment = sortedShipments.get(i);
             if (!isDelivered(shipment)) {
                 deliverShipment(shipment);
                 log.info("Shipment with sequence {} has been delivered for trip ID: {}", shipment.getSequenceAtTrip(), tripId);
 
-                // Check if this is the last shipment in the sequence
-                if (shipment.getSequenceAtTrip() == sortedShipments.get(sortedShipments.size() - 1).getSequenceAtTrip()) {
+                // Set current location to the last delivered shipment's customer store name
+                String currentLocation = shipment.getOrders().iterator().next().getCustomer().getStore().getCity();
+                trip.setTripCurrentLocation(currentLocation);
+
+                // Set next location if there is a next shipment
+                if (i < sortedShipments.size() - 1) {
+                    Shipment nextShipment = sortedShipments.get(i + 1);
+                    String nextLocation = nextShipment.getOrders().iterator().next().getCustomer().getStore().getCity();
+                    trip.setTripNextLocation(nextLocation);
+                } else {
+                    trip.setTripNextLocation("Trip finished");
                     trip.setTripStatus(TripStatus.FINISHED);
                     tripRepository.save(trip);
                     log.info("Trip ID: {} has been marked as FINISHED.", tripId);
                     return "Shipment with sequence " + shipment.getSequenceAtTrip() + " has been delivered, and the trip is now FINISHED.";
                 }
+
+                tripRepository.save(trip);
                 return "Shipment with sequence " + shipment.getSequenceAtTrip() + " has been delivered.";
             }
         }
+
         return "All shipments were already delivered.";
     }
+
 
     /**
      * Delivers a Shipment by setting the OrderStatus to DELIVERED
