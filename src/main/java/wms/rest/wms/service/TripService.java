@@ -119,43 +119,6 @@ public class TripService {
         }
     }
 
-    @Transactional
-    @Scheduled(initialDelay = 170000, fixedRate = 300000)
-    public void startAllTrips() {
-        List<Trip> trips = tripRepository.findAll(); // Fetch all trips
-
-        for (Trip trip : trips) {
-            processTrip(trip);
-        }
-    }
-
-    private void processTrip(Trip trip) {
-        // Creating a sorted list of shipments based on sequenceAtTrip
-        List<Shipment> sortedShipments = trip.getShipments().stream()
-                .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
-                .toList();
-
-        for (Shipment shipment : sortedShipments) {
-            updateShipmentAndOrders(shipment);
-        }
-
-        trip.setTripStatus(TripStatus.FINISHED);
-        tripRepository.save(trip); // Save the trip with updated status
-        log.info("Trip ID: {} has been completed.", trip.getTripId());
-    }
-
-    private void updateShipmentAndOrders(Shipment shipment) {
-        List<Order> orders = new ArrayList<>(shipment.getOrders()); //
-        for (Order order : orders) {
-            order.setOrderStatus(OrderStatus.DELIVERED);
-            order.setProgressInPercent(100);
-            orderRepository.save(order);
-            log.info("Order ID: {} from Shipment ID: {} marked as DELIVERED", order.getOrderId(), shipment.getShipmentId());
-        }
-        shipmentRepository.save(shipment);
-        log.info("Shipment ID: {} has been delivered.", shipment.getShipmentId());
-    }
-
     /**
      * Updates the TripStatus on a Trip from LOADING to DEPARTED
      * //TODO: SEND PUSH NOTIFICATION
@@ -217,5 +180,67 @@ public class TripService {
         driverInformation.put("Hans Pettersen", 49285943);
         driverInformation.put("Lus Hoston", 94682497);
         return driverInformation;
+    }
+
+    /**
+     * Deliver a Shipment based of TripId. Method is mainly used for utility purposes
+     * to specifically target each shipment and deliver them instead of using a loop
+     *
+     * @param tripId the TripId of the Trip to deliver the Shipments
+     * @return a String off the information of the Shipment
+     */
+    @Transactional
+    public String deliverNextShipment(int tripId) {
+        Trip trip = tripRepository.findById(tripId).orElse(null);
+        if (trip == null) {
+            throw new IllegalArgumentException("Trip not found");
+        }
+
+        Set<Shipment> shipmentSet = trip.getShipments();
+        // Convert the Set to a List and sort it
+        List<Shipment> sortedShipments = shipmentSet.stream()
+                .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
+                .toList();
+
+        for (Shipment shipment : sortedShipments) {
+            if (!isDelivered(shipment)) {
+                deliverShipment(shipment);
+                log.info("Shipment with sequence {} has been delivered for trip ID: {}", shipment.getSequenceAtTrip(), tripId);
+
+                // Check if this is the last shipment in the sequence
+                if (shipment.getSequenceAtTrip() == sortedShipments.get(sortedShipments.size() - 1).getSequenceAtTrip()) {
+                    trip.setTripStatus(TripStatus.FINISHED);
+                    tripRepository.save(trip);
+                    log.info("Trip ID: {} has been marked as FINISHED.", tripId);
+                    return "Shipment with sequence " + shipment.getSequenceAtTrip() + " has been delivered, and the trip is now FINISHED.";
+                }
+                return "Shipment with sequence " + shipment.getSequenceAtTrip() + " has been delivered.";
+            }
+        }
+        return "All shipments were already delivered.";
+    }
+
+    /**
+     * Delivers a Shipment by setting the OrderStatus to DELIVERED
+     *
+     * @param shipment the shipment to deliver its Orders
+     */
+    private void deliverShipment(Shipment shipment) {
+        for (Order order : shipment.getOrders()) {
+            order.setOrderStatus(OrderStatus.DELIVERED);
+            orderRepository.save(order);
+        }
+        log.debug("Orders updated to DELIVERED status for shipment ID: {}", shipment.getShipmentId());
+    }
+
+    /**
+     * Check if an Order inside a Shipment has already been delivered by checking
+     * for OrderStatus == DELIVERED
+     *
+     * @param shipment the Shipment to check if has DELIVERED orders
+     * @return true if the Order is DELIVERED, false otherwise
+     */
+    private boolean isDelivered(Shipment shipment) {
+        return shipment.getOrders().stream().allMatch(order -> order.getOrderStatus() == OrderStatus.DELIVERED);
     }
 }

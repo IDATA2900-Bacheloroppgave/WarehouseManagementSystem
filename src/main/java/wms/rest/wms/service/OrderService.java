@@ -151,16 +151,12 @@ public class OrderService {
             return "Location information not available";
         }
 
-
         if (order.getOrderStatus() == OrderStatus.DELIVERED) {
             return shipment.getShipmentUnloadLocation();
         }
 
-        // Return the current location of the trip, which could be dynamic.
         return shipment.getTrip().getTripCurrentLocation();
     }
-
-
 
     /**
      * Fetch all orders that has the OrderStatus as REGISTERED

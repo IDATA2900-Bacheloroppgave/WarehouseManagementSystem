@@ -27,7 +27,7 @@ public class TripController {
     }
 
     @Operation(summary = "Get a list of all trips", description = "Returns a list of all trips", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Trip.class))),
             @ApiResponse(responseCode = "204", description = "No content"),})
     @GetMapping
     public ResponseEntity<List<Trip>> getTrips() {
@@ -42,7 +42,7 @@ public class TripController {
     }
 
     @Operation(summary = "Get a specific trip by id", description = "Returns a specific trip by id", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Trip.class))),
             @ApiResponse(responseCode = "404", description = "Not found"),})
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Trip>> getTripById(@PathVariable("id") int id) {
@@ -57,9 +57,9 @@ public class TripController {
     }
 
     @Operation(summary = "Delete a specific trip by id", description = "Deletes a specific trip by id", responses = {
-            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Trip.class))),
             @ApiResponse(responseCode = "404", description = "Not found"),})
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTripById(@PathVariable("id") int tripId) {
         ResponseEntity response;
         if (this.tripService.existsById(tripId)) {
@@ -67,6 +67,21 @@ public class TripController {
             response = new ResponseEntity(tripId, HttpStatus.OK);
         } else {
             response = new ResponseEntity(tripId, HttpStatus.NOT_FOUND);
+        }
+        return response;
+    }
+
+    @Operation(summary = "Deliver Shipments based of TripId", description = "Delivered Shipments sequentially based of TripId", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful delivery", content = @Content(schema = @Schema(implementation = Trip.class))),
+            @ApiResponse(responseCode = "404", description = "Not found"),})
+    @GetMapping("/{tripId}/delivershipments")
+    public ResponseEntity<String> deliverNextShipment(@PathVariable("tripId") int tripId) {
+        ResponseEntity response;
+        String delivered = this.tripService.deliverNextShipment(tripId);
+        if (!delivered.isEmpty()) {
+            response = new ResponseEntity(delivered, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity("Could not find Trip with ID " + tripId, HttpStatus.NOT_FOUND);
         }
         return response;
     }
