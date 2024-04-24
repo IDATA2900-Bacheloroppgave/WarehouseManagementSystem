@@ -226,12 +226,14 @@ public class TripService {
      * @param shipment the shipment to deliver its Orders
      */
     private void deliverShipment(Shipment shipment) {
-        for (Order order : shipment.getOrders()) {
+        List<Order> orders = new ArrayList<>(shipment.getOrders());  // Make a copy of orders
+        for (Order order : orders) {
             order.setOrderStatus(OrderStatus.DELIVERED);
-            orderRepository.save(order);
+            orderRepository.save(order);  // Persist changes
         }
         log.debug("Orders updated to DELIVERED status for shipment ID: {}", shipment.getShipmentId());
     }
+
 
     /**
      * Check if an Order inside a Shipment has already been delivered by checking

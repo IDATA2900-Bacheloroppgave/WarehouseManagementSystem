@@ -55,6 +55,6 @@ public class Shipment {
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
-    @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Order> orders = new LinkedHashSet<>();
 }
