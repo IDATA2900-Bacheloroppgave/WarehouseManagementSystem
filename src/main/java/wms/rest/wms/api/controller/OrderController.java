@@ -77,6 +77,9 @@ public class OrderController {
         return response;
     }
 
+    @Operation(summary = "Get the current location of an Order", description = "Get the current location of an Order by OrderId", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(schema = @Schema(implementation = Order.class))),})
     @GetMapping("/currentlocation/{id}")
     public ResponseEntity<?> getCurrentLocation(@PathVariable("id") int orderId) {
         ResponseEntity response;
@@ -87,6 +90,24 @@ public class OrderController {
             response = new ResponseEntity("Could not find Order with ID: " + orderId, HttpStatus.NOT_FOUND);
         }
         return response;
+    }
+
+    @Operation(summary = "Get the progress in percent of an Order", description = "Get the progress in percent of an Order by OrderId", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(schema = @Schema(implementation = Order.class))),})
+    @GetMapping("/progressinpercent/{id}")
+    public ResponseEntity<?> getProgressInPercent(@PathVariable("id") int orderId) {
+        ResponseEntity response;
+        try {
+            int progress = orderService.getProgressInPercent(orderId);
+            if (progress >= 0) {
+                return ResponseEntity.ok(progress);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("An error occurred while retrieving the order progress.");
+        }
     }
 
     @Operation(summary = "Create a order associated to authenticated customer", description = "Creates a new order associated to the authenticate customer" +

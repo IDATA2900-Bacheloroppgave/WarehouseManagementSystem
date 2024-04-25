@@ -74,7 +74,7 @@ public class TripController {
     @Operation(summary = "Deliver Shipments based of TripId", description = "Delivered Shipments sequentially based of TripId", responses = {
             @ApiResponse(responseCode = "200", description = "Successful delivery", content = @Content(schema = @Schema(implementation = Trip.class))),
             @ApiResponse(responseCode = "404", description = "Not found"),})
-    @GetMapping("/{tripId}/delivershipments")
+    @GetMapping("/delivershipments/{tripId}")
     public ResponseEntity<String> deliverNextShipment(@PathVariable("tripId") int tripId) {
         ResponseEntity response;
         String delivered = this.tripService.deliverNextShipment(tripId);

@@ -213,4 +213,13 @@ public class OrderService {
         log.info("Updated Order with ID: {} from PICKING to PICKED", order.getOrderId());
         this.orderRepository.save(order);
     }
+
+    public int getProgressInPercent(int orderId) {
+        return orderRepository.findById(orderId)
+                .map(Order::getProgressInPercent)
+                .orElseGet(() -> {
+                    log.warn("Order not found with ID: {}", orderId);
+                    return 0; // Return 0 if the order is not found
+                });
+    }
 }

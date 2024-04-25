@@ -242,8 +242,9 @@ public class TripService {
     private void deliverShipment(Shipment shipment) {
         List<Order> orders = new ArrayList<>(shipment.getOrders());  // Make a copy of orders
         for (Order order : orders) {
+            order.setProgressInPercent(100);
             order.setOrderStatus(OrderStatus.DELIVERED);
-            orderRepository.save(order);  // Persist changes
+            orderRepository.save(order);
         }
         log.debug("Orders updated to DELIVERED status for shipment ID: {}", shipment.getShipmentId());
     }
@@ -253,7 +254,7 @@ public class TripService {
      * Check if an Order inside a Shipment has already been delivered by checking
      * for OrderStatus == DELIVERED
      *
-     * @param shipment the Shipment to check if has DELIVERED orders
+     * @param shipment the Shipment to check if it has DELIVERED Orders
      * @return true if the Order is DELIVERED, false otherwise
      */
     private boolean isDelivered(Shipment shipment) {
