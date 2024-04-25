@@ -15,6 +15,9 @@ import lombok.Setter;
  * tracks the total stock, available stock and reserved stock.
  *
  * availableStock = totalStock - reservedStock
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

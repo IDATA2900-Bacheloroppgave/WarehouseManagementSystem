@@ -17,67 +17,78 @@ import java.util.stream.Collectors;
 
 /**
  * Service class for Trip API controller
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @Service
 @AllArgsConstructor
 public class TripService {
 
+    /** Logger for this class used to log messages and errors */
+    /** @see LoggerFactory#getLogger(Class) */
     private static final Logger log = LoggerFactory.getLogger(TripService.class);
 
+    /** Repository for handling Trip persistence operations */
     private TripRepository tripRepository;
 
+    /** Repository for handling Shipment persistence operations */
     private ShipmentRepository shipmentRepository;
 
+    /** Repository for handling Order persistence operations */
     private OrderRepository orderRepository;
 
     /**
-     * Returns a List of all Trips
+     * Return a List of all Trips.
      *
-     * @return a list of all Trips
+     * @return a List of all Trips.
      */
     public List<Trip> getAll() {
         return this.tripRepository.findAll();
     }
 
     /**
-     * Find a Trip by ID
+     * Return an Optional object of Trip by tripId.
      *
-     * @param id the ID of the Trip to find
-     * @return Optional object of the Trip, can be present or not
+     * @param id the tripId of the Trip to return.
+     * @return an Optional object of the Trip, can be present or not.
      */
     public Optional<Trip> findTripById(int id) {
-        return this.tripRepository.findByTripId(id);
+        return this.tripRepository.findById(id);
     }
 
     /**
-     * Check if a Trip exists by ID
+     * Check if a Trip exists by tripId.
      *
-     * @param tripId the ID of the Trip to check if exists
-     * @return true if the Trip exists, false otherwise
+     * @param tripId the tripId of the Trip to check if exists.
+     * @return true if the Trip exists, false otherwise.
      */
     public boolean existsById(int tripId) {
         return this.tripRepository.existsById(tripId);
     }
 
     /**
-     * Delete a Trip by ID
+     * Delete a Trip by tripId.
      *
-     * @param tripId the ID of the Trip to delete
+     * @param tripId the tripId of the Trip to delete.
      */
     public void deleteById(int tripId) {
         this.tripRepository.deleteById(tripId);
     }
 
     /**
-     * Creates a Trip and adds all Shipments with the same wishedDeliveryDate. All orders inside a Shipment has
-     * to have the OrderStatus as PICKED.
+     * Creates a Trip and adds all Shipments with the same wishedDeliveryDate to the trip.
+     * All orders inside a Shipment has to have the OrderStatus as PICKED.
+     * Retrieves a random Driver from 'getRandomDriver' and assigns it to the trip.
+     *
+     * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
      */
     @Transactional
     @Scheduled(initialDelay = 120000, fixedRate = 300000)
     public void createTrip() {
         List<Shipment> shipments = this.shipmentRepository.findAll();
         Map<LocalDate, List<Shipment>> shipmentsByDeliveryDate = new HashMap<>();
-        // Group shipments by wished delivery date if they are ready to be picked.
+        // Group shipments by wished delivery date if they are ready to be picked
         for (Shipment shipment : shipments) {
             if (shipment.getTrip() == null && shipment.getOrders().stream()
                     .allMatch(order -> order.getOrderStatus() == OrderStatus.PICKED)) {
@@ -102,11 +113,11 @@ public class TripService {
                 for (Shipment shipment : shipmentsForDate) {
                     trip.getShipments().add(shipment);
                     shipment.setSequenceAtTrip(i);
-                    shipment.setTrip(trip); // Ensure the bidirectional relationship is set
+                    shipment.setTrip(trip);
                     log.info("Shipment with ID: {} added to Trip for delivery date {}.", shipment.getShipmentId(), deliveryDate);
                     i++;
                 }
-                tripRepository.save(trip); // Save the trip with all its shipments
+                tripRepository.save(trip);
                 log.info("Trip created with ID: {} for delivery date {} with {} shipments.", trip.getTripId(), deliveryDate, shipmentsForDate.size());
             }
         }
@@ -116,8 +127,8 @@ public class TripService {
     }
 
     /**
-     * Updates the TripStatus on a Trip from LOADING to DEPARTED
-     * //TODO: SEND PUSH NOTIFICATION
+     * Updates an Trip from TripStatus LOADING to DEPARTED.
+     * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
      */
     @Transactional
     @Scheduled(initialDelay = 130000, fixedRate = 300000 )
@@ -132,9 +143,12 @@ public class TripService {
     }
 
     /**
-     * Updates the TripStatus on a Trip from DEPARTED to IN_TRANSIT
-     * and update the progressInPercent to 50
-     * //TODO: SEND PUSH NOTIFICATION
+     * Updates an Trip from TripStatus DEPARTED to IN_TRANSIT. Also setting the
+     * progressInPercent to 50.
+     *
+     * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
+     *
+     * TODO: SEND PUSH NOTIFICATION
      */
     @Transactional
     @Scheduled(initialDelay = 150000, fixedRate = 300000 )
@@ -154,9 +168,9 @@ public class TripService {
     }
 
     /**
-     * Find a random driver from getTripDriverInformation() and return it
+     * Return a random tripDriver from 'getTripDriverInformation'.
      *
-     * @return a random driver from HashMap in getTripDriverInformation()
+     * @return a random tripDriver from 'getTripDriverInformation'.
      */
     private Map.Entry<String, Integer> getRandomDriver() {
         HashMap<String, Integer> driverInformation = getTripDriverInformation();
@@ -166,11 +180,11 @@ public class TripService {
     }
 
     /**
-     * Create a HashMap with drivers and add them into key-value pairs
+     * Create a HashMap with driver name and driver phone.
      *
-     * @return a HashMap of drivers
+     * @return a HashMap of driver name and driver phone.
      */
-    public HashMap<String, Integer> getTripDriverInformation(){
+    private HashMap<String, Integer> getTripDriverInformation(){
         HashMap<String, Integer> driverInformation = new HashMap<>();
         driverInformation.put("Pietr Didrik", 48056693);
         driverInformation.put("Hans Pettersen", 49285943);
@@ -179,11 +193,11 @@ public class TripService {
     }
 
     /**
-     * Deliver a Shipment based of TripId. Method is mainly used for utility purposes
-     * to specifically target each shipment and deliver them instead of using a loop
+     * Deliver a Shipment based of tripId. Method is mainly used for utility purposes
+     * to specifically target each Shipment and deliver them instead of using a loop.
      *
-     * @param tripId the TripId of the Trip to deliver the Shipments
-     * @return a String off the information of the Shipment
+     * @param tripId the tripId of the Trip to deliver the Shipments.
+     * @return a String containing the information about the Shipment delivery.
      */
     @Transactional
     public String deliverNextShipment(int tripId) {
@@ -225,15 +239,14 @@ public class TripService {
                 return "Shipment with sequence " + shipment.getSequenceAtTrip() + " has been delivered.";
             }
         }
-
         return "All shipments were already delivered.";
     }
 
-
     /**
-     * Delivers a Shipment by setting the OrderStatus to DELIVERED
+     * Sets the OrderStatus of an Order inside a Shipment to DELIVERED. Also setting the
+     * progressInPercent to 100.
      *
-     * @param shipment the shipment to deliver its Orders
+     * @param shipment the Shipment to update the OrderStatus and progressInPercent.
      */
     private void deliverShipment(Shipment shipment) {
         List<Order> orders = new ArrayList<>(shipment.getOrders());  // Make a copy of orders
@@ -245,13 +258,12 @@ public class TripService {
         log.debug("Orders updated to DELIVERED status for shipment ID: {}", shipment.getShipmentId());
     }
 
-
     /**
-     * Check if an Order inside a Shipment has already been delivered by checking
-     * for OrderStatus == DELIVERED
+     * Check if an Order inside a Shipment has already been delivered by checking if the
+     * current OrderStatus of the Order is DELIVERED.
      *
-     * @param shipment the Shipment to check if it has DELIVERED Orders
-     * @return true if the Order is DELIVERED, false otherwise
+     * @param shipment the Shipment to check if it has delivered Orders.
+     * @return true if the Order is DELIVERED, false otherwise.
      */
     private boolean isDelivered(Shipment shipment) {
         return shipment.getOrders().stream().allMatch(order -> order.getOrderStatus() == OrderStatus.DELIVERED);

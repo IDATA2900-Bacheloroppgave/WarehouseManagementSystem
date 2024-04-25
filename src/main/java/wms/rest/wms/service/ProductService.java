@@ -1,10 +1,7 @@
 package wms.rest.wms.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wms.rest.wms.exception.ProductDoesNotExistException;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.repository.ProductRepository;
 
@@ -13,77 +10,82 @@ import java.util.Optional;
 
 /**
  * Service class for product api controller.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @Service
 @AllArgsConstructor
 public class ProductService {
 
+    /** Repository for handling Product persistence operations */
     private ProductRepository productRepository;
 
     /**
-     * Saves a Product to the repository
+     * Creates a Product and saves it to the repository.
      *
-     * @param product the product to save to the repository
-     * @return if the Product already exists in the database, update the product based
-     *         on the parameter input. Otherwise create a new entity
+     * @param product the Product to create and save to the repository.
+     * @return saves the Product to the repository. If the Product does not exist in the repository,
+     * save and persist the new Product. If the incoming JSON payload of the Product already exist
+     * in the repository, merge the new Product with the old.
      */
-    public Product saveProduct(Product product){
+    public Product createProduct(Product product){
         return this.productRepository.save(product);
     }
 
     /**
-     * Returns a List of all Products
+     * Return a List of all Products.
      *
-     * @return a list of all Products
+     * @return a List of all Products
      */
     public List<Product> getProducts(){
         return this.productRepository.findAll();
     }
 
     /**
-     * Find a Product or several Products with the name search query
+     * Search the repository for a Product or Products containing the name search query.
      *
-     * @param name the name of the Product og Products to find
-     * @return a list of Products that contains the name search query
+     * @param name the name of the Product or Products to get.
+     * @return a List of Products that contains the name search query.
      */
     public List<Product> findByNameContaining(String name){
         return this.productRepository.findByNameContaining(name);
     }
 
     /**
-     * Find a Product by GTIN
+     * Search the repository for a Product containing the GTIN search query.
      *
-     * @param gtin the GTIN of the Product to find
-     * @return Optional object of the Product, can be present or not
+     * @param gtin the GTIN of the Product to get.
+     * @return a Optional object of the Product, can be present or not.
      */
     public Optional<Product> findByGtin(int gtin){
         return this.productRepository.findByGtin(gtin);
     }
 
     /**
-     * Check if a Product exists by ID
+     * Check if a Product exists by productId.
      *
-     * @param productId the ID of the Product to check if exists
-     * @return true if the Product exists, false otherwise
+     * @param productId the productId of the Product to check if exists.
+     * @return true if the Product exists, false otherwise.
      */
     public boolean existsById(int productId){
         return this.productRepository.existsById(productId);
     }
 
     /**
-     * Delete a Product by ID
+     * Delete a Product by productId.
      *
-     * @param productId the ID of the Product to delete
+     * @param productId the productId of the Product to delete.
      */
     public void deleteById(int productId) {
         this.productRepository.deleteById(productId);
     }
 
     /**
-     * Get an Optional object of Product
+     * Return an Optional
      *
-     * @param productId the ID of the Product to get
-     * @return an Optional object of Product. Can contain a Product or not
+     * @param productId the productId of the Product to return.
+     * @return an Optional object of Product, can be present or not.
      */
     public Optional<Product> findById(int productId){
         return this.productRepository.findById(productId);

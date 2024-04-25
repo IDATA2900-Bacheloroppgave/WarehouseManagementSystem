@@ -15,47 +15,54 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service class for Order API controller
+ * Service class for Order API controller.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @Service
 @AllArgsConstructor
 public class OrderService {
 
+    /** Logger for this class used to log messages and errors */
+    /** @see LoggerFactory#getLogger(Class) */
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
-    private OrderRepository orderRepository;
-
+    /** Repository for handling Product persistence operations */
     private ProductRepository productRepository;
 
+    /** Repository for handling Order persistence operations */
+    private OrderRepository orderRepository;
+
+    /** Repository for handling Inventory persistence operations */
     private InventoryRepository inventoryRepository;
 
     /**
-     * Return a List of all Orders placed by a Customer
+     * Return a List of all Orders placed by a Customer.
      *
-     * @param customer the Customer to have placed the Order
-     * @return a List of Orders placed by the Customer
+     * @param customer the Customer to see the placed Orders.
+     * @return a List of Orders placed by the Customer.
      */
     public List<Order> getOrders(Customer customer){
         return this.orderRepository.findByCustomer(customer);
     }
 
     /**
-     * Get an Optional object of Order
+     * Return an Optional object of Order by orderId.
      *
-     * @param orderId the ID of the Order to get
-     * @return an Optional object of Order, can be present or not
+     * @param orderId the orderId of the Order to return.
+     * @return an Optional object of Order, can be present or not.
      */
     public Optional<Order> getOrderById(int orderId){
         return this.orderRepository.findById(orderId);
     }
 
     /**
-     * Utility method for cancelOrderbyId
      * Checks if an order has the orderStatus as REGISTERED, which is the only
-     * status an Order can have for the customer to cancel the order
+     * status an Order can have for the Customer to cancel the order.
      *
-     * @param order the order to check if has orderStatus as REGISTERED
-     * @return returns true if orderStatus is REGISTERED, false otherwise
+     * @param order the order to check if it has the OrderStatus REGISTERED.
+     * @return returns true if OrderStatus is REGISTERED, false otherwise.
      */
     @Transactional
     public boolean cancelOrder(Order order){
@@ -67,10 +74,10 @@ public class OrderService {
     }
 
     /**
-     * Cancels an Order by ID
+     * Cancels an Order by orderId.
      *
-     * @param orderId the ID of the Order to cancel
-     * @return returns true if Order is cancelled, false otherwise
+     * @param orderId the orderId of the Order to cancel.
+     * @return returns true if Order is cancelled, false otherwise.
      */
     @Transactional
     public boolean cancelOrderById(int orderId) {
@@ -86,11 +93,11 @@ public class OrderService {
     }
 
     /**
-     * Creates a new order associated to a customer. Reserves the quantity of each product
+     * Creates a new order associated to a Customer. Reserves the quantity of each product
      * in inventory under reserved stock.
      *
-     * @param order JSON data payload of order.
-     * @param customer Authenticated customer.
+     * @param order the Order HTTP request required JSON payload of order.
+     * @param customer the authenticated customer.
      * @return saves the order with the orderRepository.
      */
     @Transactional
@@ -101,7 +108,6 @@ public class OrderService {
         order.setStore(customer.getStore());
 
         for (OrderQuantities quantity : order.getQuantities()) {
-
             Product product = productRepository.findById(quantity.getProduct().getProductId())
                     .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + quantity.getProduct().getProductId()));
 
@@ -125,12 +131,11 @@ public class OrderService {
         return this.orderRepository.save(order);
     }
 
-    //TODO: FIX PROPER GET CURRENT LOCATION
     /**
-     * Return the current location of an Order
+     * Return the current location of an Order.
      *
-     * @param orderId the order id of the Order to get current location
-     * @return the current location of the Order
+     * @param orderId the orderId of the Order to get its current location.
+     * @return the current location of the Order as a String.
      */
     public String getCurrentLocation(int orderId) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
@@ -145,27 +150,26 @@ public class OrderService {
         }
         if (order.getOrderStatus() == OrderStatus.DELIVERED) {
             return shipment.getShipmentUnloadLocation();
-            //return shipment.getTrip().getTripCurrentLocation(); //TODO: Kanskje denne istede?
         }
         return shipment.getTrip().getTripCurrentLocation();
     }
 
     /**
-     * Fetch all orders that has the OrderStatus as REGISTERED
+     * Return all orders that has the OrderStatus as REGISTERED.
      *
-     * @return a List of Order with orderStatus REGISTERED
+     * @return a List of all Orders with OrderStatus REGISTERED.
      */
-    public List<Order> getRegisteredOrders() {
+    private List<Order> getRegisteredOrders() {
         return this.orderRepository.findAll().stream()
                 .filter((order -> order.getOrderStatus() == OrderStatus.REGISTERED))
                 .toList();
     }
 
     /**
-     * Fetch all registered orders from getRegisteredOrders and sorts them into a Map of key-value pairs
+     * Return all registered Orders from getRegisteredOrders and sorts them into a Map of key-value pairs
      * grouped by both Store and wishedDeliveryDate.
      *
-     * @return a Map where each key is a Pair of Store and wishedDeliveryDate, and each value is a list of Orders
+     * @return a Map where each key is a Pair of Store and wishedDeliveryDate, and each value is a list of Orders.
      * Output example:
      * [Store 1, 2024-04-15] -> [Order 1, Order 2]
      * [Store 1, 2024-04-16] -> [Order 3, Order 4]
@@ -181,10 +185,10 @@ public class OrderService {
     }
 
     /**
-     * Updates an Order from orderStatus REGISTERED to PICKING
-     * Also set progressInPercent to 10
+     * Updates an Order from OrderStatus REGISTERED to PICKING. Also setting the
+     * progressInPercent to 10.
      *
-     * @param order the order to update the orderStatus and progressInPercent
+     * @param order the Order to update the OrderStatus and progressInPercent.
      */
     @Transactional
     public void updateFromRegisteredToPicking(Order order) {
@@ -195,10 +199,10 @@ public class OrderService {
     }
 
     /**
-     * Updates an Order from orderStatus PICKING to PICKED
-     * Also set progressInPercent to 20
+     * Updates an Order from OrderStatus PICKING to PICKED. Also setting the
+     * progressInPercent to 20.
      *
-     * @param order the order to update the orderStatus
+     * @param order the Order to update the OrderStatus and progressInPercent.
      */
     @Transactional
     public void updateFromPickingToPicked(Order order) {
@@ -208,6 +212,12 @@ public class OrderService {
         this.orderRepository.save(order);
     }
 
+    /**
+     * Return the progressInPercent of an Order.
+     *
+     * @param orderId the OrderId of the Order to return the progressInPercent.
+     * @return the progressInPercent of an Order as an int.
+     */
     public int getProgressInPercent(int orderId) {
         return orderRepository.findById(orderId)
                 .map(Order::getProgressInPercent)

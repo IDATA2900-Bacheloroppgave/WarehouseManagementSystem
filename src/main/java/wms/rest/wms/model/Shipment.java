@@ -21,6 +21,9 @@ import java.util.Set;
  * Class represents a Shipping entity within the warehouse management system, detailing the specific attributes of
  * each shipment, including its load and unload points, associated trip and the orders associated
  * with the shipment. One shipment can consist of several orders.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

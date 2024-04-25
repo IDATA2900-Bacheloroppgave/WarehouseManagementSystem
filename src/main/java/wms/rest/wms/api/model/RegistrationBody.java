@@ -8,34 +8,42 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import wms.rest.wms.model.Store;
 
+/**
+ * Represents the body of a registration request, containing user registration details.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 public class RegistrationBody {
 
+    /** The email address of the Customer. Must be xxx@xxx.xxx format */
     @NotNull
     @NotBlank
-    @Email //xxx@xxx.xxx
+    @Email
     private String email;
 
+    /** The first name of the Customer */
     @NotNull
     @NotBlank
-    @Size(min = 3) // min 3 letters
-    @Size(max = 20) // max 20 letters
+    @Size(min = 3)
+    @Size(max = 20)
     private String firstName;
 
+    /** The last name of the Customer */
     @NotNull
     @NotBlank
-    @Size(min = 3) // min 3 letters
-    @Size(max = 20) // max 20 letters
+    @Size(min = 3)
+    @Size(max = 20)
     private String lastName;
 
+    /** The password for Customer authentication. Must be minimum eight characters, and at least one letter and one number */
     @NotNull
     @NotBlank
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$") //Minimum eight characters, atleast one letter and one number
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
     private String password;
 
-    @Min(0) //min 0
+    /** The storeId of the Store associated to the Customer */
+    @Min(0)
     private int storeId;
 }

@@ -6,6 +6,9 @@ package wms.rest.wms.model;
  * PICKED. Once the order is PICKED, means that the TripStatus can change from
  * NOT_STARTED to READY_FOR_DEPARTURE. Once the TripStatus has the status FINISHED,
  * the OrderStatus changes from PICKED to DELIVERED.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 public enum OrderStatus {
     REGISTERED,

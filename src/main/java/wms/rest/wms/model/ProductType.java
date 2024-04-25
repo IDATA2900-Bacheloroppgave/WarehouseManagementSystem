@@ -6,6 +6,8 @@ package wms.rest.wms.model;
  * refrigerated goods and frozen goods as they individually require
  * specific storage conditions.
  *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 public enum ProductType {
     DRY_GOODS,

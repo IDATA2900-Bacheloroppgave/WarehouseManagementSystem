@@ -1,5 +1,6 @@
 package wms.rest.wms.api.security;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,13 +9,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration class for security settings.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
+    /** JWT request filter for handling JWT authentication */
     private JWTRequestFilter jwtRequestFilter;
 
-    // All permitted endpoints
+    /**
+     * List of all endpoints permitted without authentication.
+     */
     private static final String[] WHITELIST = {
             "/api/products/**", "/auth/register"
             , "/api/customers/**", "/api/address/**"
@@ -25,7 +35,14 @@ public class SecurityConfig {
             , "/swagger-resources/**", "/swagger-resources"
     };
 
-        @Bean
+    /**
+     * Configures security filters and authorization rules.
+     *
+     * @param http the HttpSecurity object to configure security.
+     * @return the configured security chain.
+     * @throws Exception if an error occurs during configuration.
+     */
+    @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())

@@ -20,8 +20,10 @@ import java.util.Set;
  * and associations to the user who placed the order and the address for the order. It also includes a set of
  * CustomerOrderQuantities to represent the many-to-many relationship between orders and products, capturing the
  * quantity of each product in the order.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

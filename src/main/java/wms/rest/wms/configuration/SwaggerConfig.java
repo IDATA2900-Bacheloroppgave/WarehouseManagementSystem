@@ -10,11 +10,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Access API documentation at http://localhost:8081/swagger-ui/index.html#/
+ * Access Application Programming Interface (API) documentation at http://localhost:8080/swagger-ui/index.html#/
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Configures Swagger for the public APIs.
+     *
+     * @return a grouped OpenAPI definition for public APIs.
+     */
     @Bean
     GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
@@ -23,6 +31,11 @@ public class SwaggerConfig {
                 .build();
     }
 
+    /**
+     * Configures custom OpenApi settings for hte WMS API.
+     *
+     * @return an OpenAPI definition with custom settings.
+     */
     @Bean
     OpenAPI customOpenApi() {
         return new OpenAPI()

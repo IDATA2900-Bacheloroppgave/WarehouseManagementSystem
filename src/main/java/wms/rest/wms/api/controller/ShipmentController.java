@@ -15,6 +15,12 @@ import wms.rest.wms.service.ShipmentService;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class containing all endpoints related to Shipments.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 @Tag(name = "Shipments", description = "All endpoint operations related to Shipments")
 @RestController
 @RequestMapping("/api/shipments")

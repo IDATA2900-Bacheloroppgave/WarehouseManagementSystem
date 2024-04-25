@@ -21,5 +21,4 @@ public class NotificationController {
         fcmService.sendMessageToToken(request);
         return new ResponseEntity<>(new NotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
     }
-
 }

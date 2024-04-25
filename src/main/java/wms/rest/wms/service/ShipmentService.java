@@ -14,32 +14,40 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service class for Shipment API controller
+ * Service class for Shipment API controller.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @Service
 @AllArgsConstructor
 public class ShipmentService {
 
+    /** Logger for this class used to log messages and errors */
+    /** @see LoggerFactory#getLogger(Class) */
     private static final Logger log = LoggerFactory.getLogger(ShipmentService.class);
 
+    /** Repository for handling Shipment persistence operations */
     private ShipmentRepository shipmentRepository;
 
-    private TripRepository tripRepository;
-
+    /** Repository for handling Order persistence operations */
     private OrderService orderService;
 
     /**
-     * Returns a list of all shipments
+     * Return a list of all Shipments
      *
-     * @return returns a list of all shipments.
+     * @return return a List of all Shipments.
      */
     public List<Shipment> getShipments(){
         return this.shipmentRepository.findAll();
     }
 
     /**
-     * When a new Order is created by the client, it sets the OrderStatus to REGISTERED. Method finds all
-     * laying orders with this status and adds them to a shipment.
+     * Schedules and creates Shipments based on grouped Orders from different Stores by delivery date.
+     *
+     * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
+     *
+     * @see OrderService#groupByStoreAndDeliveryDate() for details on how Orders are grouped.
      */
     @Transactional
     @Scheduled(initialDelay = 100000, fixedRate = 360000)
@@ -54,15 +62,15 @@ public class ShipmentService {
                     LocalDate deliveryDate = entry.getKey().getValue();
                     List<Order> orders = entry.getValue();
 
-                    // Create a new shipment for each store and delivery date if there are registered orders
+                    // Create a new Shipment for each Store and delivery date if there are registered Orders
                     Shipment shipment = new Shipment();
                     shipment.setShipmentLoadLocation("Trondheim");
-                    shipment.setShipmentUnloadLocation(store.getName()); // Set the unload location to the store's city
-                    shipment.setShipmentDeliveryDate(deliveryDate); //TODO: MAYBE RIGHT?
-                    shipment = shipmentRepository.save(shipment); // Generate ID for logger
+                    shipment.setShipmentUnloadLocation(store.getName());
+                    shipment.setShipmentDeliveryDate(deliveryDate);
+                    shipment = shipmentRepository.save(shipment);
                     log.info("Shipment created for store {} for delivery date {}. Shipment ID: {}", store.getName(), deliveryDate, shipment.getShipmentId());
 
-                    // Associate orders with the new shipment
+                    // Associate Orders with the new Shipment
                     for (Order order : orders) {
                         this.orderService.updateFromRegisteredToPicking(order);
                         order.setShipment(shipment);
@@ -89,7 +97,8 @@ public class ShipmentService {
     }
 
     /**
-     * Update all orders inside a Shipment from orderStatus PICKING to PICKED
+     * Update all Orders inside a Shipment from OrderStatus PICKING to PICKED.
+     * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
      */
     @Transactional
     @Scheduled(initialDelay = 110000, fixedRate = 360000)

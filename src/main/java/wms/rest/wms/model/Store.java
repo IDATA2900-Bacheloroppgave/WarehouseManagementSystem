@@ -20,8 +20,10 @@ import java.util.Set;
  * 'address' table in the database. It holds information about a user's address, including street addresses,
  * country, city and postal code. Each address is associated with a User entity in a many to one relationship,
  * indicating that multiple addresses can be linked to a single user.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

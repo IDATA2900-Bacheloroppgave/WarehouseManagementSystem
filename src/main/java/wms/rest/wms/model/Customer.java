@@ -12,6 +12,9 @@ import lombok.Setter;
  * Class represents a Customer entity in a warehouse management system. Each customer has
  * several attributes such as name, email, firstname, lastname and password. Additionally,
  * a customer also has a address associated with it.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

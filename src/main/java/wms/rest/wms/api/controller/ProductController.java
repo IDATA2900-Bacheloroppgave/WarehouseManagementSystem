@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +15,12 @@ import wms.rest.wms.service.ProductService;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class containing all endpoints related to Products.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 @Tag(name = "Products", description = "All endpoint operations related to Products")
 @RestController
 @RequestMapping("/api/products")
@@ -108,7 +113,7 @@ public class ProductController {
     @PostMapping()
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
         ResponseEntity response;
-        Product newProduct = this.productService.saveProduct(product);
+        Product newProduct = this.productService.createProduct(product);
         if(newProduct != null) {
             response = new ResponseEntity(newProduct, HttpStatus.CREATED);
         } else {

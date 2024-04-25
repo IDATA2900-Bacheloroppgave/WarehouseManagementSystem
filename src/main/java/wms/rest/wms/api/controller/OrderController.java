@@ -19,6 +19,12 @@ import wms.rest.wms.service.OrderService;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class containing all endpoints related to Orders.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 @Tag(name = "Orders", description = "All endpoint operations related to Orders")
 @RestController
 @RequestMapping("/api/orders")

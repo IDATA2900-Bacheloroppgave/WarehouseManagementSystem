@@ -15,6 +15,12 @@ import wms.rest.wms.service.TripService;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller clsas containing all endpoints related to Trips.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 @Tag(name = "Trips", description = "All endpoint operations related to Trips")
 @RestController
 @RequestMapping("/api/trips")

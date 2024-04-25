@@ -20,6 +20,9 @@ import java.util.Date;
  * name, description, product type, gtin number and batch number for identification. The product also has a
  * one to one relation with the inventory for performance reasons. Once the product_id is located, the inventory
  * holds the stock of the product.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

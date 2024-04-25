@@ -13,6 +13,9 @@ import lombok.Setter;
  * Class describes the relationship between customer orders and the products they contain.
  * This class defines the relationship between customer orders and the specific products
  * included within those orders.
+ *
+ * @author Mikkel Stavelie.,
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

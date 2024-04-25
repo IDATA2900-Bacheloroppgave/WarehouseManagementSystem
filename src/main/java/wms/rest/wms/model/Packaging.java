@@ -14,6 +14,9 @@ import lombok.Setter;
  * Class represents the packaging details for each product. This class defines the attributes and characteristics
  * of product packaging, including the type of packaging (D_PAK or F_PAK), quantity per package,
  * weight and dimensions.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

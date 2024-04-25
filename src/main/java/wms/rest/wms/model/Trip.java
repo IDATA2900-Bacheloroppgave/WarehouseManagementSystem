@@ -20,6 +20,9 @@ import java.util.*;
  * Class represents a Trip within the warehouse management system, encapsulating the details about each trip,
  * including status, start and end locations, dates, driver information and associated shipments. One trip
  * can contain many shipments to several locations.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @NoArgsConstructor
 @AllArgsConstructor

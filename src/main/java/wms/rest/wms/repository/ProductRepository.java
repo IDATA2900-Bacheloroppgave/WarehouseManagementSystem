@@ -6,34 +6,28 @@ import wms.rest.wms.model.Product;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for managing Product entities in the database.
+ * Provides CRUD operations and custom queries for retrieving Product entities.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 public interface ProductRepository extends ListCrudRepository<Product, Integer> {
 
     /**
-     * Find a specific product or list based on search query.
+     * Retrives a List of Products whose name contains the specified String.
      *
-     * where product name contains 'name'
-     *
-     * If there are several products with the same pattern, for example Makrell
-     * and Makrell i tomat, both the products will be returned as a list.
-     *
-     * @param name name of the product to search for.
-     * @return list of the products found.
+     * @param name the String to search for in the Product names.
+     * @return a List of Products whose names contain the specified String.
      */
     List<Product> findByNameContaining(String name);
 
     /**
-     * Find specific product by global trade identification number search.
+     * Retrieve a Product with the specified Global Trade Item Number (GTIN).
      *
-     * where product gtin like 'gtin'
-     *
-     * @param gtin global trade identification number of item to search for.
-     * @return optional container on the found product.
+     * @param gtin the Global Trade Item Number (GTIN) of the Product to retrieve.
+     * @return an Optional object containing the Product with the specified GTIN, can be present or not.
      */
     Optional<Product> findByGtin(int gtin);
-
-
-
-
-
-
 }

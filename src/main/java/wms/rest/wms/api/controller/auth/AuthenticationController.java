@@ -15,11 +15,16 @@ import org.springframework.web.bind.annotation.*;
 import wms.rest.wms.api.model.LoginBody;
 import wms.rest.wms.api.model.LoginResponse;
 import wms.rest.wms.api.model.RegistrationBody;
-import wms.rest.wms.exception.UserAlreadyExistsException;
+import wms.rest.wms.exception.CustomerAlreadyExistsException;
 import wms.rest.wms.model.Customer;
-import wms.rest.wms.model.Product;
 import wms.rest.wms.service.CustomerService;
 
+/**
+ * Controller class containing all endpoints related to Authentication.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
+ */
 @Tag(name = "Authentication", description = "All endpoint operations related to Authentication")
 @RestController
 @CrossOrigin
@@ -40,7 +45,7 @@ public class AuthenticationController {
         try{
             this.customerService.registerCustomer(registrationBody);
             return ResponseEntity.ok().build();
-        } catch(UserAlreadyExistsException e){
+        } catch(CustomerAlreadyExistsException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

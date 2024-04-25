@@ -9,28 +9,32 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service class for API Store controller
+ * Service class for API Store controller.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0
  */
 @Service
 @AllArgsConstructor
 public class StoreService {
 
+    /** Repository for handling Store persistence operations */
     private StoreRepository storeRepository;
 
     /**
-     * Return a List of all Stores
+     * Return a List of all Stores.
      *
-     * @return a List of all Stores
+     * @return a List of all Stores.
      */
     public List<Store> getStores() {
         return this.storeRepository.findAll();
     }
 
     /**
-     * Get an Optional object of Store
+     * Return an Optional object of Store by storeId.
      *
-     * @param storeId the ID of the Store to get
-     * @return an Optional object of the Store. Can contain a Store or not.
+     * @param storeId the storeId of the Store to return.
+     * @return an Optional object of the Store, can be present or not.
      */
     public Optional<Store> getStoreById(int storeId) {
         return this.storeRepository.findById(storeId);

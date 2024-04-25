@@ -7,20 +7,25 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service for handling password encryption and verification using BCrypt hashing algorithm.
+ *
+ * @author Mikkel Stavelie.
+ * @version 1.0.
  */
 @Service
 public class EncryptionService {
 
+    /** Number of rounds used for generating the salt value in password encryption */
     @Value("${encryption.salt.rounds}")
     private int saltRounds;
 
+    /** Salt value used for password encryption */
     private String salt;
 
     /**
-     * Initializes the salt value for password encryption
+     * Initializes the salt value for password encryption.
      *
      * This method is called after the service bean is fully initialized and properties injected. It generates
-     * a salt using the configured number of salt rounds, which is then used for all password encryptions
+     * a salt using the configured number of salt rounds, which is then used for all password encryptions.
      */
     @PostConstruct
     public void postConstruct(){
@@ -28,9 +33,9 @@ public class EncryptionService {
     }
 
     /**
-     * Encrypts a plain text password using BCrypt hashing algorithm
+     * Encrypts a plain text password using BCrypt hashing algorithm.
      *
-     * @param password the plain text password to be encrypted
+     * @param password the plain text password to be encrypted.
      * @return the hashed password as a String.
      */
     public String encryptPassword(String password){
