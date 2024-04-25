@@ -1,6 +1,7 @@
 package wms.rest.wms.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
  * Service class for Shipment API controller
  */
 @Service
+@AllArgsConstructor
 public class ShipmentService {
 
     private static final Logger log = LoggerFactory.getLogger(ShipmentService.class);
@@ -25,14 +27,6 @@ public class ShipmentService {
     private TripRepository tripRepository;
 
     private OrderService orderService;
-
-    public ShipmentService(
-            ShipmentRepository shipmentRepository, TripRepository tripRepository
-            , OrderService orderService) {
-        this.shipmentRepository = shipmentRepository;
-        this.tripRepository = tripRepository;
-        this.orderService = orderService;
-    }
 
     /**
      * Returns a list of all shipments

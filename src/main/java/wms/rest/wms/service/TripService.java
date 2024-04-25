@@ -1,6 +1,7 @@
 package wms.rest.wms.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * Service class for Trip API controller
  */
 @Service
+@AllArgsConstructor
 public class TripService {
 
     private static final Logger log = LoggerFactory.getLogger(TripService.class);
@@ -27,12 +29,6 @@ public class TripService {
     private ShipmentRepository shipmentRepository;
 
     private OrderRepository orderRepository;
-
-    public TripService(TripRepository tripRepository, ShipmentRepository shipmentRepository, OrderRepository orderRepository) {
-        this.tripRepository = tripRepository;
-        this.shipmentRepository = shipmentRepository;
-        this.orderRepository = orderRepository;
-    }
 
     /**
      * Returns a List of all Trips
@@ -197,7 +193,7 @@ public class TripService {
         }
 
         Set<Shipment> shipmentSet = trip.getShipments();
-        // Convert the Set to a List and sort it
+        // Convert the Set to a List and sort it (0,1,2,n)
         List<Shipment> sortedShipments = shipmentSet.stream()
                 .sorted(Comparator.comparingInt(Shipment::getSequenceAtTrip))
                 .toList();

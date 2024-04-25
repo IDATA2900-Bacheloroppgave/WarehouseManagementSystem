@@ -1,6 +1,7 @@
 package wms.rest.wms.service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.exception.ProductDoesNotExistException;
@@ -14,13 +15,10 @@ import java.util.Optional;
  * Service class for product api controller.
  */
 @Service
+@AllArgsConstructor
 public class ProductService {
 
     private ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     /**
      * Saves a Product to the repository

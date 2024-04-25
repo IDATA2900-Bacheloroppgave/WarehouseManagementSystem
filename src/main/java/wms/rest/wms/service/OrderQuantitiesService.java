@@ -1,5 +1,7 @@
+
 package wms.rest.wms.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Order;
@@ -13,14 +15,10 @@ import java.util.List;
  * Service class for OrderQuantity API controller
  */
 @Service
+@AllArgsConstructor
 public class OrderQuantitiesService {
 
     private OrderQuantitiesRepository orderQuantitiesRepository;
-
-
-    public OrderQuantitiesService(OrderQuantitiesRepository orderQuantitiesRepository){
-        this.orderQuantitiesRepository = orderQuantitiesRepository;
-    }
 
     /**
      * Returns a list of all OrderQuantities

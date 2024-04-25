@@ -1,5 +1,6 @@
 package wms.rest.wms.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.model.Store;
 import wms.rest.wms.repository.StoreRepository;
@@ -11,13 +12,10 @@ import java.util.Optional;
  * Service class for API Store controller
  */
 @Service
+@AllArgsConstructor
 public class StoreService {
 
     private StoreRepository storeRepository;
-
-    public StoreService(StoreRepository storeRepository) {
-        this.storeRepository = storeRepository;
-    }
 
     /**
      * Return a List of all Stores

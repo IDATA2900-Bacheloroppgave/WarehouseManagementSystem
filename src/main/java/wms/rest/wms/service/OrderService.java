@@ -2,6 +2,7 @@ package wms.rest.wms.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * Service class for Order API controller
  */
 @Service
+@AllArgsConstructor
 public class OrderService {
 
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
@@ -26,14 +28,6 @@ public class OrderService {
     private ProductRepository productRepository;
 
     private InventoryRepository inventoryRepository;
-
-    public OrderService(OrderRepository orderRepository
-            , ProductRepository productRepository
-            , InventoryRepository inventoryRepository){
-        this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-        this.inventoryRepository = inventoryRepository;
-    }
 
     /**
      * Return a List of all Orders placed by a Customer

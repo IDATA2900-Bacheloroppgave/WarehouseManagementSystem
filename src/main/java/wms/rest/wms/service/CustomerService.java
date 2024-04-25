@@ -1,5 +1,6 @@
 package wms.rest.wms.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import wms.rest.wms.api.model.LoginBody;
 import wms.rest.wms.api.model.RegistrationBody;
@@ -17,6 +18,7 @@ import java.util.Optional;
  * Service class for Customer API controller
  */
 @Service
+@AllArgsConstructor
 public class CustomerService {
 
     private CustomerRepository customerRepository;
@@ -26,16 +28,6 @@ public class CustomerService {
     private EncryptionService encryptionService;
 
     private JwtService jwtService;
-
-    public CustomerService(CustomerRepository customerRepository
-            , EncryptionService encryptionService
-            , JwtService jwtService
-            , StoreRepository storeRepository){
-        this.customerRepository = customerRepository;
-        this.encryptionService = encryptionService;
-        this.jwtService = jwtService;
-        this.storeRepository = storeRepository;
-    }
 
     /**
      * Register a Customer service method for endpoint /auth/register
