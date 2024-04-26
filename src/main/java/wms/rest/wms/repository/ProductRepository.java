@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface ProductRepository extends ListCrudRepository<Product, Integer> {
 
     /**
-     * Retrives a List of Products whose name contains the specified String.
+     * Retrieves a List of Products whose name contains the specified String.
      *
      * @param name the String to search for in the Product names.
      * @return a List of Products whose names contain the specified String.

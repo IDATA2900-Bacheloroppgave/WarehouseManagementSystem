@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderService {
 
-    /** Logger for this class used to log messages and errors */
-    /** @see LoggerFactory#getLogger(Class) */
+    /** Logger for this class used to log messages and errors,
+    * @see LoggerFactory#getLogger(Class) */
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     /** Repository for handling Product persistence operations */

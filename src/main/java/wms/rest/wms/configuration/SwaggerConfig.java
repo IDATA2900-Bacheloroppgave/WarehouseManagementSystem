@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Access Application Programming Interface (API) documentation at http://localhost:8080/swagger-ui/index.html#/
+ * Access Application Programming Interface (API) documentation at <a href="http://localhost:8080/swagger-ui/index.html#/">...</a>
  *
  * @author Mikkel Stavelie.
  * @version 1.0.

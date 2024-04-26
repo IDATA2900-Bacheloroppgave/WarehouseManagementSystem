@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,14 +29,12 @@ import wms.rest.wms.service.CustomerService;
 @Tag(name = "Authentication", description = "All endpoint operations related to Authentication")
 @RestController
 @CrossOrigin
+@AllArgsConstructor
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    private CustomerService customerService;
-
-    public AuthenticationController(CustomerService customerService){
-        this.customerService = customerService;
-    }
+    /** Service for handling Customer service operations */
+    private final CustomerService customerService;
 
     @Operation(summary = "Registers a Customer", description = "Register a customer with registrationbody", responses = {
             @ApiResponse(responseCode = "200", description = "Successful customer registration", content = @Content(schema = @Schema(implementation = RegistrationBody.class))),

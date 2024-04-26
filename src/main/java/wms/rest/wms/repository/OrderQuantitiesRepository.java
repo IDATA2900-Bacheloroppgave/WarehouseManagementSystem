@@ -2,7 +2,6 @@ package wms.rest.wms.repository;
 
 import org.springframework.data.repository.ListCrudRepository;
 import wms.rest.wms.model.OrderQuantities;
-import wms.rest.wms.service.OrderQuantitiesService;
 
 /**
  * Repository interface for managing OrderQuantities entities in the database.

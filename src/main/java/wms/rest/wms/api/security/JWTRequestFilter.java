@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Filter class for processing JWT authentication.
  *
- * @Author Mikkel Stavelie.
+ * @author Mikkel Stavelie.
  * @version 1.0.
  */
 @Component

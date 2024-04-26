@@ -10,15 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * Class represents the address in the warehouse management system. This class is a part of the model layer and maps to the
  * 'address' table in the database. It holds information about a user's address, including street addresses,
- * country, city and postal code. Each address is associated with a User entity in a many to one relationship,
+ * country, city and postal code. Each address is associated with a User entity in a many-to-one relationship,
  * indicating that multiple addresses can be linked to a single user.
  *
  * @author Mikkel Stavelie.

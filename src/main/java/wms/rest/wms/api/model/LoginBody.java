@@ -3,10 +3,11 @@ package wms.rest.wms.api.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 
 /**
  * Represents the body of a login request containing user email address and password.
+ *
+ * @author Mikkel Stavelie.
  */
 public class LoginBody {
 
@@ -17,9 +18,9 @@ public class LoginBody {
     private String password;
 
     /**
-     * Return the email associated with the login request.
+     * Return the email address associated with the login request.
      *
-     * @return hte mail provided in the login request.
+     * @return the email address provided in the login request.
      */
     @NotBlank
     @NotBlank

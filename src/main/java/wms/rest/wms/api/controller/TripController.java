@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wms.rest.wms.model.Product;
 import wms.rest.wms.model.Trip;
 import wms.rest.wms.service.TripService;
 
@@ -16,21 +16,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Controller clsas containing all endpoints related to Trips.
+ * Controller class containing all endpoints related to Trips.
  *
  * @author Mikkel Stavelie.
  * @version 1.0.
  */
 @Tag(name = "Trips", description = "All endpoint operations related to Trips")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/trips")
 public class TripController {
 
-    private TripService tripService;
-
-    public TripController(TripService tripService) {
-        this.tripService = tripService;
-    }
+    /** Service for handling Trip service operations */
+    private final TripService tripService;
 
     @Operation(summary = "Get a list of all trips", description = "Returns a list of all trips", responses = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Trip.class))),

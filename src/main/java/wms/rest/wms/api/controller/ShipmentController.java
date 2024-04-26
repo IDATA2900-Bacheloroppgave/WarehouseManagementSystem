@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +24,12 @@ import java.util.Optional;
  */
 @Tag(name = "Shipments", description = "All endpoint operations related to Shipments")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/shipments")
 public class ShipmentController {
 
-    private ShipmentService shipmentService;
-
-    public ShipmentController(ShipmentService shipmentService) {
-        this.shipmentService = shipmentService;
-    }
+    /** Service for handling Shipment service operations */
+    private final ShipmentService shipmentService;
 
     @Operation(summary = "Get a list of all shipments", description = "Returns a list of all shipments", responses = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Shipment.class))),

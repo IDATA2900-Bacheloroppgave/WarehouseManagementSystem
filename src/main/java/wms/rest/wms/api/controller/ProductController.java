@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,18 +24,16 @@ import java.util.Optional;
  */
 @Tag(name = "Products", description = "All endpoint operations related to Products")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    /** Service for handling Product service operations */
+    private final ProductService productService;
 
     @Operation(summary = "Get a list of all products", description = "Returns a list of all products in database", responses = {
-        @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
-        @ApiResponse(responseCode = "204", description = "Bad Request"),})
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "204", description = "Bad Request"),})
     @GetMapping
     public ResponseEntity<String> getProducts() {
         ResponseEntity response;

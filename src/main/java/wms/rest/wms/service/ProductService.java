@@ -56,7 +56,7 @@ public class ProductService {
      * Search the repository for a Product containing the GTIN search query.
      *
      * @param gtin the GTIN of the Product to get.
-     * @return a Optional object of the Product, can be present or not.
+     * @return an Optional object of the Product, can be present or not.
      */
     public Optional<Product> findByGtin(int gtin){
         return this.productRepository.findByGtin(gtin);

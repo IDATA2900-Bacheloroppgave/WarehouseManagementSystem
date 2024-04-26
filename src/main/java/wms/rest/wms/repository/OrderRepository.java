@@ -2,12 +2,9 @@ package wms.rest.wms.repository;
 
 import org.springframework.data.repository.ListCrudRepository;
 import wms.rest.wms.model.Order;
-import wms.rest.wms.model.OrderStatus;
 import wms.rest.wms.model.Customer;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Repository interface for managing Order entities in the database.

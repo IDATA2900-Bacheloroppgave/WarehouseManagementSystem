@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +28,17 @@ import java.util.Optional;
  */
 @Tag(name = "Orders", description = "All endpoint operations related to Orders")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private OrderService orderService;
-
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+    /** Service for handling Order service operations */
+    private final OrderService orderService;
 
     @Operation(summary = "Get a list of all orders associated to authenticated customer", description = "Returns a list of all orders associated to authenticated customer", responses = {
             @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Order.class))),})
     @GetMapping
     public List<Order> getOrders(@AuthenticationPrincipal Customer user){
-        System.out.println("Orders returned");
         return this.orderService.getOrders(user);
     }
 

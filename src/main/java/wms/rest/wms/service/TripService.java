@@ -13,7 +13,6 @@ import wms.rest.wms.repository.TripRepository;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Service class for Trip API controller
@@ -25,8 +24,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TripService {
 
-    /** Logger for this class used to log messages and errors */
-    /** @see LoggerFactory#getLogger(Class) */
+    /** Logger for this class used to log messages and errors,
+     * @see LoggerFactory#getLogger(Class) */
     private static final Logger log = LoggerFactory.getLogger(TripService.class);
 
     /** Repository for handling Trip persistence operations */
@@ -80,7 +79,6 @@ public class TripService {
      * Creates a Trip and adds all Shipments with the same wishedDeliveryDate to the trip.
      * All orders inside a Shipment has to have the OrderStatus as PICKED.
      * Retrieves a random Driver from 'getRandomDriver' and assigns it to the trip.
-     *
      * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
      */
     @Transactional
@@ -127,7 +125,7 @@ public class TripService {
     }
 
     /**
-     * Updates an Trip from TripStatus LOADING to DEPARTED.
+     * Updates a Trip from TripStatus LOADING to DEPARTED.
      * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
      */
     @Transactional
@@ -145,9 +143,7 @@ public class TripService {
     /**
      * Updates an Trip from TripStatus DEPARTED to IN_TRANSIT. Also setting the
      * progressInPercent to 50.
-     *
      * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
-     *
      * TODO: SEND PUSH NOTIFICATION
      */
     @Transactional

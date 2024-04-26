@@ -11,7 +11,6 @@ import wms.rest.wms.repository.*;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Service class for Shipment API controller.
@@ -23,14 +22,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ShipmentService {
 
-    /** Logger for this class used to log messages and errors */
-    /** @see LoggerFactory#getLogger(Class) */
+    /** Logger for this class used to log messages and errors,
+    * @see LoggerFactory#getLogger(Class) */
     private static final Logger log = LoggerFactory.getLogger(ShipmentService.class);
 
     /** Repository for handling Shipment persistence operations */
     private ShipmentRepository shipmentRepository;
 
-    /** Repository for handling Order persistence operations */
+    /** Service for handling Order persistence operations */
     private OrderService orderService;
 
     /**
@@ -44,7 +43,6 @@ public class ShipmentService {
 
     /**
      * Schedules and creates Shipments based on grouped Orders from different Stores by delivery date.
-     *
      * This method is executed periodically according to a Scheduled configuration starting after an initial delay.
      *
      * @see OrderService#groupByStoreAndDeliveryDate() for details on how Orders are grouped.

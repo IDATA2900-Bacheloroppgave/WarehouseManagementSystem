@@ -1,6 +1,11 @@
 package wms.rest.wms.api.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,15 +26,16 @@ import java.util.Optional;
  */
 @Tag(name = "Stores", description = "All endpoint operations related to Stores")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/stores")
 public class StoreController {
 
-    private StoreService storeService;
+    /** Service for handling Store service operations */
+    private final StoreService storeService;
 
-    public StoreController(StoreService storeService) {
-        this.storeService = storeService;
-    }
-
+    @Operation(summary = "Get a list of all stores", description = "Returns a list of all stores", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Store.class))),
+            @ApiResponse(responseCode = "204", description = "No content"),})
     @GetMapping
     public ResponseEntity<?> getStores() {
         ResponseEntity response;
@@ -42,6 +48,9 @@ public class StoreController {
         return response;
     }
 
+    @Operation(summary = "Get a specific store by id", description = "Returns a specific store by id", responses = {
+            @ApiResponse(responseCode = "200", description = "Successful retrieval", content = @Content(schema = @Schema(implementation = Store.class))),
+            @ApiResponse(responseCode = "400", description = "No content"),})
     @GetMapping("{id}")
     public ResponseEntity<?> getStoreById(@PathVariable("id") int id) {
         ResponseEntity response;

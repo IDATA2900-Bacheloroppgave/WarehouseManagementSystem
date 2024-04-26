@@ -1,7 +1,6 @@
 package wms.rest.wms.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -11,14 +10,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.catalina.core.PropertiesRoleMappingListener;
 
 import java.util.Date;
 
 /**
  * Class represents the Product in a warehouse management system. The product has several attributes such as
  * name, description, product type, gtin number and batch number for identification. The product also has a
- * one to one relation with the inventory for performance reasons. Once the product_id is located, the inventory
+ * one-to-one relation with the inventory for performance reasons. Once the product_id is located, the inventory
  * holds the stock of the product.
  *
  * @author Mikkel Stavelie.

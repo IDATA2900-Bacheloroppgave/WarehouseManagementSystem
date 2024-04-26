@@ -1,10 +1,7 @@
 package wms.rest.wms.repository;
 
 import org.springframework.data.repository.ListCrudRepository;
-import wms.rest.wms.model.Shipment;
 import wms.rest.wms.model.Trip;
-
-import java.util.Optional;
 
 /**
  * Repository interface for managing Trip entities in the database.
