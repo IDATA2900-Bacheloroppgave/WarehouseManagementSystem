@@ -1,6 +1,6 @@
 package wms.rest.wms.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 import wms.rest.wms.model.Customer;
 
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author Mikkel Stavelie.
  * @version 1.0.
  */
-public interface CustomerRepository extends CrudRepository<Customer, Integer> {
+public interface CustomerRepository extends ListCrudRepository<Customer, Integer> {
 
     /**
      * Retrieves a Customer by their email address, ignoring case.

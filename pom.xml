@@ -31,6 +31,16 @@
 			<artifactId>spring-boot-starter-data-rest</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.h2database</groupId> <!-- H2 EMBEDDED DATABASE FOR TESTING -->
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId> <!-- MOCKITO FOR SERVICE LEVEL TESTING -->
+			<version>5.11.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>2.13.1</version>
