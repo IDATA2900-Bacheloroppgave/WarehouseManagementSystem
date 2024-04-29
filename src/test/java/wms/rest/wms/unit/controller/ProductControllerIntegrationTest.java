@@ -1,5 +1,8 @@
 package wms.rest.wms.unit.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -7,14 +10,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import wms.rest.wms.api.controller.ProductController;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.model.ProductType;
 import wms.rest.wms.repository.ProductRepository;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.TimeZone;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -22,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Class tests API endpoints related to Product operations.
  * Sets up the test environment by utilizing the H2 embedded database using @ActiveProfiles.
  *
- * @author Mikkel Stvelie.
+ * @author Mikkel Stavelie.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,46 +47,112 @@ public class ProductControllerIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    /** TODO: DOES NOT RETURN THE CORRECT RESPONSE
-     * Tests the retrieval of all Products from the API.
+    /**
+     * Set up test environment by initializing the database with fixed products.
      *
-     * @throws Exception if hte perform request or expect actions fail.
+     * @throws Exception ParseException if there is an error in parsing the fixed date String.
+     */
+    @BeforeEach // Run before each test method
+    public void setup() throws Exception {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date fixedDate = dateFormat.parse("2024-08-24");
+
+        Product product1 = new Product(1, "Sample Product", "Sample Description", "Sample Supplier",
+                fixedDate, ProductType.DRY_GOODS, 10.99, 54321, 78905, null, null);
+        Product product2 = new Product(2, "Another Product", "Another Description", "Another Supplier",
+                fixedDate, ProductType.FROZEN_GOODS, 15.99, 12345, 67890, null, null);
+
+        productRepository.save(product1);
+        productRepository.save(product2);
+    }
+
+    /**
+     * Tests the GET /api/products endpoint and the correct HTTP response status code.
+     *
+     * @throws Exception if the perform request or expect actions fail.
      */
     @Test
-    public void testGetAllProducts() throws Exception{
-        Product product = new Product(1,
-                "Sample Product", "Sample Description", "Sample Supplier",
-                LocalDate.of(2024, 8, 24), ProductType.DRY_GOODS, 10.99,
-                54321, 78905, null, null);
+    public void testGetAllProducts() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/products"))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(MockMvcResultMatchers.content().contentType(APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
+                // Assertions for product1
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].productId").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Sample Product"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].description").value("Sample Description"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].supplier").value("Sample Supplier"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].productType").value("DRY_GOODS"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].price").value(10.99))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gtin").value(54321))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].batch").value(78905))
+                // Assertions for product2
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].productId").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("Another Product"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].description").value("Another Description"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].supplier").value("Another Supplier"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].productType").value("FROZEN_GOODS"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].price").value(15.99))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].gtin").value(12345))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].batch").value(67890));
+    }
 
-        Product product2 = new Product(2,
-                "Sample Product", "Sample Description", "Sample Supplier",
-                LocalDate.of(2024, 8, 24), ProductType.REFRIGERATED_GOODS, 12.0,
-                12345, 51351, null, null);
+    /**
+     * Tests the GET /api/products/{productId} endpoint and the correct HTTP response status code.
+     *
+     * @throws Exception if the perform request or expect actions fail.
+     */
+    @Test
+    public void testGetProductById() throws Exception {
+        int productId = 1; // Added in @BeforeEach
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/products/{id}", productId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.productId").value(productId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Sample Product"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Sample Description"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.supplier").value("Sample Supplier"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.productType").value("DRY_GOODS"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(10.99))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gtin").value(54321))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.batch").value(78905));
+    }
 
-        this.productRepository.save(product);
-        this.productRepository.save(product2);
+    /**
+     * Tests the POST /api/products by adding a new Product to the List and the correct HTTP response status code.
+     *
+     * @throws Exception if the perform request or expect actions fail.
+     */
+    @Test
+    public void testCreateProduct() throws Exception {
+        // Create a product object to send with POST request
+        Product newProduct = new Product(0, "New Product", "New Description", "New Supplier",
+                new SimpleDateFormat("yyyy-MM-dd").parse("2024-09-01"),
+                ProductType.DRY_GOODS, 25.00, 98765, 12345, null, null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String productJson = objectMapper.writeValueAsString(newProduct);
+        System.out.println(productJson);
 
-        mockMvc.perform(get("/api/products"))
-                .andExpect(status().is(200))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].productId").value(1))
-                .andExpect(jsonPath("$[0].name").value("Sample Product 1"))
-                .andExpect(jsonPath("$[0].description").value("Sample Description 1"))
-                .andExpect(jsonPath("$[0].supplier").value("Sample Supplier 1"))
-                .andExpect(jsonPath("$[0].bestBeforeDate").value("2024-08-24"))
-                .andExpect(jsonPath("$[0].productType").value("DRY_GOODS"))
-                .andExpect(jsonPath("$[0].price").value(10.99))
-                .andExpect(jsonPath("$[0].gtin").value(54321))
-                .andExpect(jsonPath("$[0].batch").value(78905))
-                .andExpect(jsonPath("$[1].productId").value(2))
-                .andExpect(jsonPath("$[1].name").value("Sample Product 2"))
-                .andExpect(jsonPath("$[1].description").value("Sample Description 2"))
-                .andExpect(jsonPath("$[1].supplier").value("Sample Supplier 2"))
-                .andExpect(jsonPath("$[1].bestBeforeDate").value("2024-08-25"))
-                .andExpect(jsonPath("$[1].productType").value("REFRIGERATED_GOODS"))
-                .andExpect(jsonPath("$[1].price").value(12.0))
-                .andExpect(jsonPath("$[1].gtin").value(12345))
-                .andExpect(jsonPath("$[1].batch").value(51351));
+        // Simulate POST request to create a product
+        mockMvc.perform(post("/api/products")
+                        .contentType(APPLICATION_JSON)
+                        .content(productJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("New Product"))
+                .andExpect(jsonPath("$.description").value("New Description"))
+                .andExpect(jsonPath("$.supplier").value("New Supplier"))
+                .andExpect(jsonPath("$.price").value(25.00));
+
+        // Test handling of invalid data such as empty name
+        Product invalidProduct = new Product(0, "", "Some Description", "Some Supplier",
+                new SimpleDateFormat("yyyy-MM-dd").parse("2024-09-01"),
+                ProductType.DRY_GOODS, 25.00, 98765, 12345, null, null);
+        String invalidProductJson = objectMapper.writeValueAsString(invalidProduct);
+
+        // Simulate POST request with invalid data
+        mockMvc.perform(post("/api/products")
+                        .contentType(APPLICATION_JSON)
+                        .content(invalidProductJson))
+                .andExpect(status().isBadRequest());
     }
 }

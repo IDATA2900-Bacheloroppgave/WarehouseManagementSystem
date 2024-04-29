@@ -5,9 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import wms.rest.wms.api.model.LoginBody;
 import wms.rest.wms.api.model.RegistrationBody;
 import wms.rest.wms.exception.CustomerAlreadyExistsException;
@@ -58,10 +55,10 @@ public class CustomerServiceTest {
     /**
      * Tests the retrieval of all Customers in CustomerService.
      * Ensures the CustomerRepository's findAll method is called and correctly retrieves a List of all Customers.
-     * Verifies the correct number ogf Customers are returned.
+     * Verifies the correct number of Customers are returned.
      */
     @Test
-    public void testGetAllCustomers() {
+    public void testGetCustomers() {
         Store store = new Store();
         store.setName("Test Store");
         store.setAddress("123 Test St");
@@ -75,8 +72,8 @@ public class CustomerServiceTest {
                 new Customer(2, "jahndoe@gmail.com", "Jahn", "Doe", "secretpassword11", store)
         ));
 
-        // Test method
-        List<Customer> customers = customerService.getAll();
+        // Method to test
+        List<Customer> customers = customerService.getCustomers();
 
         verify(customerRepository).findAll();
         assertEquals(2, customers.size());

@@ -84,7 +84,7 @@ public class CustomerService {
      *
      * @return a List of all Customers.
      */
-    public List<Customer> getAll() {
+    public List<Customer> getCustomers() {
         return this.customerRepository.findAll();
     }
 

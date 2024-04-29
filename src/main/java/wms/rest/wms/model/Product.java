@@ -47,7 +47,7 @@ public class Product {
     @Column(name = "supplier", nullable = false)
     private String supplier;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "best_before_date", nullable = false)
     private Date bestBeforeDate;
 
