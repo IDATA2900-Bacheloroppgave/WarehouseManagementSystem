@@ -13,6 +13,7 @@ import wms.rest.wms.service.security.EncryptionService;
 import wms.rest.wms.service.security.JwtService;
 
 import java.util.Optional;
+import java.util.List;
 
 /**
  * Service class for Customer API controller.
@@ -76,5 +77,24 @@ public class CustomerService {
             }
         }
         return null;
+    }
+
+    /**
+     * Return a List of all Customers.
+     *
+     * @return a List of all Customers.
+     */
+    public List<Customer> getAll() {
+        return this.customerRepository.findAll();
+    }
+
+    /**
+     * Return a Customer by specified customerId.
+     *
+     * @param customerId the customerId to retrieve the Customer.
+     * @return a Customer from the specified customerId.
+     */
+    public Optional<Customer> getCustomerById(int customerId) {
+        return this.customerRepository.findById(customerId);
     }
 }

@@ -1,6 +1,5 @@
 package wms.rest.wms.unit.repository;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -9,25 +8,33 @@ import org.springframework.test.context.ActiveProfiles;
 import wms.rest.wms.model.Customer;
 import wms.rest.wms.model.Store;
 import wms.rest.wms.repository.CustomerRepository;
-import wms.rest.wms.repository.StoreRepository;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for CustomerRepository.
+ *
+ * @author Mikkel Stavelie.
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 public class CustomerRepositoryTest {
 
+    /** Autowired CustomerRepository for access to its methods in testing */
     @Autowired
     private CustomerRepository customerRepository;
 
+    /** Autowired TestEntityManager for handling database operations directly in tests */
     @Autowired
     private TestEntityManager entityManager;
 
+    /**
+     * Tests the retrieval of all Customers from the database.
+     * Verifies that the correct number of Customers is retrieved.
+     */
     @Test
     public void testFindAllCustomers() {
         Store store = new Store();
@@ -67,6 +74,10 @@ public class CustomerRepositoryTest {
         assertNotEquals(5, customers.size());
     }
 
+    /**
+     * Tests the functionality of finding a Customer by email.
+     * Confirms the correct retrieval of Customer details and verifies that a non-existent email return no Customer.
+     */
     @Test
     public void testFindCustomerByEmail() {
         // Create Store
