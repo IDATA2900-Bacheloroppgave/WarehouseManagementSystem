@@ -57,10 +57,8 @@ public class ProductControllerIntegrationTest {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date fixedDate = dateFormat.parse("2024-08-24");
 
-        Product product1 = new Product(1, "Sample Product", "Sample Description", "Sample Supplier",
-                fixedDate, ProductType.DRY_GOODS, 10.99, 54321, 78905, null, null);
-        Product product2 = new Product(2, "Another Product", "Another Description", "Another Supplier",
-                fixedDate, ProductType.FROZEN_GOODS, 15.99, 12345, 67890, null, null);
+        Product product1 = new Product(1, "Sample Product", "Sample Description", "Sample Supplier", fixedDate, ProductType.DRY_GOODS, 10.99, 54321, 78905, null, null);
+        Product product2 = new Product(2, "Another Product", "Another Description", "Another Supplier", fixedDate, ProductType.FROZEN_GOODS, 15.99, 12345, 67890, null, null);
 
         productRepository.save(product1);
         productRepository.save(product2);
@@ -76,7 +74,7 @@ public class ProductControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/products"))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.content().contentType(APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
                 // Assertions for product1
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].productId").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Sample Product"))

@@ -21,7 +21,7 @@ public interface ProductRepository extends ListCrudRepository<Product, Integer> 
      * @param name the String to search for in the Product names.
      * @return a List of Products whose names contain the specified String.
      */
-    List<Product> findByNameContaining(String name);
+    List<Product> findByNameContainingIgnoreCase(String name);
 
     /**
      * Retrieve a Product with the specified Global Trade Item Number (GTIN).

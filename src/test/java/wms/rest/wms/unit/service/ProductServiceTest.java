@@ -73,13 +73,13 @@ public class ProductServiceTest {
                 new Product(1, "Test Product", "Description", "Supplier", new Date(), ProductType.DRY_GOODS, 20.00, 1000, 2000, null, null),
                 new Product(2, "Another Test Product", "Description2", "Supplier2", new Date(), ProductType.REFRIGERATED_GOODS, 25.00, 2001, 3000, null, null)
         );
-        when(productRepository.findByNameContaining(searchTerm)).thenReturn(mockProducts);
+        when(productRepository.findByNameContainingIgnoreCase(searchTerm)).thenReturn(mockProducts);
 
         // Act
         List<Product> foundProducts = productService.findByNameContaining(searchTerm);
 
         // Assert
-        verify(productRepository).findByNameContaining(searchTerm);
+        verify(productRepository).findByNameContainingIgnoreCase(searchTerm);
         assertEquals("Should return a list of products containing the term", mockProducts, foundProducts);
     }
 

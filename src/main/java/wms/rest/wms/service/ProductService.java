@@ -49,7 +49,7 @@ public class ProductService {
      * @return a List of Products that contains the name search query.
      */
     public List<Product> findByNameContaining(String name){
-        return this.productRepository.findByNameContaining(name);
+        return this.productRepository.findByNameContainingIgnoreCase(name);
     }
 
     /**

@@ -17,6 +17,7 @@ import wms.rest.wms.model.Customer;
 import wms.rest.wms.model.Store;
 import wms.rest.wms.repository.CustomerRepository;
 import wms.rest.wms.repository.StoreRepository;
+import wms.rest.wms.service.security.EncryptionService;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,18 +52,31 @@ public class CustomerControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private EncryptionService encryptionService;
+
     @BeforeEach
     public void setup() {
         Store store = new Store();
         store.setStoreId(1);
         store.setName("Test store");
         store.setAddress("Test address");
-        store.setCountry("Test ocuntry");
+        store.setCountry("Test country");  // Fixed a typo here
         store.setCity("Test City");
         store.setPostalCode(5004);
-        store = storeRepository.save(store);
+        storeRepository.save(store);
 
-        Customer customer = new Customer(1, "test@example.com", "John", "Doe", "secretpassword11", store);
+        Customer customer = new Customer();
+        customer.setEmail("test@example.com");
+        customer.setFirstName("John");
+        customer.setLastName("Doe");
+        customer.setStore(store);
+
+        // Encrypt the password to avoid IllegalArgumentException: Invalid salt
+        String encryptedPassword = encryptionService.encryptPassword("secretpassword11");
+        customer.setPassword(encryptedPassword);
+
+        // Now save the customer with the encrypted password
         customerRepository.save(customer);
     }
 
@@ -111,7 +125,7 @@ public class CustomerControllerIntegrationTest {
     @Test
     public void testLoginFailure() throws Exception {
         // Incorrect credentials
-        LoginBody invalidLogin = new LoginBody("test@example.com", "secretpassword11");
+        LoginBody invalidLogin = new LoginBody("testt@example.com", "secretpassword11");
         String jsonRequest = objectMapper.writeValueAsString(invalidLogin);
 
         // Perform POST request and verify the response status is 400
@@ -120,5 +134,4 @@ public class CustomerControllerIntegrationTest {
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest());
     }
-
 }
