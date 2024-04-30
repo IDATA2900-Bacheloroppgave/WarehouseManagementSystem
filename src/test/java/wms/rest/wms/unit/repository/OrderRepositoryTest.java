@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for OrderRepository.
- *
+ * Verifying that custom query methods work as expected.
  * @author Mikkel Stavelie.
  */
 @DataJpaTest
@@ -75,15 +75,6 @@ public class OrderRepositoryTest {
         order.setCustomer(customer);
         entityManager.persist(order);
         entityManager.flush();
-    }
-
-    /**
-     * Tests the findAll method in OrderRepository.
-     */
-    @Test
-    public void testFindAll() {
-        List<Order> orders = orderRepository.findAll();
-        assertEquals(1, orders.size(), "There should be exactly one order in the repository");
     }
 
     /**

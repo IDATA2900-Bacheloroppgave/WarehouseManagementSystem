@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for ProductRepository.
+ * Verifying that custom query methods work as expected.
  *
  * @author Mikkel Stavelie.
  */
@@ -76,19 +77,6 @@ public class ProductRepositoryTest {
         product2.setBatch(67890);
         entityManager.persist(product2);
         entityManager.flush();
-    }
-
-    /**
-     * Tests the retrieval of all Products from the database.
-     * Verifies that the correct number of Products is retrieved.
-     */
-    @Test
-    public void testFindAll() {
-        List<Product> products = this.productRepository.findAll();
-        assertEquals(2, products.size());
-        assertTrue(products.contains(product1));
-        assertTrue(products.contains(product2));
-        assertNotEquals(5, products.size());
     }
 
     /**

@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for CustomerController using MockMvc.
  * Class tests API endpoints related to Customer operations.
  * Sets up the test environment by utilizing the H2 embedded database using @ActiveProfiles.
+ * Verifies that the request parameters are correctly mapped and if the response is as expected.
  *
  * @author Mikkel Stvelie.
  */
@@ -52,6 +53,7 @@ public class CustomerControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /** Autowired EncryptionService for required password encryption in login */
     @Autowired
     private EncryptionService encryptionService;
 

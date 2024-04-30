@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for ProductController using MockMvc.
  * Class tests API endpoints related to Product operations.
  * Sets up the test environment by utilizing the H2 embedded database using @ActiveProfiles.
+ * Verifies that the request parameters are correctly mapped and if the response is as expected.
  *
  * @author Mikkel Stavelie.
  */

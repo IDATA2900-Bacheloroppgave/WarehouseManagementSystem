@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for CustomerRepository.
+ * Verifying that custom query methods work as expected.
  *
  * @author Mikkel Stavelie.
  */
@@ -68,23 +69,6 @@ public class CustomerRepositoryTest {
         customer2.setStore(store);
         entityManager.persist(customer2);
         entityManager.flush();
-    }
-
-    /**
-     * Tests the retrieval of all Customers from the database.
-     * Verifies that the correct number of Customers is retrieved.
-     */
-    @Test
-    public void testFindAll() {
-        List<Customer> customers = this.customerRepository.findAll();
-
-        // Test finding all Customers from repository
-        assertEquals(2, customers.size());
-        assertTrue(customers.contains(customer));
-        assertTrue(customers.contains(customer2));
-
-        // Test finding wrong Customer amount from repository
-        assertNotEquals(5, customers.size());
     }
 
     /**
