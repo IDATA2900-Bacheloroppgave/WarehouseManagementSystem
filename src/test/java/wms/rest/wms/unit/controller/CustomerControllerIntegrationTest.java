@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import wms.rest.wms.api.model.LoginBody;
@@ -57,28 +58,37 @@ public class CustomerControllerIntegrationTest {
     @Autowired
     private EncryptionService encryptionService;
 
+    /** Declare Customer at class level for easier accessibility */
+    private Customer customer;
+
+    /** Declare Store at class level for easier accessibility */
+    private Store store;
+
+    /**
+     * Prepare the test environment before each test method.
+     * This method is run before each test method to ensure the testing environment is properly initialized.
+     * Reduces boilerplate code and makes test more clear and concise.
+     */
     @BeforeEach
     public void setup() {
-        Store store = new Store();
+        store = new Store();
         store.setStoreId(1);
         store.setName("Test store");
         store.setAddress("Test address");
-        store.setCountry("Test country");  // Fixed a typo here
+        store.setCountry("Test country");
         store.setCity("Test City");
         store.setPostalCode(5004);
         storeRepository.save(store);
 
-        Customer customer = new Customer();
+        customer = new Customer();
         customer.setEmail("test@example.com");
         customer.setFirstName("John");
         customer.setLastName("Doe");
         customer.setStore(store);
 
-        // Encrypt the password to avoid IllegalArgumentException: Invalid salt
+        // Encrypt the password
         String encryptedPassword = encryptionService.encryptPassword("secretpassword11");
         customer.setPassword(encryptedPassword);
-
-        // Now save the customer with the encrypted password
         customerRepository.save(customer);
     }
 
@@ -90,11 +100,11 @@ public class CustomerControllerIntegrationTest {
      */
     @Test
     public void testGetCustomerById() throws Exception {
-        int customerId = 1; // Know its 1 from the setup() method
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/customers/{customerId}", customerId))
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/customers/{customerId}", customer.getCustomerId()))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.content().contentType(APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(customerId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(customer.getCustomerId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("test@example.com"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("John"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Doe"));
@@ -135,5 +145,35 @@ public class CustomerControllerIntegrationTest {
                         .contentType(APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Test the Customer /auth/me endpoint and the correct return HTTP response status code.
+     * Tests the full flow from logging in the Customer and extracting the JWT for authentication.
+     *
+     * @throws Exception if the perform request or expect actions fail.
+     */
+    @Test
+    public void testFullAuthenticationFlow() throws Exception {
+        LoginBody validLogin = new LoginBody("test@example.com", "secretpassword11");
+        String jsonRequest = objectMapper.writeValueAsString(validLogin);
+
+        // Perform login request
+        MvcResult result = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jwt").exists())
+                .andReturn();
+
+        // Extract JWT from login response
+        String responseString = result.getResponse().getContentAsString();
+        String jwt = objectMapper.readTree(responseString).get("jwt").asText();
+        // Use the extracted JWT to authenticate a request to the /me endpoint
+        mockMvc.perform(get("/auth/me")
+                        .header("Authorization", "Bearer " + jwt)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 }

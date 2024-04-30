@@ -34,8 +34,10 @@ public class ProductRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    /** Declare Products at class level for easier accessibility */
+    /** Declare Product at class level for easier accessibility */
     private Product product1;
+
+    /** Declare Product at class level for easier accessibility */
     private Product product2;
 
     /** Declare String search query name at class level for easier accessibility */
