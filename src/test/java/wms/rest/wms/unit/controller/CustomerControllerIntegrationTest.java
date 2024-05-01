@@ -100,7 +100,6 @@ public class CustomerControllerIntegrationTest {
      */
     @Test
     public void testGetCustomerById() throws Exception {
-
         mockMvc.perform(MockMvcRequestBuilders.get("/api/customers/{customerId}", customer.getCustomerId()))
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andExpect(MockMvcResultMatchers.content().contentType(APPLICATION_JSON))

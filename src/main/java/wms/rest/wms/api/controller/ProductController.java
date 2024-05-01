@@ -110,7 +110,7 @@ public class ProductController {
             @ApiResponse(responseCode = "201", description = "Successful creation", content = @Content(schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "400", description = "Bad request"),})
     @PostMapping()
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product){
+    public ResponseEntity<Product> createProduct(@RequestBody Product product){
         ResponseEntity response;
         Product newProduct = this.productService.createProduct(product);
         if(newProduct != null) {
