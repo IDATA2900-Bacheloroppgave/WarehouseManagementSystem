@@ -1,6 +1,7 @@
 package wms.rest.wms.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,44 +36,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 @ActiveProfiles("test")
 public class CustomerControllerIntegrationTest {
 
-    /** Provides support for Spring MVC testing. Allows to send HTTP requests into the DispatcherServlet and make assertions about the result */
     @Autowired
     private MockMvc mockMvc;
 
-    /** Autowired CustomerRepository for interaction with the Customer H2 embedded database */
     @Autowired
     private CustomerRepository customerRepository;
 
-    /** Autowired CustomerRepository for interaction with the Store H2 embedded database */
     @Autowired
     private StoreRepository storeRepository;
 
-    /** Autowired Objectmapper for object serialization and JSON deserialization */
     @Autowired
     private ObjectMapper objectMapper;
 
-    /** Autowired EncryptionService for required password encryption in login */
     @Autowired
     private EncryptionService encryptionService;
 
-    /** Declare Customer at class level for easier accessibility */
-    private Customer customer;
-
-    /** Declare Store at class level for easier accessibility */
-    private Store store;
-
-    /**
-     * Prepare the test environment before each test method.
-     * This method is run before each test method to ensure the testing environment is properly initialized.
-     * Reduces boilerplate code and makes test more clear and concise.
-     */
     @BeforeEach
     public void setup() {
-        store = new Store();
-        store.setStoreId(1);
+        storeRepository.deleteAll();
+        customerRepository.deleteAll();
+
+        Store store = new Store();
         store.setName("Test store");
         store.setAddress("Test address");
         store.setCountry("Test country");
@@ -80,84 +68,59 @@ public class CustomerControllerIntegrationTest {
         store.setPostalCode(5004);
         storeRepository.save(store);
 
-        customer = new Customer();
-        customer.setEmail("test@example.com");
+        createCustomer("test@example.com", "secretpassword11", store);
+    }
+
+    private Customer createCustomer(String email, String password, Store store) {
+        Customer customer = new Customer();
+        customer.setEmail(email);
         customer.setFirstName("John");
         customer.setLastName("Doe");
         customer.setStore(store);
-
-        // Encrypt the password
-        String encryptedPassword = encryptionService.encryptPassword("secretpassword11");
+        String encryptedPassword = encryptionService.encryptPassword(password);
         customer.setPassword(encryptedPassword);
-        customerRepository.save(customer);
+        return customerRepository.save(customer);
     }
 
-    /**
-     * Tests the retrieval of a Customer by customerId from the API and the correct return
-     * HTTP response status code.
-     *
-     * @throws Exception if the perform request or expect actions fail.
-     */
     @Test
     public void testGetCustomerById() throws Exception {
+        Customer customer = customerRepository.findByEmail("test@example.com").orElseThrow();
         mockMvc.perform(MockMvcRequestBuilders.get("/api/customers/{customerId}", customer.getCustomerId()))
-                .andExpect(MockMvcResultMatchers.status().is(200))
-                .andExpect(MockMvcResultMatchers.content().contentType(APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(customer.getCustomerId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("test@example.com"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("John"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Doe"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.customerId").value(customer.getCustomerId()))
+                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"));
     }
 
-    /**
-     * Tests the Customer /auth/login endpoint and the correct HTTP response status code.
-     * @see wms.rest.wms.api.controller.auth.AuthenticationController#loginUser(LoginBody).
-     *
-     * @throws Exception if the perform request or expect actions fail.
-     */
     @Test
     public void testLoginSuccess() throws Exception {
         LoginBody validLogin = new LoginBody("test@example.com", "secretpassword11");
         String jsonRequest = objectMapper.writeValueAsString(validLogin);
 
-        // Perform POST request and verify the response status is 200
         mockMvc.perform(post("/auth/login")
-                        .contentType(APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.jwt").exists());
     }
 
-    /**
-     * Test the Customer /auth/login endpoint and the correct return HTTP response status code.
-     *
-     * @throws Exception if the perform request or expect actions fail.
-     */
     @Test
     public void testLoginFailure() throws Exception {
-        // Incorrect credentials
-        LoginBody invalidLogin = new LoginBody("testt@example.com", "secretpassword11");
+        LoginBody invalidLogin = new LoginBody("wrong@example.com", "wrongpassword");
         String jsonRequest = objectMapper.writeValueAsString(invalidLogin);
 
-        // Perform POST request and verify the response status is 400
         mockMvc.perform(post("/auth/login")
-                        .contentType(APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest());
     }
 
-    /**
-     * Test the Customer /auth/me endpoint and the correct return HTTP response status code.
-     * Tests the full flow from logging in the Customer and extracting the JWT for authentication.
-     *
-     * @throws Exception if the perform request or expect actions fail.
-     */
     @Test
     public void testFullAuthenticationFlow() throws Exception {
         LoginBody validLogin = new LoginBody("test@example.com", "secretpassword11");
         String jsonRequest = objectMapper.writeValueAsString(validLogin);
 
-        // Perform login request
         MvcResult result = mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
@@ -165,10 +128,9 @@ public class CustomerControllerIntegrationTest {
                 .andExpect(jsonPath("$.jwt").exists())
                 .andReturn();
 
-        // Extract JWT from login response
         String responseString = result.getResponse().getContentAsString();
         String jwt = objectMapper.readTree(responseString).get("jwt").asText();
-        // Use the extracted JWT to authenticate a request to the /me endpoint
+
         mockMvc.perform(get("/auth/me")
                         .header("Authorization", "Bearer " + jwt)
                         .accept(MediaType.APPLICATION_JSON))
