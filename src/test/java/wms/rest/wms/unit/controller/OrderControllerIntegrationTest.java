@@ -41,14 +41,14 @@ public class OrderControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    /** Autowired CustomerRepository for interaction with the Customer H2 embedded database */
+    /** Autowired CustomerRepository for interaction with the H2 embedded database */
     @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
     private OrderRepository orderRepository;
 
-    /** Autowired CustomerRepository for interaction with the Store H2 embedded database */
+    /** Autowired CustomerRepository for interaction with the H2 embedded database */
     @Autowired
     private StoreRepository storeRepository;
 

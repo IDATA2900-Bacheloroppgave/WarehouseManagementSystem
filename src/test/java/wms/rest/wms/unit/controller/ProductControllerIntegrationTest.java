@@ -2,8 +2,6 @@ package wms.rest.wms.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import wms.rest.wms.api.controller.ProductController;
 import wms.rest.wms.model.Product;
 import wms.rest.wms.model.ProductType;
 import wms.rest.wms.repository.ProductRepository;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.TimeZone;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,12 +35,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class ProductControllerIntegrationTest {
 
+    /** Provides support for Spring MVC testing. Allows to send HTTP requests into the DispatcherServlet and make assertions about the result */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Autowired ProductRepository for interaction with the H2 embedded database */
     @Autowired
     private ProductRepository productRepository;
 
+    /**
+     * Prepare the test environment before each test method.
+     * This method is run before each test method to ensure the testing environment is properly initialized.
+     * Reduces boilerplate code and makes test more clear and concise.
+     */
     @BeforeEach
     public void setup() throws Exception {
         productRepository.deleteAll(); // Ensure clean state
@@ -78,6 +76,11 @@ public class ProductControllerIntegrationTest {
         productRepository.save(product2);
     }
 
+    /**
+     * Tests the GET /api/products endpoint and the correct HTTP response status code.
+     *
+     * @throws Exception if the perform request or expect actions fail.
+     */
     @Test
     public void testGetAllProducts() throws Exception {
         mockMvc.perform(get("/api/products"))
@@ -88,6 +91,11 @@ public class ProductControllerIntegrationTest {
                 .andExpect(jsonPath("$[1].name").value("Product2"));
     }
 
+    /**
+     * Tests the GET /api/products/{productId} endpoint and the correct HTTP response status code.
+     *
+     * @throws Exception if the perform request or expect actions fail.
+     */
     @Test
     public void testGetProductById() throws Exception {
         Product product = productRepository.findAll().get(0);
@@ -96,6 +104,11 @@ public class ProductControllerIntegrationTest {
                 .andExpect(jsonPath("$.name").value(product.getName()));
     }
 
+    /**
+     * Tests the POST /api/products by adding a new Product to the List and the correct HTTP response status code.
+     *
+     * @throws Exception if the perform request or expect actions fail.
+     */
     @Test
     public void testCreateProduct() throws Exception {
         Product newProduct = new Product();
