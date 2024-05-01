@@ -86,7 +86,7 @@ public class OrderControllerIntegrationTest {
         storeRepository.save(store);
 
         customer = new Customer();
-        customer.setEmail("test@example.com");
+        customer.setEmail("testt@example.com");
         customer.setFirstName("John");
         customer.setLastName("Doe");
         customer.setStore(store);
@@ -127,7 +127,7 @@ public class OrderControllerIntegrationTest {
      * @throws Exception if the perform request of expect actions fail.
      */
     private String authenticateAndGetJwt() throws Exception {
-        LoginBody validLogin = new LoginBody("test@example.com", "secretpassword11");
+        LoginBody validLogin = new LoginBody("testt@example.com", "secretpassword11");
         String jsonRequest = objectMapper.writeValueAsString(validLogin);
 
         MvcResult result = mockMvc.perform(post("/auth/login")
