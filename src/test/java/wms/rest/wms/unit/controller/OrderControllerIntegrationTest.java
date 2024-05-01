@@ -1,6 +1,7 @@
 package wms.rest.wms.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import wms.rest.wms.api.model.LoginBody;
 import wms.rest.wms.model.Customer;
 import wms.rest.wms.model.Order;
@@ -94,7 +94,7 @@ public class OrderControllerIntegrationTest {
         // Encrypt the password
         String encryptedPassword = encryptionService.encryptPassword("secretpassword11");
         customer.setPassword(encryptedPassword);
-        customerRepository.save(customer);
+        this.customerRepository.save(customer);
 
         order = new Order();
         order.setOrderDate(LocalDate.now());
@@ -106,6 +106,18 @@ public class OrderControllerIntegrationTest {
         order.setCustomer(customer);
         order.setStore(store);
         this.orderRepository.save(order);
+    }
+
+    /**
+     * Cleans up the embedded H2 database after each test.
+     * This method ensures that all entities are deleted from the repository,
+     * maintaining a clean state for subsequent tests.
+     */
+    @AfterEach
+    public void cleanup() {
+        this.orderRepository.deleteAll();
+        this.customerRepository.deleteAll();
+        this.storeRepository.deleteAll();
     }
 
     /**
@@ -167,7 +179,4 @@ public class OrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.orderId").value(order.getOrderId()))
                 .andExpect(jsonPath("$.orderStatus").value("DELIVERED"));
     }
-
-
-
 }
