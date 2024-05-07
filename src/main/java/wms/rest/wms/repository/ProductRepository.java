@@ -1,6 +1,7 @@
 package wms.rest.wms.repository;
 
 import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Repository;
 import wms.rest.wms.model.Product;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
  * @author Mikkel Stavelie.
  * @version 1.0.
  */
+@Repository
 public interface ProductRepository extends ListCrudRepository<Product, Integer> {
 
     /**
