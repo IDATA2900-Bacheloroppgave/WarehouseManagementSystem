@@ -78,7 +78,7 @@ resource "google_compute_firewall" "ssh" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-# Firewall config to allow traffic to Spring Boot default port
+# Firewall config to allow traffic to Spring Boot default port, test
 resource "google_compute_firewall" "spring_boot" {
   name           = "spring-boot-app-firewall"
   network        = google_compute_network.vpc_network.id
