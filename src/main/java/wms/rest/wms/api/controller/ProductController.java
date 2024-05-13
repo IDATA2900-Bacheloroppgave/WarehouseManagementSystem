@@ -120,4 +120,18 @@ public class ProductController {
         }
         return response;
     }
+
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") int productId, @RequestBody Product productDetails) throws Exception {
+        ResponseEntity response;
+        Product updatedProduct = productService.updateProduct(productId, productDetails);
+        if (updatedProduct != null) {
+            response = new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+        } else {
+            response = new ResponseEntity<>("Product could not be updated", HttpStatus.BAD_REQUEST);
+        }
+        return response;
+    }
+
 }

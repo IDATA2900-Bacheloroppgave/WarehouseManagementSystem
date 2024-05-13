@@ -40,20 +40,16 @@ public class Packaging {
     @Column(name = "packaging_id", nullable = false)
     private int packagingId;
 
-    @NotBlank(message = "Package type is mandatory")
     @Enumerated(EnumType.STRING)
     @Column(name = "package_type")
     private PackageType packageType;
 
-    @Min(1)
     @Column(name = "quantity_pr_package")
     private int quantityPrPackage;
 
-    @Min(1)
     @Column(name = "weight_in_gram", nullable = false)
     private double weightInGrams;
 
-    @Min(1)
     @Column(name = "dimension_cm_3", nullable = false)
     private double dimensionInCm3;
 
