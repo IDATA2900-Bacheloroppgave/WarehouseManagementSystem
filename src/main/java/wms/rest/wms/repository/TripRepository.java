@@ -1,6 +1,7 @@
 package wms.rest.wms.repository;
 
 import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Repository;
 import wms.rest.wms.model.Trip;
 
 /**
@@ -10,5 +11,6 @@ import wms.rest.wms.model.Trip;
  * @author Mikkel Stavelie.
  * @version 1.0.
  */
+@Repository
 public interface TripRepository extends ListCrudRepository<Trip, Integer> {
 }
