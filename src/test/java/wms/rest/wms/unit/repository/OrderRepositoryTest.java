@@ -82,7 +82,7 @@ public class OrderRepositoryTest {
      */
     @Test
     public void testFindByCustomer() {
-        // Now customer is available here
+        // Customer and Order is created beforehand and saved to their associated repository
         List<Order> orders = this.orderRepository.findByCustomer(customer);
         assertEquals(1, orders.size(), "There should be exactly one order for the customer");
     }

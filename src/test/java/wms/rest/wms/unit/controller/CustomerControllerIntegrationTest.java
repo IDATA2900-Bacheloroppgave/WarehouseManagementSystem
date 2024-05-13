@@ -121,6 +121,7 @@ public class CustomerControllerIntegrationTest {
      */
     @Test
     public void testLoginSuccess() throws Exception {
+        // Customer is created beforehand with a hashed password and saved to the CustomerRepository
         LoginBody validLogin = new LoginBody("test@example.com", "secretpassword11");
         String jsonRequest = objectMapper.writeValueAsString(validLogin);
 

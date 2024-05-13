@@ -46,21 +46,21 @@ public class JWTRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String tokenHeader = request.getHeader("Authorization");
+        String tokenHeader = request.getHeader("Authorization"); // Extract JWT from header
         if(tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
             String token = tokenHeader.substring(7);
             try {
-                String email = jwtService.getEmail(token);
+                String email = jwtService.getEmail(token); // Compare JWT to Customer with email
                 Optional<Customer> opUser = customerRepository.findByEmail(email);
                 if(opUser.isPresent()){
                     Customer user = opUser.get();
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList()); // Create authentication object
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication); // Set the authentication object to the Spring security context
                 }
             } catch (JWTDecodeException ex) {
             }
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // Run defined filter
     }
 }

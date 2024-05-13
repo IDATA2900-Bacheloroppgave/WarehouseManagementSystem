@@ -23,7 +23,7 @@ public class SecurityConfig {
     /**
      * List of all endpoints permitted without authentication.
      */
-    private static final String[] WHITELIST = {
+    private static final String[] WHITELIST_DEVELOPMENT = {
             "/api/products/**", "/auth/register"
             , "/api/customers/**", "/api/address/**"
             , "/auth/login", "/api/orders/**"
@@ -31,6 +31,16 @@ public class SecurityConfig {
             , "/api/trips/**", "/api/shipments/**"
             , "/swagger-ui/**", "/v3/api-docs/**"
             , "/swagger-resources/**", "/swagger-resources"
+    };
+
+    /**
+     * List of all endpoints permitted without authentication.
+     */
+    private static final String[] WHITELIST_PROUDCTION = {
+            "/api/products/**", "/auth/register"
+            , "/api/address/**"
+            , "/auth/login", "/api/orders/**"
+            , "/api/stores/**"
     };
 
     /**
@@ -44,8 +54,8 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class) // Run authentication filter before http request filter.
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers(WHITELIST).permitAll() // Exclusion rules
+                .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class) // Run authentication filter before http request filter
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers(WHITELIST_DEVELOPMENT).permitAll() // Exclusion rules
                         .anyRequest().authenticated()); // Everything else needs authorization
         return http.build();
     }
