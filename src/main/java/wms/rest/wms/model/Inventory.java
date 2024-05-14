@@ -34,7 +34,6 @@ public class Inventory {
     @Column(name = "total_stock")
     private int totalStock;
 
-    @Min(0)
     @Column(name = "reserved_stock")
     private int reservedStock;
 
