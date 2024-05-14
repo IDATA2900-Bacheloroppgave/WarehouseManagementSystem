@@ -32,6 +32,9 @@ public class ShipmentService {
     /** Service for handling Order persistence operations */
     private OrderService orderService;
 
+    /** Repository for handling Inventory persistence operations */
+    private InventoryRepository inventoryRepository;
+
     /**
      * Return a list of all Shipments
      *
@@ -47,8 +50,8 @@ public class ShipmentService {
      *
      * @see OrderService#groupByStoreAndDeliveryDate() for details on how Orders are grouped.
      */
-    @Transactional
-    @Scheduled(initialDelay = 100000, fixedRate = 360000)
+    @Transactional //100k opprinneig
+    @Scheduled(initialDelay = 20000, fixedRate = 360000)
     public void createShipment() {
         try {
             // Group orders by both Store and LocalDate
@@ -79,10 +82,15 @@ public class ShipmentService {
                             Product product = quantity.getProduct();
                             Inventory inventory = product.getInventory();
 
-                            // Update inventory when order is PICKING
-                            inventory.setReservedStock(inventory.getReservedStock() - quantity.getProductQuantity());
-                            inventory.setTotalStock(inventory.getTotalStock() - quantity.getProductQuantity());
-                            inventory.setAvailableStock(inventory.getTotalStock());
+                            // Calculate the new inventory values
+                            int newReservedStock = inventory.getReservedStock() - quantity.getProductQuantity();
+                            int newTotalStock = inventory.getTotalStock() - quantity.getProductQuantity();
+                            int newAvailableStock = newTotalStock - newReservedStock;
+
+                            inventory.setReservedStock(newReservedStock);
+                            inventory.setTotalStock(newTotalStock);
+                            inventory.setAvailableStock(newAvailableStock);
+                            inventoryRepository.save(inventory);
                         }
                     }
                 }
@@ -93,6 +101,7 @@ public class ShipmentService {
             log.error("An error occurred while creating shipments: {}", e.getMessage(), e);
         }
     }
+
 
     /**
      * Update all Orders inside a Shipment from OrderStatus PICKING to PICKED.
