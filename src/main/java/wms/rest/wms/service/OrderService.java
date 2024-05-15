@@ -166,11 +166,11 @@ public class OrderService {
     }
 
     /**
-     * Return all registered Orders from getRegisteredOrders and sorts them into a Map of key-value pairs
+     * Returns all registered Orders from getRegisteredOrders and sorts them into a Map of key-value pairs
      * grouped by both Store and wishedDeliveryDate.
      *
-     * @return a Map where each key is a Pair of Store and wishedDeliveryDate, and each value is a list of Orders.
-     * Output example:
+     * @return a Map where each key is a SimpleEntry of Store and wishedDeliveryDate, and each value is a list of Orders.
+     * Example output:
      * [Store 1, 2024-04-15] -> [Order 1, Order 2]
      * [Store 1, 2024-04-16] -> [Order 3, Order 4]
      * [Store 2, 2024-04-16] -> [Order 5, Order 6, Order 7]
@@ -180,9 +180,9 @@ public class OrderService {
         return registeredOrders.stream()
                 .filter(order -> order.getCustomer() != null && order.getCustomer().getStore() != null)
                 .collect(Collectors.groupingBy(order ->
-                        new AbstractMap.SimpleEntry<>
-                                (order.getCustomer().getStore(), order.getWishedDeliveryDate())));
+                        new AbstractMap.SimpleEntry<>(order.getCustomer().getStore(), order.getWishedDeliveryDate())));
     }
+
 
     /**
      * Updates an Order from OrderStatus REGISTERED to PICKING. Also setting the
