@@ -61,7 +61,7 @@ public class Product {
     private Double price;
 
     @Column(name = "gtin", nullable = false, unique = true)
-    private int gtin;
+    private long gtin;
 
     @Min(1)
     @Column(name = "batch", nullable = false)
