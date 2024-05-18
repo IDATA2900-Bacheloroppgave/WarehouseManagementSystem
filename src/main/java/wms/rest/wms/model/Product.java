@@ -60,8 +60,6 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
-    @Min(10000) // Ensures the number is at least 5 digits
-    @Max(99999) // Ensures the number does not exceed 5 digits
     @Column(name = "gtin", nullable = false, unique = true)
     private int gtin;
 
