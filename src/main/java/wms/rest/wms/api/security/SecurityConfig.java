@@ -56,7 +56,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .addFilterBefore(jwtRequestFilter, AuthorizationFilter.class) // Run authentication filter before http request filter
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers(WHITELIST_PROUDCTION).permitAll() // Exclusion rules
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers(WHITELIST_DEVELOPMENT).permitAll() // Exclusion rules
                         .anyRequest().authenticated()); // Everything else needs authorization
         return http.build();
     }
